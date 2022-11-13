@@ -1,0 +1,5 @@
+repository_type: pipeline
+lint:
+  nextflow_config:
+  - manifest.name
+  - manifest.homePage
