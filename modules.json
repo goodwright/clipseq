@@ -5,6 +5,35 @@
         "https://github.com/goodwright/flow-nf.git": {
             "modules": {
                 "goodwright": {
+                    "clipseq/filter_gtf": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "clipseq/find_longest_transcript": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "clipseq/resolve_unannotated": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "icount/segment": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "prepare_clipseq",
+                            "modules"
+                        ]
+                    },
                     "peka": {
                         "branch": "master",
                         "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
@@ -13,12 +42,72 @@
                         ]
                     }
                 }
+            },
+            "subworkflows": {
+                "goodwright": {
+                    "prepare_genome/prepare_aligner": {
+                        "branch": "master",
+                        "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
+                    "prepare_genome/prepare_clipseq": {
+                        "branch": "master",
+                        "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
+                    "prepare_genome/prepare_ref": {
+                        "branch": "master",
+                        "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    }
+                }
             }
         },
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "bowtie2/build": {
+                        "branch": "master",
+                        "git_sha": "e797efb47b0d3b2124753beb55dc83ab9512bceb",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "custom/getchromsizes": {
+                        "branch": "master",
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "gunzip": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "multiqc": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "star/genomegenerate": {
+                        "branch": "master",
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "untar": {
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
                         "installed_by": [
