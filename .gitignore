@@ -9,5 +9,5 @@ testing*
 
 modules/nf-core/
 subworkflows/nf-core/
-modules/flow-nf/
-subworkflows/flow-nf/
+modules/goodwright/
+subworkflows/goodwright/
