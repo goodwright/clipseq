@@ -2,6 +2,19 @@
     "name": "goodwright/clipseq",
     "homePage": "https://github.com/goodwright/clipseq",
     "repos": {
+        "https://github.com/goodwright/flow-nf.git": {
+            "modules": {
+                "goodwright": {
+                    "peka": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    }
+                }
+            }
+        },
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
