@@ -42,9 +42,11 @@
                         ]
                     },
                     "util/logging": {
-                        "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
-                        "installed_by": "modules"
+                        "branch": "dev",
+                        "git_sha": "f4106d5b28b591b4ab08266f46eb32c03f8cccb2",
+                        "installed_by": [
+                            "modules"
+                        ]
                     }
                 }
             },

@@ -9,6 +9,8 @@
 
 nextflow.enable.dsl = 2
 
+include { goodwright_logo } from './modules/goodwright/util/logging/main'
+
 workflow {
-    
+    log.info goodwright_logo()
 }
