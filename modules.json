@@ -40,6 +40,11 @@
                         "installed_by": [
                             "modules"
                         ]
+                    },
+                    "util/logging": {
+                        "branch": "master",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": "modules"
                     }
                 }
             },
