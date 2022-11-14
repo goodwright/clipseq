@@ -43,7 +43,7 @@
                     },
                     "util/logging": {
                         "branch": "dev",
-                        "git_sha": "ae11394e5329d226b310d9152719e4b408f9614a",
+                        "git_sha": "a1bb8eff407083da05f34d370ececf5cde92f650",
                         "installed_by": [
                             "modules"
                         ]
