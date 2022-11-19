@@ -28,7 +28,7 @@
                     },
                     "icount/segment": {
                         "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "git_sha": "abc209295f965763891938ac9d8c810f84146fd2",
                         "installed_by": [
                             "prepare_clipseq",
                             "modules"
@@ -42,8 +42,8 @@
                         ]
                     },
                     "util/logging": {
-                        "branch": "dev",
-                        "git_sha": "a1bb8eff407083da05f34d370ececf5cde92f650",
+                        "branch": "master",
+                        "git_sha": "bb303132b4de0eaa3eda01c96e758a71760e6d7f",
                         "installed_by": [
                             "modules"
                         ]
