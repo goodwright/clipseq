@@ -40,7 +40,10 @@ check_param_list = [
 for (param in check_param_list) { 
     if (!param.value) { 
         exit 1, "Required parameter not specified: ${param.key}"
-     }
+    } 
+    else {
+        file(param.value, checkIfExists: true)
+    }
 }
 
 // Check non-manditory input parameters to see if the files exist if they have been specified
