@@ -117,6 +117,9 @@ include { RNA_ALIGN         } from './subworkflows/goodwright/rna_align/main'
 // SUBWORKFLOWS
 //
 
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP     } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -230,6 +233,31 @@ workflow CLIPSEQ {
         ch_transcript_samtools_stats    = RNA_ALIGN.out.transcript_stats
         ch_transcript_samtools_flagstat = RNA_ALIGN.out.transcript_flagstat
         ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
+    }
+
+    //TODO: FILTER TRANSCRIPTS
+
+    if(params.run_read_filter) {
+        /*
+        * CHANNEL: Combine bam and bai files on id
+        */
+        ch_genome_bam_bai = ch_genome_bam
+            .map { row -> [row[0].id, row ].flatten()}
+            .join ( ch_genome_bai.map { row -> [row[0].id, row ].flatten()} )
+            .map { row -> [row[1], row[2], row[4]] }
+
+        ch_transcript_bam_bai = ch_transcript_bam
+            .map { row -> [row[0].id, row ].flatten()}
+            .join ( ch_transcript_bai.map { row -> [row[0].id, row ].flatten()} )
+            .map { row -> [row[1], row[2], row[4]] }
+
+        /*
+        * SUBWORKFLOW: TODO
+        */
+        GENOME_DEDUP (
+            ch_genome_bam_bai,
+            true
+        )
     }
 
 
