@@ -98,7 +98,8 @@ ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIf
 // SUBWORKFLOWS
 //
 
-include { PREPARE_CLIPSEQ } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
+include { PREPARE_CLIPSEQ   } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
+include { PARSE_FASTQ_INPUT } from './subworkflows/goodwright/parse_fastq_input'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,8 +124,8 @@ include { PREPARE_CLIPSEQ } from './subworkflows/goodwright/prepare_genome/prepa
 workflow CLIPSEQ {
     // Init
     ch_versions            = Channel.empty()
-    ch_target_genome_index = Channel.empty()
-    ch_smrna_genome_index  = Channel.empty()
+    ch_target_genome_index = []
+    ch_smrna_genome_index  = []
 
     // Prepare manditory params into channels 
     ch_samplesheet = file(params.samplesheet, checkIfExists: true)
@@ -134,33 +135,70 @@ workflow CLIPSEQ {
 
     // Pepare non-manditory params into channels
     if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
-    if(params.smrna_genome_index) { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
+    if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
 
-    /*
-    * SUBWORKFLOW: Prepare clipseq genome files
-    */
-    PREPARE_CLIPSEQ (
-        ch_fasta,
-        ch_smrna_fasta,
-        ch_gtf,
-        ch_target_genome_index,
-        ch_smrna_genome_index
-    )
+    // Prepare genome and build indexes if required
+    ch_fasta_fai              = Channel.empty()
+    ch_filtered_gtf           = Channel.empty()
+    ch_chrom_sizes            = Channel.empty()
+    ch_smrna_fasta_fai        = Channel.empty()
+    ch_smrna_chrom_sizes      = Channel.empty()
+    ch_longest_transcript     = Channel.empty()
+    ch_seg_gtf                = Channel.empty()
+    ch_seg_filt_gtf           = Channel.empty()
+    ch_seg_resolved_gtf       = Channel.empty()
+    ch_seg_resolved_gtf_genic = Channel.empty()
+    if (params.run_genome_prep) {
+        /*
+        * SUBWORKFLOW: Prepare clipseq genome files
+        */
+        PREPARE_CLIPSEQ (
+            ch_fasta,
+            ch_smrna_fasta,
+            ch_gtf,
+            ch_target_genome_index,
+            ch_smrna_genome_index
+        )
+        ch_versions               = ch_versions.mix(PREPARE_CLIPSEQ.out.versions)
+        ch_fasta                  = PREPARE_CLIPSEQ.out.fasta
+        ch_fasta_fai              = PREPARE_CLIPSEQ.out.fasta_fai
+        ch_gtf                    = PREPARE_CLIPSEQ.out.gtf
+        ch_filtered_gtf           = PREPARE_CLIPSEQ.out.filtered_gtf
+        ch_chrom_sizes            = PREPARE_CLIPSEQ.out.chrom_sizes
+        ch_smrna_fasta            = PREPARE_CLIPSEQ.out.smrna_fasta
+        ch_smrna_fasta_fai        = PREPARE_CLIPSEQ.out.smrna_fasta_fai
+        ch_smrna_chrom_sizes      = PREPARE_CLIPSEQ.out.smrna_chrom_sizes
+        ch_longest_transcript     = PREPARE_CLIPSEQ.out.longest_transcript
+        ch_seg_gtf                = PREPARE_CLIPSEQ.out.seg_gtf
+        ch_seg_filt_gtf           = PREPARE_CLIPSEQ.out.seg_filt_gtf
+        ch_seg_resolved_gtf       = PREPARE_CLIPSEQ.out.seg_resolved_gtf
+        ch_seg_resolved_gtf_genic = PREPARE_CLIPSEQ.out.seg_resolved_gtf_genic
+        ch_target_genome_index    = PREPARE_CLIPSEQ.out.genome_index
+        ch_smrna_genome_index     = PREPARE_CLIPSEQ.out.smrna_index
+    }
 
-    // fasta                  = ch_fasta                  // channel: [ val(meta), [ fasta ] ]
-    // fasta_fai              = ch_fasta_fai              // channel: [ val(meta), [ fai ] ]
-    // gtf                    = ch_gtf                    // channel: [ val(meta), [ gtf ] ]
-    // filtered_gtf           = ch_filt_gtf               // channel: [ val(meta), [ gtf ] ]
-    // chrom_sizes            = ch_chrom_sizes            // channel: [ val(meta), [ txt ] ]
-    // smrna_fasta            = ch_smrna_fasta            // channel: [ val(meta), [ fasta ] ]
-    // smrna_fasta_fai        = ch_smrna_fasta_fai        // channel: [ val(meta), [ fai ] ]
-    // smrna_chrom_sizes      = ch_smrna_chrom_sizes      // channel: [ val(meta), [ txt ] ]
-    // longest_transcript     = ch_longest_transcript     // channel: [ val(meta), [ txt ] ]
-    // seg_gtf                = ch_seg_gtf                // channel: [ val(meta), [ gtf ] ]
-    // seg_filt_gtf           = ch_seg_filt_gtf           // channel: [ val(meta), [ gtf ] ]
-    // seg_resolved_gtf       = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
-    // seg_resolved_gtf_genic = ch_seg_resolved_gtf_genic // channel: [ val(meta), [ gtf ] ]
-    // versions               = ch_versions               // channel: [ versions.yml ]
+    ch_fastq = Channel.empty()
+    if(params.run_input_check) {
+        /*
+        * SUBWORKFLOW: Read in samplesheet, validate, stage input files and merge replicates
+        */
+        PARSE_FASTQ_INPUT (
+            ch_samplesheet
+        )
+        ch_versions = ch_versions.mix(PARSE_FASTQ_INPUT.out.versions)
+        ch_fastq    = PARSE_FASTQ_INPUT.out.fastq
+    }
+    //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
+    //ch_fastq | view
+
+
+    // TODO: clipseq qc
+    // TODO: software versions
+    // TODO: multiqc
+
+    // TODO: test list
+    //     - tar indexes
+    //     - replciates to merge
 }
 
 /*

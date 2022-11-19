@@ -41,6 +41,13 @@
                             "modules"
                         ]
                     },
+                    "sample/base_samplesheet_check": {
+                        "branch": "dev",
+                        "git_sha": "aae35bb999b4b42bfb1bd21e586a9a5416c4dea3",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "util/logging": {
                         "branch": "master",
                         "git_sha": "bb303132b4de0eaa3eda01c96e758a71760e6d7f",
@@ -52,6 +59,13 @@
             },
             "subworkflows": {
                 "goodwright": {
+                    "parse_fastq_input": {
+                        "branch": "dev",
+                        "git_sha": "1a63e40358567434c5846f4fd95ae844536c922f",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
                     "prepare_genome/prepare_aligner": {
                         "branch": "master",
                         "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
@@ -82,6 +96,13 @@
                     "bowtie2/build": {
                         "branch": "master",
                         "git_sha": "e797efb47b0d3b2124753beb55dc83ab9512bceb",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "cat/fastq": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
                         "installed_by": [
                             "modules"
                         ]
