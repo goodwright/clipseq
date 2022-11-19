@@ -83,7 +83,7 @@ ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIf
 // SUBWORKFLOWS
 //
 
-include { PREPARE_CLIPSEQ } from '../subworkflows/goodwright/prepare_genome/prepare_clipseq'
+include { PREPARE_CLIPSEQ } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
