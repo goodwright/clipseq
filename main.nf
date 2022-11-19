@@ -100,6 +100,7 @@ ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIf
 
 include { PREPARE_CLIPSEQ   } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
 include { PARSE_FASTQ_INPUT } from './subworkflows/goodwright/parse_fastq_input'
+include { FASTQC_TRIMGALORE } from './subworkflows/goodwright/fastqc_trimgalore/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -190,6 +191,19 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
+
+    if(params.run_trim_galore_fastqc) {
+        /*
+        * SUBWORKFLOW: Run fastqc and trimming
+        */
+        FASTQC_TRIMGALORE (
+            ch_fastq,
+            params.skip_fastqc,
+            params.skip_trimming
+        )
+        ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
+        ch_fastq    = FASTQC_TRIMGALORE.out.fastq
+    }
 
 
     // TODO: clipseq qc
