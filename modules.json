@@ -59,6 +59,13 @@
             },
             "subworkflows": {
                 "goodwright": {
+                    "fastqc_trimgalore": {
+                        "branch": "dev",
+                        "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
                     "parse_fastq_input": {
                         "branch": "dev",
                         "git_sha": "1a63e40358567434c5846f4fd95ae844536c922f",
@@ -114,6 +121,13 @@
                             "modules"
                         ]
                     },
+                    "fastqc": {
+                        "branch": "master",
+                        "git_sha": "3dd73937b084b547f9272bc901e0f120a7913fd8",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "gunzip": {
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
@@ -131,6 +145,13 @@
                     "star/genomegenerate": {
                         "branch": "master",
                         "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "trimgalore": {
+                        "branch": "master",
+                        "git_sha": "b51a69e30973c71950225c817ad07a3337d22c40",
                         "installed_by": [
                             "modules"
                         ]
