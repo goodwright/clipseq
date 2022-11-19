@@ -101,6 +101,7 @@ ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIf
 include { PREPARE_CLIPSEQ   } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
 include { PARSE_FASTQ_INPUT } from './subworkflows/goodwright/parse_fastq_input'
 include { FASTQC_TRIMGALORE } from './subworkflows/goodwright/fastqc_trimgalore/main'
+include { RNA_ALIGN         } from './subworkflows/goodwright/rna_align/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,6 +204,32 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(FASTQC_TRIMGALORE.out.versions)
         ch_fastq    = FASTQC_TRIMGALORE.out.fastq
+    }
+    //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
+    //ch_fastq | view
+
+    if(params.run_alignment) {
+        /*
+        * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
+        */
+        RNA_ALIGN (
+            ch_fastq,
+            ch_smrna_genome_index.map{ [ [id:'smrna' ], it[1] ] },
+            ch_target_genome_index,
+            ch_filtered_gtf.map{ it[1] },
+            ch_fasta.map{ it[1] }
+        )
+        ch_versions                     = ch_versions.mix(RNA_ALIGN.out.versions)
+        ch_genome_bam                   = RNA_ALIGN.out.genome_bam
+        ch_genome_bai                   = RNA_ALIGN.out.genome_bai
+        ch_genome_samtools_stats        = RNA_ALIGN.out.genome_stats
+        ch_genome_samtools_flagstat     = RNA_ALIGN.out.genome_flagstat
+        ch_genome_samtools_idxstats     = RNA_ALIGN.out.genome_idxstats
+        ch_transcript_bam               = RNA_ALIGN.out.transcript_bam
+        ch_transcript_bai               = RNA_ALIGN.out.transcript_bai
+        ch_transcript_samtools_stats    = RNA_ALIGN.out.transcript_stats
+        ch_transcript_samtools_flagstat = RNA_ALIGN.out.transcript_flagstat
+        ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
     }
 
 
