@@ -33,6 +33,7 @@ log.info summary_log(workflow, params, params.debug, params.monochrome_logs)
 
 // Check manditory input parameters to see if the files exist if they have been specified
 check_param_list = [
+    samplesheet: params.samplesheet,
     fasta: params.fasta,
     smrna_fasta: params.smrna_fasta,
     gtf: params.gtf
@@ -52,9 +53,6 @@ check_param_list = [
     params.smrna_genome_index
 ]
 for (param in check_param_list) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters that we need an immediate channel for
-if (params.samplesheet) { ch_input = file(params.samplesheet) } else { exit 1, "Input samplesheet not specified" }
 
 // Stage dummy file to be used as an optional input where required
 ch_dummy_file = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
@@ -122,21 +120,31 @@ include { PREPARE_CLIPSEQ } from './subworkflows/goodwright/prepare_genome/prepa
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow {
-    ch_versions = Channel.empty()
+workflow CLIPSEQ {
+    // Init
+    ch_versions            = Channel.empty()
+    ch_target_genome_index = Channel.empty()
+    ch_smrna_genome_index  = Channel.empty()
+
+    // Prepare manditory params into channels 
+    ch_samplesheet = file(params.samplesheet, checkIfExists: true)
+    ch_fasta       = file(params.fasta, checkIfExists: true)
+    ch_smrna_fasta = file(params.smrna_fasta, checkIfExists: true)
+    ch_gtf         = file(params.gtf, checkIfExists: true)
+
+    // Pepare non-manditory params into channels
+    if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
+    if(params.smrna_genome_index) { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
 
     /*
     * SUBWORKFLOW: Prepare clipseq genome files
     */
-
-    // ch_fasta = Channel.empty()
-    // ch_fasta = Channel.empty()
     PREPARE_CLIPSEQ (
-        params.fasta,
-        params.smrna_fasta,
-        params.gtf,
-        params.target_genome_index,
-        params.smrna_genome_index
+        ch_fasta,
+        ch_smrna_fasta,
+        ch_gtf,
+        ch_target_genome_index,
+        ch_smrna_genome_index
     )
 
     // fasta                  = ch_fasta                  // channel: [ val(meta), [ fasta ] ]
@@ -153,6 +161,16 @@ workflow {
     // seg_resolved_gtf       = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
     // seg_resolved_gtf_genic = ch_seg_resolved_gtf_genic // channel: [ val(meta), [ gtf ] ]
     // versions               = ch_versions               // channel: [ versions.yml ]
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow {
+    CLIPSEQ ()
 }
 
 /*
