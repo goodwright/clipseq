@@ -63,7 +63,7 @@ ch_dummy_file = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
 
 // // Header files for MultiQC
 // ch_pca_header_multiqc        = file("$projectDir/assets/multiqc/deseq2_pca_header.txt", checkIfExists: true)
@@ -236,8 +236,10 @@ workflow CLIPSEQ {
     }
 
     //TODO: FILTER TRANSCRIPTS
-
     if(params.run_read_filter) {
+    }
+
+    if(params.run_umi_dedup) {
         /*
         * CHANNEL: Combine bam and bai files on id
         */
@@ -252,10 +254,18 @@ workflow CLIPSEQ {
             .map { row -> [row[1], row[2], row[4]] }
 
         /*
-        * SUBWORKFLOW: TODO
+        * SUBWORKFLOW: Run umi deduplication on genome-level alignments
         */
         GENOME_DEDUP (
             ch_genome_bam_bai,
+            true
+        )
+
+        /*
+        * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
+        */
+        TRANSCRIPT_DEDUP (
+            ch_transcript_bam_bai,
             true
         )
     }
