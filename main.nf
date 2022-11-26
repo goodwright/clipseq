@@ -100,10 +100,12 @@ include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwrigh
 // SUBWORKFLOWS
 //
 
-include { PREPARE_CLIPSEQ   } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
-include { PARSE_FASTQ_INPUT } from './subworkflows/goodwright/parse_fastq_input'
-include { FASTQC_TRIMGALORE } from './subworkflows/goodwright/fastqc_trimgalore/main'
-include { RNA_ALIGN         } from './subworkflows/goodwright/rna_align/main'
+include { PREPARE_CLIPSEQ                                    } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
+include { PARSE_FASTQ_INPUT                                  } from './subworkflows/goodwright/parse_fastq_input'
+include { FASTQC_TRIMGALORE                                  } from './subworkflows/goodwright/fastqc_trimgalore/main'
+include { RNA_ALIGN                                          } from './subworkflows/goodwright/rna_align/main'
+include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS     } from './subworkflows/goodwright/clip_calc_crosslinks/main'
+include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -323,6 +325,38 @@ workflow CLIPSEQ {
         ch_transcript_samtools_stats    = TRANSCRIPT_DEDUP.out.stats
         ch_transcript_samtools_flagstat = TRANSCRIPT_DEDUP.out.flagstat
         ch_transcript_samtools_idxstats = TRANSCRIPT_DEDUP.out.idxstats
+    }
+
+    ch_genome_crosslink_bed           = Channel.empty()
+    ch_genome_crosslink_coverage      = Channel.empty()
+    ch_genome_crosslink_coverage_norm = Channel.empty()
+    ch_trans_crosslink_bed            = Channel.empty()
+    ch_trans_crosslink_coverage       = Channel.empty()
+    ch_trans_crosslink_coverage_norm  = Channel.empty()
+    if(params.run_calc_crosslinks) {
+        /*
+        * SUBWORKFLOW: Run crosslink calculation for genome
+        */
+        CALC_GENOME_CROSSLINKS (
+            ch_genome_bam,
+            ch_fasta_fai.collect{ it[1] }
+        )
+        ch_versions                = ch_versions.mix(CALC_GENOME_CROSSLINKS.out.versions)
+        ch_genome_crosslink_bed           = CALC_GENOME_CROSSLINKS.out.bed
+        ch_genome_crosslink_coverage      = CALC_GENOME_CROSSLINKS.out.coverage
+        ch_genome_crosslink_coverage_norm = CALC_GENOME_CROSSLINKS.out.coverage_norm
+
+        /*
+        * SUBWORKFLOW: Run crosslink calculation for transcripts
+        */
+        CALC_TRANSCRIPT_CROSSLINKS (
+            ch_genome_bam,
+            ch_fasta_fai.collect{ it[1] }
+        )
+        ch_versions                      = ch_versions.mix(CALC_TRANSCRIPT_CROSSLINKS.out.versions)
+        ch_trans_crosslink_bed           = CALC_TRANSCRIPT_CROSSLINKS.out.bed
+        ch_trans_crosslink_coverage      = CALC_TRANSCRIPT_CROSSLINKS.out.coverage
+        ch_trans_crosslink_coverage_norm = CALC_TRANSCRIPT_CROSSLINKS.out.coverage_norm
     }
 
 
