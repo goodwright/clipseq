@@ -13,8 +13,8 @@
                         ]
                     },
                     "clipseq/find_longest_transcript": {
-                        "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "branch": "dev",
+                        "git_sha": "8ab1c7f1153fb3c9a4423f5e2a056458c7c7e8d4",
                         "installed_by": [
                             "modules"
                         ]
@@ -43,7 +43,7 @@
                     },
                     "sample/base_samplesheet_check": {
                         "branch": "dev",
-                        "git_sha": "aae35bb999b4b42bfb1bd21e586a9a5416c4dea3",
+                        "git_sha": "998a4fbb6e2577ba91ed760acc2a84e5b7268635",
                         "installed_by": [
                             "modules"
                         ]
