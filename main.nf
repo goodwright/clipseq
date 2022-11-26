@@ -94,6 +94,8 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 // MODULEs
 //
 
+include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwright/samtools/simple_view/main'
+
 //
 // SUBWORKFLOWS
 //
@@ -117,8 +119,9 @@ include { RNA_ALIGN         } from './subworkflows/goodwright/rna_align/main'
 // SUBWORKFLOWS
 //
 
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP     } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP             } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP         } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
+include { BAM_SORT_STATS_SAMTOOLS as BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT } from './subworkflows/nf-core/bam_sort_stats_samtools/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -211,6 +214,16 @@ workflow CLIPSEQ {
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
 
+    ch_genome_bam                   = Channel.empty()
+    ch_genome_bai                   = Channel.empty()
+    ch_genome_samtools_stats        = Channel.empty()
+    ch_genome_samtools_flagstat     = Channel.empty()
+    ch_genome_samtools_idxstats     = Channel.empty()
+    ch_transcript_bam               = Channel.empty()
+    ch_transcript_bai               = Channel.empty()
+    ch_transcript_samtools_stats    = Channel.empty()
+    ch_transcript_samtools_flagstat = Channel.empty()
+    ch_transcript_samtools_idxstats = Channel.empty()
     if(params.run_alignment) {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
@@ -235,8 +248,38 @@ workflow CLIPSEQ {
         ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
     }
 
-    //TODO: FILTER TRANSCRIPTS
     if(params.run_read_filter) {
+        /*
+        * CHANNEL: Combine bam and bai files on id
+        */
+        ch_transcript_bam_bai = ch_transcript_bam
+            .map { row -> [row[0].id, row ].flatten()}
+            .join ( ch_transcript_bai.map { row -> [row[0].id, row ].flatten()} )
+            .map { row -> [row[1], row[2], row[4]] }
+
+        /*
+        * MODULE: Filter transcriptome bam on longest transcripts
+        */
+        FILTER_TRANSCRIPTS (
+            ch_transcript_bam_bai,
+            [],
+            ch_longest_transcript.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(FILTER_TRANSCRIPTS.out.versions)
+
+        /*
+        * SUBWORKFLOW: Sort, index, stats on filtered bam
+        */
+        BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT (
+            FILTER_TRANSCRIPTS.out.bam,
+            ch_fasta.map{ it[1] }
+        )
+        ch_versions                     = ch_versions.mix(BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.versions)
+        ch_transcript_bam               = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.bam
+        ch_transcript_bai               = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.bai
+        ch_transcript_samtools_stats    = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.stats
+        ch_transcript_samtools_flagstat = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.flagstat
+        ch_transcript_samtools_idxstats = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.idxstats
     }
 
     if(params.run_umi_dedup) {
@@ -260,6 +303,12 @@ workflow CLIPSEQ {
             ch_genome_bam_bai,
             true
         )
+        ch_versions                 = ch_versions.mix(GENOME_DEDUP.out.versions)
+        ch_genome_bam               = GENOME_DEDUP.out.bam
+        ch_genome_bai               = GENOME_DEDUP.out.bai
+        ch_genome_samtools_stats    = GENOME_DEDUP.out.stats
+        ch_genome_samtools_flagstat = GENOME_DEDUP.out.flagstat
+        ch_genome_samtools_idxstats = GENOME_DEDUP.out.idxstats
 
         /*
         * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
@@ -268,6 +317,12 @@ workflow CLIPSEQ {
             ch_transcript_bam_bai,
             true
         )
+        ch_versions                     = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
+        ch_transcript_bam               = TRANSCRIPT_DEDUP.out.bam
+        ch_transcript_bai               = TRANSCRIPT_DEDUP.out.bai
+        ch_transcript_samtools_stats    = TRANSCRIPT_DEDUP.out.stats
+        ch_transcript_samtools_flagstat = TRANSCRIPT_DEDUP.out.flagstat
+        ch_transcript_samtools_idxstats = TRANSCRIPT_DEDUP.out.idxstats
     }
 
 

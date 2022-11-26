@@ -48,6 +48,13 @@
                             "modules"
                         ]
                     },
+                    "samtools/simple_view": {
+                        "branch": "dev",
+                        "git_sha": "0f34640182b26bf0b09f193ebf18f7bafc70d0ab",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "util/logging": {
                         "branch": "master",
                         "git_sha": "bb303132b4de0eaa3eda01c96e758a71760e6d7f",
