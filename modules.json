@@ -14,7 +14,7 @@
                     },
                     "clipseq/find_longest_transcript": {
                         "branch": "dev",
-                        "git_sha": "8ab1c7f1153fb3c9a4423f5e2a056458c7c7e8d4",
+                        "git_sha": "495a77a1d205bb51a79018ef0abb24513b41ee5e",
                         "installed_by": [
                             "modules"
                         ]
