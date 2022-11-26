@@ -5,6 +5,14 @@
         "https://github.com/goodwright/flow-nf.git": {
             "modules": {
                 "goodwright": {
+                    "bedtools/shift": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "clip_calc_crosslinks",
+                            "modules"
+                        ]
+                    },
                     "clipseq/filter_gtf": {
                         "branch": "master",
                         "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
@@ -31,6 +39,14 @@
                         "git_sha": "abc209295f965763891938ac9d8c810f84146fd2",
                         "installed_by": [
                             "prepare_clipseq",
+                            "modules"
+                        ]
+                    },
+                    "linux/command": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "clip_calc_crosslinks",
                             "modules"
                         ]
                     },
@@ -66,6 +82,13 @@
             },
             "subworkflows": {
                 "goodwright": {
+                    "clip_calc_crosslinks": {
+                        "branch": "dev",
+                        "git_sha": "fa39fc988ca497a0be9ea01a65bdbbccdb689593",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
                     "fastqc_trimgalore": {
                         "branch": "dev",
                         "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
@@ -107,6 +130,20 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
+                    "bedtools/bamtobed": {
+                        "branch": "master",
+                        "git_sha": "219bbdaf9d08043a66f2b531609c1e8e4ac89021",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
+                    "bedtools/genomecov": {
+                        "branch": "master",
+                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "bowtie2/align": {
                         "branch": "master",
                         "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
