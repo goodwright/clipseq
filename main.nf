@@ -15,7 +15,8 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { summary_log } from './modules/goodwright/util/logging/main'
+include { summary_log     } from './modules/goodwright/util/logging/main'
+include { multiqc_summary } from './modules/goodwright/util/logging/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -80,6 +81,8 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 // MODULEs
 //
 
+include { MULTIQC } from './modules/local/multiqc'
+
 //
 // SUBWORKFLOWS
 //
@@ -97,6 +100,7 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwright/samtools/simple_view/main'
 include { CLIPPY                                     } from './modules/goodwright/clippy/main'
 include { PEKA                                       } from './modules/goodwright/peka/main'
+include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 
 //
 // SUBWORKFLOWS
@@ -407,9 +411,33 @@ workflow CLIPSEQ {
         // ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
+    if(params.run_reporting) {
+        /*
+        * MODULE: Collect software versions
+        */
+        DUMP_SOFTWARE_VERSIONS (
+            ch_versions.unique().collectFile()
+        )
+
+        /*
+        * MODULE: Run multiqc
+        */
+        workflow_summary    = multiqc_summary(workflow, params)
+        ch_workflow_summary = Channel.value(workflow_summary)
+
+        MULTIQC (
+            ch_multiqc_config,
+            DUMP_SOFTWARE_VERSIONS.out.mqc_yml.collect(),
+            DUMP_SOFTWARE_VERSIONS.out.mqc_unique_yml.collect(),
+            ch_workflow_summary.collectFile(name: "workflow_summary_mqc.yml"),
+            FASTQC_TRIMGALORE.out.fastqc_zip.collect{it[1]}.ifEmpty([]),
+            FASTQC_TRIMGALORE.out.fastqc_trim_zip.collect{it[1]}.ifEmpty([]),
+            FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([])
+        )
+    }
+
+
     // TODO: clipseq qc
-    // TODO: software versions
-    // TODO: multiqc
 
     // TODO: test list
     //     - tar indexes

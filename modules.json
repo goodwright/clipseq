@@ -41,6 +41,13 @@
                             "modules"
                         ]
                     },
+                    "dump_software_versions": {
+                        "branch": "dev",
+                        "git_sha": "e805f0bfb73155255e12f0669d4b468142b2218f",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "icount/peaks": {
                         "branch": "dev",
                         "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
@@ -122,8 +129,8 @@
                         ]
                     },
                     "util/logging": {
-                        "branch": "master",
-                        "git_sha": "bb303132b4de0eaa3eda01c96e758a71760e6d7f",
+                        "branch": "dev",
+                        "git_sha": "a86151c42d09cfa2e707008d32233054aabe5073",
                         "installed_by": [
                             "modules"
                         ]
@@ -244,13 +251,6 @@
                         ]
                     },
                     "gunzip": {
-                        "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
-                        "installed_by": [
-                            "modules"
-                        ]
-                    },
-                    "multiqc": {
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
                         "installed_by": [
