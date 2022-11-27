@@ -13,6 +13,13 @@
                             "modules"
                         ]
                     },
+                    "clippy": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "modules"
+                        ]
+                    },
                     "clipseq/filter_gtf": {
                         "branch": "master",
                         "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
@@ -34,6 +41,20 @@
                             "modules"
                         ]
                     },
+                    "icount/peaks": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "icount_analyse"
+                        ]
+                    },
+                    "icount/rnamaps": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "icount_analyse"
+                        ]
+                    },
                     "icount/segment": {
                         "branch": "master",
                         "git_sha": "abc209295f965763891938ac9d8c810f84146fd2",
@@ -42,12 +63,41 @@
                             "modules"
                         ]
                     },
+                    "icount/sigxls": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "icount_analyse"
+                        ]
+                    },
+                    "icount/summary": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "icount_analyse"
+                        ]
+                    },
                     "linux/command": {
                         "branch": "dev",
                         "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
                         "installed_by": [
                             "clip_calc_crosslinks",
-                            "modules"
+                            "modules",
+                            "paraclu_analyse"
+                        ]
+                    },
+                    "paraclu/cut": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "paraclu_analyse"
+                        ]
+                    },
+                    "paraclu/paraclu": {
+                        "branch": "dev",
+                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "installed_by": [
+                            "paraclu_analyse"
                         ]
                     },
                     "peka": {
@@ -92,6 +142,20 @@
                     "fastqc_trimgalore": {
                         "branch": "dev",
                         "git_sha": "158393a0b4e3a82a451591c600e10728e59dacfc",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
+                    "icount_analyse": {
+                        "branch": "dev",
+                        "git_sha": "4c9e01be7566edc75e963dce2baa02a707dd7454",
+                        "installed_by": [
+                            "subworkflows"
+                        ]
+                    },
+                    "paraclu_analyse": {
+                        "branch": "dev",
+                        "git_sha": "fa39fc988ca497a0be9ea01a65bdbbccdb689593",
                         "installed_by": [
                             "subworkflows"
                         ]

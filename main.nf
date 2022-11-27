@@ -95,6 +95,8 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 //
 
 include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwright/samtools/simple_view/main'
+include { CLIPPY                                     } from './modules/goodwright/clippy/main'
+include { PEKA                                       } from './modules/goodwright/peka/main'
 
 //
 // SUBWORKFLOWS
@@ -106,6 +108,8 @@ include { FASTQC_TRIMGALORE                                  } from './subworkfl
 include { RNA_ALIGN                                          } from './subworkflows/goodwright/rna_align/main'
 include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS     } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS } from './subworkflows/goodwright/clip_calc_crosslinks/main'
+include { PARACLU_ANALYSE                                    } from './subworkflows/goodwright/paraclu_analyse/main'
+include { ICOUNT_ANALYSE                                     } from './subworkflows/goodwright/icount_analyse/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -341,7 +345,7 @@ workflow CLIPSEQ {
             ch_genome_bam,
             ch_fasta_fai.collect{ it[1] }
         )
-        ch_versions                = ch_versions.mix(CALC_GENOME_CROSSLINKS.out.versions)
+        ch_versions                       = ch_versions.mix(CALC_GENOME_CROSSLINKS.out.versions)
         ch_genome_crosslink_bed           = CALC_GENOME_CROSSLINKS.out.bed
         ch_genome_crosslink_coverage      = CALC_GENOME_CROSSLINKS.out.coverage
         ch_genome_crosslink_coverage_norm = CALC_GENOME_CROSSLINKS.out.coverage_norm
@@ -359,6 +363,49 @@ workflow CLIPSEQ {
         ch_trans_crosslink_coverage_norm = CALC_TRANSCRIPT_CROSSLINKS.out.coverage_norm
     }
 
+    if(params.run_peak_calling) {
+        /*
+        * MODULE: Run clippy on genome-level crosslinks
+        */
+        CLIPPY (
+            ch_genome_crosslink_bed,
+            ch_filtered_gtf.collect{ it[1] },
+            ch_fasta_fai.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(CLIPPY.out.versions)
+
+        /*
+        * SUBWORKFLOW: Run paraclu on genome-level crosslinks
+        */
+        PARACLU_ANALYSE (
+            ch_genome_crosslink_bed,
+            params.paraclu_min_value
+        )
+        ch_versions = ch_versions.mix(PARACLU_ANALYSE.out.versions)
+
+        /*
+        * SUBWORKFLOW: Run iCount on genome-level crosslinks
+        */
+        ICOUNT_ANALYSE (
+            ch_genome_crosslink_bed,
+            ch_seg_gtf.collect{ it[1] },
+            ch_seg_resolved_gtf,
+            true
+        )
+        ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
+
+        // /*
+        // * MODULE: Run peka on genome-level crosslinks
+        // */
+        // PEKA (
+        //     CLIPPY.out.peaks,
+        //     ch_genome_crosslink_bed,
+        //     ch_fasta.collect{ it[1] },
+        //     ch_fasta_fai.collect{ it[1] },
+        //     ch_seg_resolved_gtf_genic
+        // )
+        // ch_versions = ch_versions.mix(PEKA.out.versions)
+    }
 
     // TODO: clipseq qc
     // TODO: software versions
