@@ -11,6 +11,8 @@ run_modules:
   - custom_content
   - fastqc
   - cutadapt
+  - bowtie2
+  - star
 
 module_order:
   - fastqc:
