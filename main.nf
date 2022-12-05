@@ -151,7 +151,7 @@ workflow CLIPSEQ {
     ch_smrna_fasta = file(params.smrna_fasta, checkIfExists: true)
     ch_gtf         = file(params.gtf, checkIfExists: true)
 
-    // Pepare non-manditory params into channels
+    // Prepare non-manditory params into channels
     if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
     if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
 
@@ -398,17 +398,17 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        // /*
-        // * MODULE: Run peka on genome-level crosslinks
-        // */
-        // PEKA (
-        //     CLIPPY.out.peaks,
-        //     ch_genome_crosslink_bed,
-        //     ch_fasta.collect{ it[1] },
-        //     ch_fasta_fai.collect{ it[1] },
-        //     ch_seg_resolved_gtf_genic
-        // )
-        // ch_versions = ch_versions.mix(PEKA.out.versions)
+        /*
+        * MODULE: Run peka on genome-level crosslinks
+        */
+        PEKA (
+            CLIPPY.out.peaks,
+            ch_genome_crosslink_bed,
+            ch_fasta.collect{ it[1] },
+            ch_fasta_fai.collect{ it[1] },
+            ch_seg_resolved_gtf_genic
+        )
+        ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
     if(params.run_reporting) {
