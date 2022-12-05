@@ -1,0 +1,55 @@
+name: prepare_ref
+description: Uncompresses and prepares genome reference files.
+keywords:
+  - fasta
+  - gtf
+  - bed
+  - genome
+modules:
+  - nf-core/gunzip
+  - nf-core/custom/getchromsizes
+input:
+  - fasta:
+      type: file
+      description: genome fasta file
+      pattern: "*.{fasta,fasta.gz}"
+  - gtf:
+      type: file
+      description: genome gtf annotation file
+      pattern: "*.{gtf,gtf.gz}"
+  - bed:
+      type: file
+      description: genome bed gene annotation file
+      pattern: "*.{bed,bed.gz}"
+  - blacklist:
+      type: file
+      description: genome region blacklist file
+      pattern: "*.{bed,bed.gz}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - fasta:
+      type: file
+      description: genome fasta file
+      pattern: "*.{fasta}"
+  - gtf:
+      type: file
+      description: genome gtf annotation file
+      pattern: "*.{gtf}"
+  - bed:
+      type: file
+      description: genome bed gene annotation file
+      pattern: "*.{bed}"
+  - blacklist:
+      type: file
+      description: genome region blacklist file
+      pattern: "*.{bed}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@chris-cheshire"

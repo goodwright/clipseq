@@ -5,8 +5,3 @@ results/
 testing/
 testing*
 *.pyc
-
-modules/nf-core/
-subworkflows/nf-core/
-modules/goodwright/
-subworkflows/goodwright/

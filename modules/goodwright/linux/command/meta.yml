@@ -1,0 +1,31 @@
+name: linux_command
+description: |
+  Wrapper process that allows running of native linux commands where the input file 
+  is streamed to a pipe using cat and fed into whatever args are specified using ext.args
+keywords:
+  - linux
+input:
+  - input:
+      type: file
+      description: Any file
+      pattern: "*.*"
+  - input2:
+      type: file
+      description: A second file for operations where two files must be used in an operation
+      pattern: "*.*"
+  - copy_input:
+      type: boolean
+      description: A boolean value that determines whether in a dual-file operation, the first input is re-used instead of input2
+
+output:
+  - file:
+      type: file
+      description: The altered output file
+      pattern: "*.*"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@chris-cheshire"

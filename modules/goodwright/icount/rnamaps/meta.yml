@@ -1,0 +1,41 @@
+name: icount_rnamaps
+description: Calculates the distribution of cross-links relative to genomic landmarks.
+keywords:
+  - iCLIP
+tools:
+  - icount:
+      description: Computational pipeline for analysis of iCLIP data
+      homepage: https://icount.readthedocs.io/en/latest/
+      documentation: https://icount.readthedocs.io/en/latest/
+      licence: ["MIT"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bed:
+      type: file
+      description: BED file of crosslinks
+      pattern: "*.{bed}"
+  - segmentation:
+      type: file
+      description: GTF file segmented by iCount segment
+      pattern: "*.{gtf}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - rnamaps:
+      type: file
+      description: Output rnamaps
+      pattern: "rnamaps*"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@marc-jones"
+  - "@chris-cheshire"
