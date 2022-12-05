@@ -84,7 +84,7 @@ workflow PREPARE_CLIPSEQ {
     PREPARE_PRIMARY_INDEX (
         ["star"],
         ch_fasta,
-        ch_gtf.map{ it[1] },
+        ch_gtf,
         [],
         genome_index_path
     )
@@ -95,7 +95,7 @@ workflow PREPARE_CLIPSEQ {
     * SUBWORKFLOW: Prepare BT2 index for smrna genome
     */
     PREPARE_SMRNA_INDEX (
-        ["bowtie2"],
+        ["bowtie"],
         ch_smrna_fasta,
         [],
         smrna_index_path,
