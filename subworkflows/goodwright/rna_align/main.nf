@@ -6,7 +6,7 @@
 /*
 * MODULES
 */
-include { BOWTIE2_ALIGN  } from '../../../modules/nf-core/bowtie2/align/main.nf'
+include { BOWTIE_ALIGN   } from '../../../modules/nf-core/bowtie/align/main.nf'
 include { STAR_ALIGN     } from '../../../modules/nf-core/star/align/main.nf'
 include { SAMTOOLS_INDEX } from '../../../modules/nf-core/samtools/index/main'
 
@@ -30,19 +30,17 @@ workflow RNA_ALIGN {
     /*
     * MODULE: Align reads to smrna genome
     */
-    BOWTIE2_ALIGN (
+    BOWTIE_ALIGN (
         fastq,
-        bt2_index,
-        true,
-        false
+        bt2_index.map{ it[1] }
     )
-    ch_versions = ch_versions.mix(BOWTIE2_ALIGN.out.versions)
+    ch_versions = ch_versions.mix(BOWTIE_ALIGN.out.versions)
 
     /*
     * MODULE: Align reads that did not align to the smrna genome to the primary genome
     */
     STAR_ALIGN (
-        BOWTIE2_ALIGN.out.fastq,
+        BOWTIE_ALIGN.out.fastq,
         star_index,
         gtf,
         false,
@@ -90,8 +88,8 @@ workflow RNA_ALIGN {
     )
 
     emit:
-    bt2_bam             = BOWTIE2_ALIGN.out.bam                           // channel: [ val(meta), [ bam ] ]
-    bt2_log             = BOWTIE2_ALIGN.out.log                           // channel: [ val(meta), [ txt ] ]
+    bt2_bam             = BOWTIE_ALIGN.out.bam                           // channel: [ val(meta), [ bam ] ]
+    bt2_log             = BOWTIE_ALIGN.out.log                           // channel: [ val(meta), [ txt ] ]
     star_bam            = STAR_ALIGN.out.bam_sorted                       // channel: [ val(meta), [ bam ] ]
     star_bam_transcript = STAR_ALIGN.out.bam_transcript                   // channel: [ val(meta), [ bam ] ]
     star_log            = STAR_ALIGN.out.log                              // channel: [ val(meta), [ txt ] ]
