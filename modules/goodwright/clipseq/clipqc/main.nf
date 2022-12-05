@@ -14,7 +14,7 @@ process CLIPSEQ_CLIPQC {
     path("clippy/*")
 
     output:
-    path "*.tsv"         , emit: log
+    path "*.tsv"         , emit: tsv
     path  "versions.yml" , emit: versions
 
     when:
