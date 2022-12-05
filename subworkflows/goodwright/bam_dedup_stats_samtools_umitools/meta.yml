@@ -3,12 +3,13 @@ description: UMI-tools dedup, index BAM file and run samtools stats, flagstat an
 keywords:
   - umi
   - dedup
+  - collapse
   - index
   - bam
   - sam
   - cram
 modules:
-  - umitools/dedup
+  - umitools/collapse
   - samtools/index
   - samtools/stats
   - samtools/idxstats
@@ -52,5 +53,4 @@ output:
       description: File containing software versions
       pattern: "versions.yml"
 authors:
-  - "@drpatelh"
-  - "@KamilMaliszArdigen"
+  - "@chris-cheshire"
