@@ -106,14 +106,16 @@ include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwrigh
 // SUBWORKFLOWS
 //
 
-include { PREPARE_CLIPSEQ                                    } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
-include { PARSE_FASTQ_INPUT                                  } from './subworkflows/goodwright/parse_fastq_input'
-include { FASTQC_TRIMGALORE                                  } from './subworkflows/goodwright/fastqc_trimgalore/main'
-include { RNA_ALIGN                                          } from './subworkflows/goodwright/rna_align/main'
-include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS     } from './subworkflows/goodwright/clip_calc_crosslinks/main'
-include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS } from './subworkflows/goodwright/clip_calc_crosslinks/main'
-include { PARACLU_ANALYSE                                    } from './subworkflows/goodwright/paraclu_analyse/main'
-include { ICOUNT_ANALYSE                                     } from './subworkflows/goodwright/icount_analyse/main'
+include { PREPARE_CLIPSEQ                                       } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
+include { PARSE_FASTQ_INPUT                                     } from './subworkflows/goodwright/parse_fastq_input'
+include { FASTQC_TRIMGALORE                                     } from './subworkflows/goodwright/fastqc_trimgalore/main'
+include { RNA_ALIGN                                             } from './subworkflows/goodwright/rna_align/main'
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP     } from './subworkflows/goodwright/bam_dedup_stats_samtools_umitools/main'
+include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP } from './subworkflows/goodwright/bam_dedup_stats_samtools_umitools/main'
+include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './subworkflows/goodwright/clip_calc_crosslinks/main'
+include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './subworkflows/goodwright/clip_calc_crosslinks/main'
+include { PARACLU_ANALYSE                                       } from './subworkflows/goodwright/paraclu_analyse/main'
+include { ICOUNT_ANALYSE                                        } from './subworkflows/goodwright/icount_analyse/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,8 +131,6 @@ include { ICOUNT_ANALYSE                                     } from './subworkfl
 // SUBWORKFLOWS
 //
 
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP             } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP         } from './subworkflows/nf-core/bam_dedup_stats_samtools_umitools/main'
 include { BAM_SORT_STATS_SAMTOOLS as BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT } from './subworkflows/nf-core/bam_sort_stats_samtools/main'
 
 /*
@@ -240,7 +240,7 @@ workflow CLIPSEQ {
         */
         RNA_ALIGN (
             ch_fastq,
-            ch_smrna_genome_index.map{ [ [id:'smrna' ], it[1] ] },
+            ch_smrna_genome_index,
             ch_target_genome_index,
             ch_filtered_gtf.map{ it[1] },
             ch_fasta.map{ it[1] }
@@ -310,8 +310,7 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run umi deduplication on genome-level alignments
         */
         GENOME_DEDUP (
-            ch_genome_bam_bai,
-            true
+            ch_genome_bam_bai
         )
         ch_versions                 = ch_versions.mix(GENOME_DEDUP.out.versions)
         ch_genome_bam               = GENOME_DEDUP.out.bam
@@ -324,8 +323,7 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
         */
         TRANSCRIPT_DEDUP (
-            ch_transcript_bam_bai,
-            true
+            ch_transcript_bam_bai
         )
         ch_versions                     = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
         ch_transcript_bam               = TRANSCRIPT_DEDUP.out.bam
@@ -398,17 +396,17 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        /*
-        * MODULE: Run peka on genome-level crosslinks
-        */
-        PEKA (
-            CLIPPY.out.peaks,
-            ch_genome_crosslink_bed,
-            ch_fasta.collect{ it[1] },
-            ch_fasta_fai.collect{ it[1] },
-            ch_seg_resolved_gtf_genic
-        )
-        ch_versions = ch_versions.mix(PEKA.out.versions)
+        // /*
+        // * MODULE: Run peka on genome-level crosslinks
+        // */
+        // PEKA (
+        //     CLIPPY.out.peaks,
+        //     ch_genome_crosslink_bed,
+        //     ch_fasta.collect{ it[1] },
+        //     ch_fasta_fai.collect{ it[1] },
+        //     ch_seg_resolved_gtf_genic
+        // )
+        // ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
     if(params.run_reporting) {
