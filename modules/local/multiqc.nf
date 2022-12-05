@@ -14,6 +14,9 @@ process MULTIQC {
     path ('fastqc/*')
     path ('trimgalore/fastqc/*')
     path ('trimgalore/*')
+    path ('bowtie/*')
+    path ('star/*')
+    path ('clipqc/*')
 
     output:
     path "*multiqc_report.html", emit: report

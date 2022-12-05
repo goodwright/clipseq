@@ -450,16 +450,12 @@ workflow CLIPSEQ {
             ch_workflow_summary.collectFile(name: "workflow_summary_mqc.yml"),
             FASTQC_TRIMGALORE.out.fastqc_zip.collect{it[1]}.ifEmpty([]),
             FASTQC_TRIMGALORE.out.fastqc_trim_zip.collect{it[1]}.ifEmpty([]),
-            FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([])
+            FASTQC_TRIMGALORE.out.trim_log.collect{it[1]}.ifEmpty([]),
+            ch_bt_log.collect{it[1]}.ifEmpty([]),
+            ch_star_log.collect{it[1]}.ifEmpty([]),
+            CLIPSEQ_CLIPQC.out.tsv.collect().ifEmpty([])
         )
     }
-
-
-    // TODO: clipseq qc
-
-    // TODO: test list
-    //     - tar indexes
-    //     - replciates to merge
 }
 
 /*
