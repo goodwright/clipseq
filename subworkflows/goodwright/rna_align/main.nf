@@ -88,8 +88,8 @@ workflow RNA_ALIGN {
     )
 
     emit:
-    bt2_bam             = BOWTIE_ALIGN.out.bam                           // channel: [ val(meta), [ bam ] ]
-    bt2_log             = BOWTIE_ALIGN.out.log                           // channel: [ val(meta), [ txt ] ]
+    bt_bam              = BOWTIE_ALIGN.out.bam                            // channel: [ val(meta), [ bam ] ]
+    bt_log              = BOWTIE_ALIGN.out.log                            // channel: [ val(meta), [ txt ] ]
     star_bam            = STAR_ALIGN.out.bam_sorted                       // channel: [ val(meta), [ bam ] ]
     star_bam_transcript = STAR_ALIGN.out.bam_transcript                   // channel: [ val(meta), [ bam ] ]
     star_log            = STAR_ALIGN.out.log                              // channel: [ val(meta), [ txt ] ]
