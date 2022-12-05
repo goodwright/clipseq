@@ -101,6 +101,7 @@ include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwrigh
 include { CLIPPY                                     } from './modules/goodwright/clippy/main'
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
+include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc'
 
 //
 // SUBWORKFLOWS
@@ -234,6 +235,8 @@ workflow CLIPSEQ {
     ch_transcript_samtools_stats    = Channel.empty()
     ch_transcript_samtools_flagstat = Channel.empty()
     ch_transcript_samtools_idxstats = Channel.empty()
+    ch_bt_log                       = Channel.empty()
+    ch_star_log                     = Channel.empty()
     if(params.run_alignment) {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
@@ -256,6 +259,8 @@ workflow CLIPSEQ {
         ch_transcript_samtools_stats    = RNA_ALIGN.out.transcript_stats
         ch_transcript_samtools_flagstat = RNA_ALIGN.out.transcript_flagstat
         ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
+        ch_bt_log                       = RNA_ALIGN.out.bt_log
+        ch_star_log                     = RNA_ALIGN.out.star_log_final
     }
 
     if(params.run_read_filter) {
@@ -292,6 +297,7 @@ workflow CLIPSEQ {
         ch_transcript_samtools_idxstats = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.idxstats
     }
 
+    ch_umi_log = Channel.empty()
     if(params.run_umi_dedup) {
         /*
         * CHANNEL: Combine bam and bai files on id
@@ -318,6 +324,7 @@ workflow CLIPSEQ {
         ch_genome_samtools_stats    = GENOME_DEDUP.out.stats
         ch_genome_samtools_flagstat = GENOME_DEDUP.out.flagstat
         ch_genome_samtools_idxstats = GENOME_DEDUP.out.idxstats
+        ch_umi_log                  = GENOME_DEDUP.out.umi_log
 
         /*
         * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
@@ -415,6 +422,19 @@ workflow CLIPSEQ {
         */
         DUMP_SOFTWARE_VERSIONS (
             ch_versions.unique().collectFile()
+        )
+
+        /*
+        * MODULE: Run clipqc
+        */
+        CLIPSEQ_CLIPQC (
+            ch_bt_log.map{ it[1] },
+            ch_star_log.map{ it[1] },
+            ch_umi_log.map{ it[1] },
+            ch_genome_crosslink_bed.map{ it[1] },
+            ICOUNT_ANALYSE.out.bed_peaks.map{ it[1] },
+            PARACLU_ANALYSE.out.peaks.map{ it[1] },
+            CLIPPY.out.peaks.map{ it[1] }
         )
 
         /*
