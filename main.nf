@@ -96,7 +96,7 @@ include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwrigh
 include { CLIPPY                                     } from './modules/goodwright/clippy/main'
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
-include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc'
+include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
 
 //
 // SUBWORKFLOWS
