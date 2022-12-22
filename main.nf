@@ -102,8 +102,8 @@ include { CLIPSEQ_CLIPQC                             } from './modules/goodwrigh
 // SUBWORKFLOWS
 //
 
-include { PREPARE_CLIPSEQ                                       } from './subworkflows/goodwright/prepare_genome/prepare_clipseq'
-include { PARSE_FASTQ_INPUT                                     } from './subworkflows/goodwright/parse_fastq_input'
+include { PREPARE_CLIPSEQ                                       } from './subworkflows/goodwright/prepare_genome/prepare_clipseq/main'
+include { PARSE_FASTQ_INPUT                                     } from './subworkflows/goodwright/parse_fastq_input/main'
 include { FASTQC_TRIMGALORE                                     } from './subworkflows/goodwright/fastqc_trimgalore/main'
 include { RNA_ALIGN                                             } from './subworkflows/goodwright/rna_align/main'
 include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP     } from './subworkflows/goodwright/bam_dedup_stats_samtools_umitools/main'
