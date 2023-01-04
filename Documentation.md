@@ -22,17 +22,26 @@ This pipeline requires demultiplexed fastq sample input and an associated metada
 
 If you are analysing demultiplexed sample files, then depending on where you have sourced your fastq from, the UMI and experimental barcode might still be present at the 5' end of reads, which will cause errors in downstream analysis. Note this is common for historical public data downloaded from ArrayExpress, for example. 
 
+To enable this option set `run_move_umi_to_header = true` and ensure you provide the UMI format to `move_umi`, for example `move_umi='NNNNNN'`.
+
 **Changing the UMI delimiter**
 
 Depending on how you demultiplexed your reads, you may need to change the delimiter that UMICollapse uses to search for UMIs in your aligned reads. We default to using "rbc:" which is the output of Ultraplex, the demultiplexer we use in our demultiplexing pipeline.
+
+To change, set `umi_separator`.
 
 **Turning off deduplication**
 
 For older data with very short or no UMIs at all, you may want to skip the UMI deduplication step.
 
-**Changing peak calling or PEKA parameters** 
+To turn of deduplications, set `run_umi_dedup = false`
 
-When you are working with data you're already familiar with you might have specific parameters in mind for peak calling or PEKA.  
+**Changing other individual tool parameters** 
+
+When you are working with data you're already familiar with you might have specific parameters in mind for certain tools, here are your options for changing:
+- Minimum length of reads kept by Trim Galore! after trimming, `trim_length`, eg. `10`
+- Bowtie parameters for pre-mapping, `bowtie_params`, eg. `"-v 2 -m 100 --norc --best --strata"`
+- Paraclu minimum cut off value, `paraclu_min_value`, eg. `30`
 
 ## Pipeline in Detail
 
