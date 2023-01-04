@@ -123,6 +123,8 @@ include { ICOUNT_ANALYSE                                        } from './subwor
 // MODULEs
 //
 
+include { UMITOOLS_EXTRACT                           } from './modules/nf-core/umitools/extract/main'
+
 //
 // SUBWORKFLOWS
 //
@@ -204,6 +206,14 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
+
+	if(params.run_move_umi_to_header){
+		UMITOOLS_EXTRACT (
+			ch_fastq
+		)
+		ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions)
+		ch_fastq    = UMITOOLS_EXTRACT.out.fastq
+	}
 
     if(params.run_trim_galore_fastqc) {
         /*
