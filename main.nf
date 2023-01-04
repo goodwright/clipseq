@@ -212,7 +212,7 @@ workflow CLIPSEQ {
 			ch_fastq
 		)
 		ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions)
-		ch_fastq    = UMITOOLS_EXTRACT.out.fastq
+		ch_fastq    = UMITOOLS_EXTRACT.out.reads
 	}
 
     if(params.run_trim_galore_fastqc) {
