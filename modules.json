@@ -12,6 +12,7 @@
                             "modules"
                         ]
                     }
+                }
             }
         },
         "https://github.com/nf-core/modules.git": {
