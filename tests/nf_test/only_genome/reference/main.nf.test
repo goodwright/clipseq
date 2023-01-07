@@ -1,0 +1,57 @@
+nextflow_pipeline {
+
+    name "only_genome_reference"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/bowtie/homosapiens_smallRNA.1.ebwt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/bowtie/homosapiens_smallRNA.rev.1.ebwt").exists()
+
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrStart.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrNameLength.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrLength.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/sjdbList.fromGTF.out.tab").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/exonInfo.tab").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/sjdbList.out.tab").exists()
+        }
+    }
+
+    test("run_test_save_reference") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/longest_transcript.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/gencode.filt.seg.gtf").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/gencode.seg.gtf").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/gencode.resolved_genic_other.gtf").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/gencode.resolved.gtf").exists()
+
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/bowtie/homosapiens_smallRNA.1.ebwt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/bowtie/homosapiens_smallRNA.rev.1.ebwt").exists()
+
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrStart.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrNameLength.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/chrLength.txt").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/sjdbList.fromGTF.out.tab").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/exonInfo.tab").exists()
+            assert new File(".nf-test/tests/799f8754b14ab2027f3d8eb6c25c75ec/output/00_genome/index/star/sjdbList.out.tab").exists()
+        }
+    }
+}
