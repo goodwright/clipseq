@@ -59,4 +59,3 @@ sp:
     fn: "*.flagstat"
   samtools/idxstats:
     fn: "*.idxstats*"
-
