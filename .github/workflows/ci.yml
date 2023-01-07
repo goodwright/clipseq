@@ -60,6 +60,7 @@ jobs:
           - "only_input/rep_merge"
           - "only_genome/input_params"
           - "only_genome/reference"
+          - "only_trimming/fastq_trimming"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
