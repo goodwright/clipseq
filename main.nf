@@ -398,17 +398,17 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        // /*
-        // * MODULE: Run peka on genome-level crosslinks
-        // */
-         PEKA (
-             CLIPPY.out.peaks,
-             ch_genome_crosslink_bed,
-             ch_fasta.collect{ it[1] },
-             ch_fasta_fai.collect{ it[1] },
-             ch_seg_resolved_gtf_genic
-         )
-        ch_versions = ch_versions.mix(PEKA.out.versions)
+        /*
+        * MODULE: Run peka on genome-level crosslinks
+        */
+        //  PEKA (
+        //      CLIPPY.out.peaks,
+        //      ch_genome_crosslink_bed,
+        //      ch_fasta.collect{ it[1] },
+        //      ch_fasta_fai.collect{ it[1] },
+        //      ch_seg_resolved_gtf_genic
+        //  )
+        // ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
     if(params.run_reporting) {
