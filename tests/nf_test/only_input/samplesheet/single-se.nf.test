@@ -13,7 +13,6 @@ nextflow_pipeline {
         }
 
         then {
-            // Test results
             assert workflow.success
 
             assert new File(".nf-test/tests/ed8466b627c901f9ec4a9e19aa2b892f/output/pipeline_info/samplesheet.valid.csv").exists()

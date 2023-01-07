@@ -3,7 +3,6 @@ nextflow_pipeline {
     name "only_input_samplesheet_single-se"
     script "main.nf"
 
-    // Test with a single comparison
     test("run_test") {
         when {
             params {
@@ -14,7 +13,6 @@ nextflow_pipeline {
         }
 
         then {
-            // Test results
             assert workflow.success
 
             assert new File(".nf-test/tests/e0afb62d4a29dc80d58e7e32020c9276/output/pipeline_info/samplesheet.valid.csv").exists()

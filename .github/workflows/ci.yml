@@ -57,6 +57,7 @@ jobs:
         profile: ["docker"]
         test:
           - "only_input/samplesheet"
+          - "only_input/rep_merge"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
