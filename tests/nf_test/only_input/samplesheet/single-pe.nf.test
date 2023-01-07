@@ -1,0 +1,23 @@
+nextflow_pipeline {
+
+    name "only_input_samplesheet_single-pe"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_input = true
+                samplesheet = './tests/data/samplesheets/small-dual-sample-se.csv'
+            }
+        }
+
+        then {
+            // Test results
+            assert workflow.success
+
+            assert new File(".nf-test/tests/ec8502755b6d2af783b5ac23bc54f2b/output/pipeline_info/samplesheet.valid.csv").exists()
+            assert path(".nf-test/tests/ec8502755b6d2af783b5ac23bc54f2b/output/pipeline_info/samplesheet.valid.csv").md5 == "12b2be3425cd9d9e84ea0ef9f34d1577"
+        }
+    }
+}

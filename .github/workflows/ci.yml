@@ -56,9 +56,7 @@ jobs:
           - ""
         profile: ["docker"]
         test:
-          - "comparison_none"
-          - "comparison_single"
-          - "comparison_multi"
+          - "only_input/samplesheet"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
@@ -78,7 +76,7 @@ jobs:
         run: |
           nf-test test \
             --profile=test,${{ matrix.profile }} \
-            tests/${{ matrix.test }}/*.nf.test \
+            tests/nf_test/${{ matrix.test }}/*.nf.test \
             --tap=test.tap
 
       - uses: pcolby/tap-summary@v1
