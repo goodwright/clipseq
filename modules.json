@@ -123,7 +123,7 @@
                     },
                     "bowtie/align": {
                         "branch": "master",
-                        "git_sha": "848ee9a215d02d80be033bfa60881700f2bd914c",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "bowtie/build": {
