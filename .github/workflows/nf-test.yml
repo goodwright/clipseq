@@ -44,12 +44,15 @@ jobs:
         with:
           version: "${{ matrix.NXF_VER }}"
 
+      # - name: Install nf-test
+      #   uses: Wandalen/wretry.action@v1.0.36
+      #   with:
+      #     attempt_limit: 3
+      #     attempt_delay: 10
+      #     command: wget -qO- https://code.askimed.com/install/nf-test | bash && sudo mv nf-test /usr/local/bin/
+
       - name: Install nf-test
-        uses: Wandalen/wretry.action@v1.0.36
-        with:
-          attempt_limit: 3
-          attempt_delay: 10
-          command: wget -qO- https://code.askimed.com/install/nf-test | bash && sudo mv nf-test /usr/local/bin/
+        run: cat assets/install_nf_test.txt | bash && sudo mv nf-test /usr/local/bin/
 
       - name: Run nf-test
         run: |
