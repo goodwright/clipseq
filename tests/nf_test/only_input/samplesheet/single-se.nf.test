@@ -15,8 +15,8 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            assert new File(".nf-test/tests/ed8466b627c901f9ec4a9e19aa2b892f/output/pipeline_info/samplesheet.valid.csv").exists()
-            assert path(".nf-test/tests/ed8466b627c901f9ec4a9e19aa2b892f/output/pipeline_info/samplesheet.valid.csv").md5 == "6fe8fb80dbb9e5a61d9b3844b94510c6"
+            assert new File("$outputDir/pipeline_info/samplesheet.valid.csv").exists()
+            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "6fe8fb80dbb9e5a61d9b3844b94510c6"
         }
     }
 }

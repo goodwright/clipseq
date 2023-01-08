@@ -16,11 +16,11 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            assert new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/pipeline_info/samplesheet.valid.csv").exists()
-            assert path(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/pipeline_info/samplesheet.valid.csv").md5 == "2a59f3a91c275a8b89cf2ec319d62d12"
+            assert new File("$outputDir/pipeline_info/samplesheet.valid.csv").exists()
+            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "2a59f3a91c275a8b89cf2ec319d62d12"
 
-            assert !(new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_1_R1.merged.fastq.gz").exists())
-            assert !(new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_2_R1.merged.fastq.gz").exists())
+            assert !(new File("$outputDir/merged_samples/sample_1_R1.merged.fastq.gz").exists())
+            assert !(new File("$outputDir/merged_samples/sample_2_R1.merged.fastq.gz").exists())
         }
     }
 
@@ -37,14 +37,14 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            assert new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/pipeline_info/samplesheet.valid.csv").exists()
-            assert path(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/pipeline_info/samplesheet.valid.csv").md5 == "2a59f3a91c275a8b89cf2ec319d62d12"
+            assert new File("$outputDir/pipeline_info/samplesheet.valid.csv").exists()
+            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "2a59f3a91c275a8b89cf2ec319d62d12"
 
-            assert new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_1_R1.merged.fastq.gz").exists()
-            assert path(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_1_R1.merged.fastq.gz").md5 == "8cffff2f391aaf371a8e4c6b025cea2f"
+            assert new File("$outputDir/merged_samples/sample_1_R1.merged.fastq.gz").exists()
+            assert path("$outputDir/merged_samples/sample_1_R1.merged.fastq.gz").md5 == "8cffff2f391aaf371a8e4c6b025cea2f"
 
-            assert new File(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_2_R1.merged.fastq.gz").exists()
-            assert path(".nf-test/tests/eeef2e1786dc72c7f9aade03d3fe13a6/output/merged_samples/sample_2_R1.merged.fastq.gz").md5 == "8cffff2f391aaf371a8e4c6b025cea2f"
+            assert new File("$outputDir/merged_samples/sample_2_R1.merged.fastq.gz").exists()
+            assert path("$outputDir/merged_samples/sample_2_R1.merged.fastq.gz").md5 == "8cffff2f391aaf371a8e4c6b025cea2f"
         }
     }
 }

@@ -15,13 +15,13 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            assert new File(".nf-test/tests/bf9a382e9e9d9936a1bfdff2ca25dc69/output/01_prealign/pre_trim_fastqc/sample_1_R1_ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5_fastqc.zip").exists()
-            assert path(".nf-test/tests/bf9a382e9e9d9936a1bfdff2ca25dc69/output/01_prealign/pre_trim_fastqc/sample_1_R1_ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5_fastqc.zip").md5 == "b3e59741e478a8342cace676ff838be1"
+            assert new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5_fastqc.zip").exists()
+            assert path("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5_fastqc.zip").md5 == "b3e59741e478a8342cace676ff838be1"
 
-            assert new File(".nf-test/tests/bf9a382e9e9d9936a1bfdff2ca25dc69/output/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
-            assert path(".nf-test/tests/bf9a382e9e9d9936a1bfdff2ca25dc69/output/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").md5 == "8811e13ef074c8867b6e2eeb2c3ea2b5"
+            assert new File("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
+            assert path("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").md5 == "8811e13ef074c8867b6e2eeb2c3ea2b5"
 
-            assert !(new File(".nf-test/tests/bf9a382e9e9d9936a1bfdff2ca25dc69/output/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists())
+            assert !(new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists())
         }
     }
 }
