@@ -61,6 +61,8 @@ jobs:
           - "only_genome/input_params"
           - "only_genome/reference"
           - "only_trimming/fastqc_trimming"
+          - "only_trimming/skip_fastqc"
+          - "only_trimming/skip_trimming"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
