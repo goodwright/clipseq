@@ -52,7 +52,7 @@ jobs:
       #     command: wget -qO- https://code.askimed.com/install/nf-test | bash && sudo mv nf-test /usr/local/bin/
 
       - name: Install nf-test
-        run: cat assets/install_nf_test.txt | bash && sudo mv nf-test /usr/local/bin/
+        run: cat assets/install_nf_test.txt | bash
 
       - name: Run nf-test
         run: |
