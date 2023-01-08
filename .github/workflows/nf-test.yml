@@ -1,4 +1,4 @@
-name: pipeline CI
+name: nf-test
 on:
   push:
     branches:
