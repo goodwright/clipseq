@@ -40,7 +40,7 @@ nextflow_pipeline {
             assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
 
             assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").exists()
-            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "4f811b7928ce4b3cf86cbfe0ed6e54b1"
+            assert path("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").md5 == "4f811b7928ce4b3cf86cbfe0ed6e54b1"
         }
     }
 }
