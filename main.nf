@@ -39,10 +39,10 @@ check_param_list = [
     smrna_fasta: params.smrna_fasta,
     gtf: params.gtf
 ]
-for (param in check_param_list) { 
-    if (!param.value) { 
+for (param in check_param_list) {
+    if (!param.value) {
         exit 1, "Required parameter not specified: ${param.key}"
-    } 
+    }
     else {
         file(param.value, checkIfExists: true)
     }
@@ -141,7 +141,7 @@ workflow CLIPSEQ {
     ch_target_genome_index = []
     ch_smrna_genome_index  = []
 
-    // Prepare manditory params into channels 
+    // Prepare manditory params into channels
     ch_samplesheet = file(params.samplesheet, checkIfExists: true)
     ch_fasta       = file(params.fasta, checkIfExists: true)
     ch_smrna_fasta = file(params.smrna_fasta, checkIfExists: true)
