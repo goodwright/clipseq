@@ -1,0 +1,23 @@
+nextflow_pipeline {
+
+    name "only_moveumitoheader"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_moveumitoheader = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.progress.out").exists()
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.final.out").exists()
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.out").exists()
+            // assert new File("$outputDir/02_alignment/smrna/sample_1_R1.out").exists()
+        }
+    }
+}

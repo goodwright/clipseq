@@ -35,6 +35,7 @@ jobs:
           - "only_trimming/skip_fastqc"
           - "only_trimming/skip_trimming"
           - "only_alignment/alignment"
+          - "only_moveumitoheader"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
