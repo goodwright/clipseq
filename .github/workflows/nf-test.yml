@@ -1,0 +1,65 @@
+name: nf-test
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+  release:
+    types: [published]
+
+env:
+  NXF_ANSI_LOG: false
+
+# Cancel if a newer run is started
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nf_test:
+    name: nf-test tests
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'goodwright/differential-analysis') }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        NXF_VER:
+          - "22.10.1"
+          - ""
+        profile: ["docker"]
+        test:
+          - "only_input/samplesheet"
+          - "only_input/rep_merge"
+          - "only_genome/input_params"
+          - "only_genome/reference"
+          - "only_trimming/fastqc_trimming"
+          - "only_trimming/skip_fastqc"
+          - "only_trimming/skip_trimming"
+          - "only_alignment/alignment"
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Install nf-test
+        run: |
+          wget -qO- https://github.com/askimed/nf-test/releases/download/v0.7.1/nf-test-0.7.1.tar.gz | tar -xz
+          APP_HOME=${HOME}/.nf-test
+          mkdir -p ${APP_HOME}
+          mv -f nf-test.jar ${APP_HOME}/nf-test.jar
+          mv nf-test /usr/local/bin/
+
+      - name: Run nf-test
+        run: |
+          nf-test test \
+            --profile=test,${{ matrix.profile }} \
+            tests/nf_test/${{ matrix.test }}/*.nf.test \
+            --tap=test.tap
+
+      - uses: pcolby/tap-summary@v1
+        with:
+          path: >-
+            test.tap
