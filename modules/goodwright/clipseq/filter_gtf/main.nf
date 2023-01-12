@@ -19,7 +19,7 @@ process CLIPSEQ_FILTER_GTF {
 
     shell:
     process_name = task.process
-    output       = task.ext.output ?: "${gtf.simpleName}.filtered.gtf"
+    output       = task.ext.output ?: "${gtf.simpleName}_filtered.gtf"
     template 'filter_gtf.py'
 }
 
