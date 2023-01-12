@@ -23,7 +23,7 @@ nextflow_pipeline {
             assert !(new File("$outputDir/00_genome/index/star/chrNameLength.txt").exists())
 
             assert !(new File("$outputDir/00_genome/longest_transcript.txt").exists())
-            assert !(new File("$outputDir/00_genome/gencode.filt.seg.gtf").exists())
+            assert !(new File("$outputDir/00_genome/gencode_filtered_seg.gtf").exists())
         }
     }
 
@@ -41,10 +41,14 @@ nextflow_pipeline {
             assert workflow.success
 
             assert new File("$outputDir/00_genome/longest_transcript.txt").exists()
-            assert new File("$outputDir/00_genome/gencode.filt.seg.gtf").exists()
-            assert new File("$outputDir/00_genome/gencode.seg.gtf").exists()
-            assert new File("$outputDir/00_genome/gencode.resolved_genic_other.gtf").exists()
-            assert new File("$outputDir/00_genome/gencode.resolved.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_seg.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_regions.gtf.gz").exists()
+            assert new File("$outputDir/00_genome/gencode_seg.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_regions.gtf.gz").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_seg_genicOtherfalse.resolved.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_seg_genicOthertrue.resolved.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_regions_genicOtherfalse.resolved.gtf").exists()
+            assert new File("$outputDir/00_genome/gencode_filtered_regions_genicOthertrue.resolved.gtf").exists()
         }
     }
 

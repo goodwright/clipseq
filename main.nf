@@ -123,6 +123,8 @@ include { ICOUNT_ANALYSE                                        } from './subwor
 // MODULEs
 //
 
+include { UMITOOLS_EXTRACT                           } from './modules/nf-core/umitools/extract/main'
+
 //
 // SUBWORKFLOWS
 //
@@ -152,16 +154,21 @@ workflow CLIPSEQ {
     if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
 
     // Prepare genome and build indexes if required
-    ch_fasta_fai              = Channel.empty()
-    ch_filtered_gtf           = Channel.empty()
-    ch_chrom_sizes            = Channel.empty()
-    ch_smrna_fasta_fai        = Channel.empty()
-    ch_smrna_chrom_sizes      = Channel.empty()
-    ch_longest_transcript     = Channel.empty()
-    ch_seg_gtf                = Channel.empty()
-    ch_seg_filt_gtf           = Channel.empty()
-    ch_seg_resolved_gtf       = Channel.empty()
-    ch_seg_resolved_gtf_genic = Channel.empty()
+    ch_fasta_fai                  = Channel.empty()
+    ch_filtered_gtf               = Channel.empty()
+    ch_chrom_sizes                = Channel.empty()
+    ch_smrna_fasta_fai            = Channel.empty()
+    ch_smrna_chrom_sizes          = Channel.empty()
+    ch_longest_transcript         = Channel.empty()
+    ch_seg_gtf                    = Channel.empty()
+    ch_seg_filt_gtf               = Channel.empty()
+    ch_seg_resolved_gtf           = Channel.empty()
+    ch_seg_resolved_gtf_genic     = Channel.empty()
+    ch_regions_gtf                = Channel.empty()
+    ch_regions_filt_gtf           = Channel.empty()
+    ch_regions_resolved_gtf       = Channel.empty()
+    ch_regions_resolved_gtf_genic = Channel.empty()
+
     if (params.run_genome_prep) {
         /*
         * SUBWORKFLOW: Prepare clipseq genome files
@@ -173,22 +180,26 @@ workflow CLIPSEQ {
             ch_target_genome_index,
             ch_smrna_genome_index
         )
-        ch_versions               = ch_versions.mix(PREPARE_CLIPSEQ.out.versions)
-        ch_fasta                  = PREPARE_CLIPSEQ.out.fasta
-        ch_fasta_fai              = PREPARE_CLIPSEQ.out.fasta_fai
-        ch_gtf                    = PREPARE_CLIPSEQ.out.gtf
-        ch_filtered_gtf           = PREPARE_CLIPSEQ.out.filtered_gtf
-        ch_chrom_sizes            = PREPARE_CLIPSEQ.out.chrom_sizes
-        ch_smrna_fasta            = PREPARE_CLIPSEQ.out.smrna_fasta
-        ch_smrna_fasta_fai        = PREPARE_CLIPSEQ.out.smrna_fasta_fai
-        ch_smrna_chrom_sizes      = PREPARE_CLIPSEQ.out.smrna_chrom_sizes
-        ch_longest_transcript     = PREPARE_CLIPSEQ.out.longest_transcript
-        ch_seg_gtf                = PREPARE_CLIPSEQ.out.seg_gtf
-        ch_seg_filt_gtf           = PREPARE_CLIPSEQ.out.seg_filt_gtf
-        ch_seg_resolved_gtf       = PREPARE_CLIPSEQ.out.seg_resolved_gtf
-        ch_seg_resolved_gtf_genic = PREPARE_CLIPSEQ.out.seg_resolved_gtf_genic
-        ch_target_genome_index    = PREPARE_CLIPSEQ.out.genome_index
-        ch_smrna_genome_index     = PREPARE_CLIPSEQ.out.smrna_index
+        ch_versions                   = ch_versions.mix(PREPARE_CLIPSEQ.out.versions)
+        ch_fasta                      = PREPARE_CLIPSEQ.out.fasta
+        ch_fasta_fai                  = PREPARE_CLIPSEQ.out.fasta_fai
+        ch_gtf                        = PREPARE_CLIPSEQ.out.gtf
+        ch_filtered_gtf               = PREPARE_CLIPSEQ.out.filtered_gtf
+        ch_chrom_sizes                = PREPARE_CLIPSEQ.out.chrom_sizes
+        ch_smrna_fasta                = PREPARE_CLIPSEQ.out.smrna_fasta
+        ch_smrna_fasta_fai            = PREPARE_CLIPSEQ.out.smrna_fasta_fai
+        ch_smrna_chrom_sizes          = PREPARE_CLIPSEQ.out.smrna_chrom_sizes
+        ch_longest_transcript         = PREPARE_CLIPSEQ.out.longest_transcript
+        ch_seg_gtf                    = PREPARE_CLIPSEQ.out.seg_gtf
+        ch_seg_filt_gtf               = PREPARE_CLIPSEQ.out.seg_filt_gtf
+        ch_seg_resolved_gtf           = PREPARE_CLIPSEQ.out.seg_resolved_gtf
+        ch_seg_resolved_gtf_genic     = PREPARE_CLIPSEQ.out.seg_resolved_gtf_genic
+        ch_regions_gtf                = PREPARE_CLIPSEQ.out.regions_gtf
+        ch_regions_filt_gtf           = PREPARE_CLIPSEQ.out.regions_filt_gtf
+        ch_regions_resolved_gtf       = PREPARE_CLIPSEQ.out.regions_resolved_gtf
+        ch_regions_resolved_gtf_genic = PREPARE_CLIPSEQ.out.regions_resolved_gtf_genic
+        ch_target_genome_index        = PREPARE_CLIPSEQ.out.genome_index
+        ch_smrna_genome_index         = PREPARE_CLIPSEQ.out.smrna_index
     }
 
     ch_fastq = Channel.empty()
@@ -204,6 +215,14 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
+
+    if(params.run_move_umi_to_header){
+        UMITOOLS_EXTRACT (
+            ch_fastq
+        )
+        ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions)
+        ch_fastq    = UMITOOLS_EXTRACT.out.reads
+    }
 
     if(params.run_trim_galore_fastqc) {
         /*
@@ -398,17 +417,17 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        /*
-        * MODULE: Run peka on genome-level crosslinks
-        */
-        //  PEKA (
-        //      CLIPPY.out.peaks,
-        //      ch_genome_crosslink_bed,
-        //      ch_fasta.collect{ it[1] },
-        //      ch_fasta_fai.collect{ it[1] },
-        //      ch_seg_resolved_gtf_genic
-        //  )
-        // ch_versions = ch_versions.mix(PEKA.out.versions)
+        // /*
+        // * MODULE: Run peka on genome-level crosslinks
+        // */
+        PEKA (
+            CLIPPY.out.peaks,
+            ch_genome_crosslink_bed,
+            ch_fasta.collect{ it[1] },
+            ch_fasta_fai.collect{ it[1] },
+            ch_regions_resolved_gtf
+        )
+        ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
     if(params.run_reporting) {

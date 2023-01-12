@@ -21,6 +21,6 @@ process CLIPSEQ_RESOLVE_UNANNOTATED {
 
     shell:
     process_name   = task.process
-    output         = task.ext.output ?: "${annotation.simpleName}.resolved.gtf"
+    output         = task.ext.output ?: "${filt_segmentation.simpleName}_genicOther${genic_other}.resolved.gtf"
     template 'resolve_unannotated.py'
 }

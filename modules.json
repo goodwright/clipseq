@@ -12,7 +12,7 @@
                     },
                     "clippy": {
                         "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "git_sha": "fb1a6945bd7b352e6c7c6b8a2894f4d3df66ac4b",
                         "installed_by": ["modules"]
                     },
                     "clipseq/clipqc": {
@@ -21,8 +21,8 @@
                         "installed_by": ["modules"]
                     },
                     "clipseq/filter_gtf": {
-                        "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "branch": "dev",
+                        "git_sha": "f417cabfb158e6b9b5df1c4fadd8745b0a9615ac",
                         "installed_by": ["modules"]
                     },
                     "clipseq/find_longest_transcript": {
@@ -37,7 +37,7 @@
                     },
                     "dump_software_versions": {
                         "branch": "master",
-                        "git_sha": "f9c6d7a8b342f0561c74980d81b21df00cf85ebd",
+                        "git_sha": "181741cf3cc9d2fc548ce19b6e92b6331a45177d",
                         "installed_by": ["modules"]
                     },
                     "icount/peaks": {
@@ -82,17 +82,22 @@
                     },
                     "peka": {
                         "branch": "master",
-                        "git_sha": "4146728d56beafca300efba689fead1d838cfae0",
+                        "git_sha": "fdb430ad67c7a1651d8fe12849d9b16b8cef040f",
                         "installed_by": ["modules"]
                     },
                     "sample/base_samplesheet_check": {
                         "branch": "master",
-                        "git_sha": "f9c6d7a8b342f0561c74980d81b21df00cf85ebd",
+                        "git_sha": "c921383f21931f3745bde850656870b45102e729",
                         "installed_by": ["modules"]
                     },
                     "samtools/simple_view": {
                         "branch": "master",
                         "git_sha": "0f34640182b26bf0b09f193ebf18f7bafc70d0ab",
+                        "installed_by": ["modules"]
+                    },
+                    "umicollapse": {
+                        "branch": "dev",
+                        "git_sha": "4a6d9a614039e2dda0f4e0911813011a5e2163f7",
                         "installed_by": ["modules"]
                     },
                     "umitools/collapse": {
@@ -128,32 +133,32 @@
                     },
                     "bowtie/build": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "cat/fastq": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "custom/getchromsizes": {
                         "branch": "master",
-                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "3dd73937b084b547f9272bc901e0f120a7913fd8",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "gunzip": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["modules"]
                     },
                     "samtools/flagstat": {
                         "branch": "master",
-                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01",
+                        "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
                         "installed_by": ["bam_stats_samtools"]
                     },
                     "samtools/idxstats": {
@@ -189,6 +194,11 @@
                     "trimgalore": {
                         "branch": "master",
                         "git_sha": "b51a69e30973c71950225c817ad07a3337d22c40",
+                        "installed_by": ["modules"]
+                    },
+                    "umitools/extract": {
+                        "branch": "master",
+                        "git_sha": "e745e167c1020928ef20ea1397b6b4d230681b4d",
                         "installed_by": ["modules"]
                     },
                     "untar": {
