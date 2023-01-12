@@ -164,7 +164,7 @@ workflow CLIPSEQ {
     ch_seg_filt_gtf               = Channel.empty()
     ch_seg_resolved_gtf           = Channel.empty()
     ch_seg_resolved_gtf_genic     = Channel.empty()
-	ch_regions_gtf                = Channel.empty()
+    ch_regions_gtf                = Channel.empty()
     ch_regions_filt_gtf           = Channel.empty()
     ch_regions_resolved_gtf       = Channel.empty()
     ch_regions_resolved_gtf_genic = Channel.empty()
@@ -216,13 +216,13 @@ workflow CLIPSEQ {
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
 
-	if(params.run_move_umi_to_header){
-		UMITOOLS_EXTRACT (
-			ch_fastq
-		)
-		ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions)
-		ch_fastq    = UMITOOLS_EXTRACT.out.reads
-	}
+    if(params.run_move_umi_to_header){
+        UMITOOLS_EXTRACT (
+            ch_fastq
+        )
+        ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions)
+        ch_fastq    = UMITOOLS_EXTRACT.out.reads
+    }
 
     if(params.run_trim_galore_fastqc) {
         /*
@@ -426,7 +426,7 @@ workflow CLIPSEQ {
             ch_fasta.collect{ it[1] },
             ch_fasta_fai.collect{ it[1] },
             ch_regions_resolved_gtf
-         )
+        )
         ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
