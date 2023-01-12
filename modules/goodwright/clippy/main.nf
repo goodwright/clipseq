@@ -1,6 +1,6 @@
 process CLIPPY {
     tag "$meta.id"
-    label "process_medium"
+    label "process_high"
 
     conda (params.enable_conda ? "bioconda::clippy=1.5.0" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

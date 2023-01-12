@@ -113,9 +113,9 @@ workflow PREPARE_CLIPSEQ {
         ch_gtf,
         ch_fasta_fai.map{ it[1] }
     )
-    ch_seg_gtf  = ICOUNT_SEG_GTF.out.gtf
+    ch_seg_gtf     = ICOUNT_SEG_GTF.out.gtf
 	ch_regions_gtf = ICOUNT_SEG_GTF.out.regions
-    ch_versions = ch_versions.mix(ICOUNT_SEG_GTF.out.versions)
+    ch_versions    = ch_versions.mix(ICOUNT_SEG_GTF.out.versions)
 
     /*
     * MODULE: Segment the filtered GTF file using icount
@@ -124,7 +124,7 @@ workflow PREPARE_CLIPSEQ {
         ch_filt_gtf,
         ch_fasta_fai.map{ it[1] }
     )
-    ch_seg_filt_gtf  = ICOUNT_SEG_FILTGTF.out.gtf
+    ch_seg_filt_gtf     = ICOUNT_SEG_FILTGTF.out.gtf
 	ch_regions_filt_gtf = ICOUNT_SEG_FILTGTF.out.regions
 
     /*
@@ -177,24 +177,24 @@ workflow PREPARE_CLIPSEQ {
     ch_regions_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS.out.gtf
 
     emit:
-    fasta                  = ch_fasta                  // channel: [ val(meta), [ fasta ] ]
-    fasta_fai              = ch_fasta_fai              // channel: [ val(meta), [ fai ] ]
-    gtf                    = ch_gtf                    // channel: [ val(meta), [ gtf ] ]
-    filtered_gtf           = ch_filt_gtf               // channel: [ val(meta), [ gtf ] ]
-    chrom_sizes            = ch_chrom_sizes            // channel: [ val(meta), [ txt ] ]
-    smrna_fasta            = ch_smrna_fasta            // channel: [ val(meta), [ fasta ] ]
-    smrna_fasta_fai        = ch_smrna_fasta_fai        // channel: [ val(meta), [ fai ] ]
-    smrna_chrom_sizes      = ch_smrna_chrom_sizes      // channel: [ val(meta), [ txt ] ]
-    longest_transcript     = ch_longest_transcript     // channel: [ val(meta), [ txt ] ]
-    seg_gtf                = ch_seg_gtf                // channel: [ val(meta), [ gtf ] ]
-    seg_filt_gtf           = ch_seg_filt_gtf           // channel: [ val(meta), [ gtf ] ]
-    seg_resolved_gtf       = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
-    seg_resolved_gtf_genic = ch_seg_resolved_gtf_genic // channel: [ val(meta), [ gtf ] ]
+    fasta                      = ch_fasta                  // channel: [ val(meta), [ fasta ] ]
+    fasta_fai                  = ch_fasta_fai              // channel: [ val(meta), [ fai ] ]
+    gtf                        = ch_gtf                    // channel: [ val(meta), [ gtf ] ]
+    filtered_gtf               = ch_filt_gtf               // channel: [ val(meta), [ gtf ] ]
+    chrom_sizes                = ch_chrom_sizes            // channel: [ val(meta), [ txt ] ]
+    smrna_fasta                = ch_smrna_fasta            // channel: [ val(meta), [ fasta ] ]
+    smrna_fasta_fai            = ch_smrna_fasta_fai        // channel: [ val(meta), [ fai ] ]
+    smrna_chrom_sizes          = ch_smrna_chrom_sizes      // channel: [ val(meta), [ txt ] ]
+    longest_transcript         = ch_longest_transcript     // channel: [ val(meta), [ txt ] ]
+    seg_gtf                    = ch_seg_gtf                // channel: [ val(meta), [ gtf ] ]
+    seg_filt_gtf               = ch_seg_filt_gtf           // channel: [ val(meta), [ gtf ] ]
+    seg_resolved_gtf           = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
+    seg_resolved_gtf_genic     = ch_seg_resolved_gtf_genic // channel: [ val(meta), [ gtf ] ]
     regions_gtf                = ch_regions_gtf                // channel: [ val(meta), [ gtf ] ]
     regions_filt_gtf           = ch_regions_filt_gtf           // channel: [ val(meta), [ gtf ] ]
     regions_resolved_gtf       = ch_regions_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
     regions_resolved_gtf_genic = ch_regions_resolved_gtf_genic // channel: [ val(meta), [ gtf ] ]
-    genome_index           = ch_genome_index           // channel: [ val(meta), [ star_index ] ]
-    smrna_index            = ch_smrna_index            // channel: [ val(meta), [ bt2_index ] ]
-    versions               = ch_versions               // channel: [ versions.yml ]
+    genome_index               = ch_genome_index           // channel: [ val(meta), [ star_index ] ]
+    smrna_index                = ch_smrna_index            // channel: [ val(meta), [ bt2_index ] ]
+    versions                   = ch_versions               // channel: [ versions.yml ]
 }

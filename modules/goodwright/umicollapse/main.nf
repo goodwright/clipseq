@@ -1,4 +1,4 @@
-process UMITOOLS_COLLAPSE {
+process UMICOLLAPSE {
     tag "$meta.id"
     label "process_medium"
 
