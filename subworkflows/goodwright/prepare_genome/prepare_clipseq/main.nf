@@ -151,7 +151,6 @@ workflow PREPARE_CLIPSEQ {
         false
     )
     ch_regions_resolved_gtf = RESOLVE_UNANNOTATED_REGIONS.out.gtf
-    ch_versions             = ch_versions.mix(RESOLVE_UNANNOTATED.out.versions)
 
     /*
     * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag

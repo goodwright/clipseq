@@ -94,7 +94,7 @@ include { MULTIQC } from './modules/local/multiqc'
 
 include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwright/samtools/simple_view/main'
 include { CLIPPY                                     } from './modules/goodwright/clippy/main'
-//include { PEKA                                       } from './modules/goodwright/peka/main'
+include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
 
@@ -420,14 +420,14 @@ workflow CLIPSEQ {
         // /*
         // * MODULE: Run peka on genome-level crosslinks
         // */
-        // PEKA (
-        //     CLIPPY.out.peaks,
-        //     ch_genome_crosslink_bed,
-        //     ch_fasta.collect{ it[1] },
-        //     ch_fasta_fai.collect{ it[1] },
-        //     ch_regions_resolved_gtf
-        // )
-        //ch_versions = ch_versions.mix(PEKA.out.versions)
+        PEKA (
+            CLIPPY.out.peaks,
+            ch_genome_crosslink_bed,
+            ch_fasta.collect{ it[1] },
+            ch_fasta_fai.collect{ it[1] },
+            ch_regions_resolved_gtf
+         )
+        ch_versions = ch_versions.mix(PEKA.out.versions)
     }
 
     if(params.run_reporting) {

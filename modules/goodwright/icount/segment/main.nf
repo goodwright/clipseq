@@ -22,9 +22,9 @@ process ICOUNT_SEGMENT {
     path fai
 
     output:
-    tuple val(meta), path("*_seg.gtf") ,  emit: gtf
-	path("*_regions.gtf.gz")           ,  emit: regions
-    path "versions.yml"                ,  emit: versions
+    tuple val(meta), path("*_seg.gtf")                  ,  emit: gtf
+	tuple val(meta), path("*_regions.gtf.gz")           ,  emit: regions
+    path "versions.yml"                                 ,  emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,7 +38,9 @@ process ICOUNT_SEGMENT {
         $gtf \\
         ${prefix}.gtf \\
         $fai
-	mv regions.gtf.gz ${regions_prefix}_regions.gtf.gz
+
+    mv regions.gtf.gz ${regions_prefix}_regions.gtf.gz
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         iCount-Mini: \$(iCount-Mini -v)
