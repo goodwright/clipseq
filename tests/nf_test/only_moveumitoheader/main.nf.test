@@ -16,10 +16,9 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.progress.out").exists()
-            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.final.out").exists()
-            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.out").exists()
-            // assert new File("$outputDir/02_alignment/smrna/sample_1_R1.out").exists()
+            assert new File("$outputDir/01_prealign/pre_trim_move_umi_to_header/sample_1_R1.umi_extract.fastq.gz").exists()
+            assert new File("$outputDir/01_prealign/pre_trim_move_umi_to_header/sample_1_R1.umi_extract.log").exists()
+
         }
     }
 }

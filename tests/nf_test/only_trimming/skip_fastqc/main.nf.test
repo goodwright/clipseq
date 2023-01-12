@@ -15,7 +15,7 @@ nextflow_pipeline {
         then {
             assert workflow.success
 
-            assert !(new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5_fastqc.zip").exists())
+            assert !(new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_fastqc.zip").exists())
 
             assert new File("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
             assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
