@@ -8,6 +8,8 @@ nextflow_pipeline {
             params {
                 outdir = "$outputDir"
                 only_moveumitoheader = true
+                move_umi      = 'NNNNNNNNN'
+                umi_separator = '_'
             }
         }
 
