@@ -1,4 +1,4 @@
-# Primary CLIP Analysis
+# CLIP Analysis
 
 Full documentation [here](Documentation.md), salient usage details summarised below.
 
@@ -62,4 +62,9 @@ When the full pipeline is run, output is organised into 6 folders:
 - `05_peak_calling` contains Clippy, iCount and Paraclu peaks. The iCount folder also contains gene, subtype and type level summaries of crosslink information and metagene plots around transcript landmarks of interest in the rnamaps folder. Also included is PEKA output.
 - `06_reports` contains various CLIP-specific QC metrics in tabular format in the clipqc folder. These are plotted, alongside other QC metrics in the html provided in the multiqc folder.
 
-
+## Authors and contact
+This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 nf-core/clipseq pipeline in collaboration with the original authors and Prof. Jernej Ule. 
+To raise any issues or comments with the pipeline you can (in order of preference):
+- Raise an issue in this repository
+- Write to us in our [Slack](https://join.slack.com/t/imapsgroup/shared_invite/zt-r24y3591-Xbhnym2t38u_urU~I0K0lQ) 
+- Email charlotte.capitanchik@goodwright.com
