@@ -1,0 +1,24 @@
+nextflow_pipeline {
+
+    name "only_moveumitoheader"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_moveumitoheader = true
+                move_umi      = 'NNNNNNNNN'
+                umi_separator = '_'
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File("$outputDir/01_prealign/pre_trim_move_umi_to_header/sample_1_R1.umi_extract.fastq.gz").exists()
+            assert new File("$outputDir/01_prealign/pre_trim_move_umi_to_header/sample_1_R1.umi_extract.log").exists()
+
+        }
+    }
+}

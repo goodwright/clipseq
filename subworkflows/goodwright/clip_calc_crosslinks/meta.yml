@@ -1,0 +1,53 @@
+name: clip_calc_crosslinks
+description: |
+  Calculate clip crosslinks using an input BAM file and genome index file. Crosslinks are outputed as a BED file and additional 
+  coverage and normalised coverage tracks are calculated in BEDGRAPH format.
+keywords:
+  - bedtools
+  - crosslinks
+  - coverage
+  - fai
+  - bam
+modules:
+  - goodwright/linux/command
+  - goodwright/bedtools/shift
+  - nf-core/bedtools/bamtobed
+  - nf-core/bedtools/genomecov
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bam:
+      type: file
+      description: BAM file
+      pattern: "*.bam"
+  - fai:
+      type: file
+      description: FAI file
+      pattern: "*.fai"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bed:
+      type: file
+      description: Bedfile containing the crosslink depths at genomic positions
+      pattern: "*.bed"
+  - coverage:
+      type: file
+      description: The crosslinks bed file turned into a bedgraph coverage file.
+      pattern: "*.bedgraph"
+  - coverage_norm:
+      type: file
+      description: The crosslinks bed file turned into a bedgraph coverage file normalised against total count
+      pattern: "*.bedgraph"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@chris-cheshire"

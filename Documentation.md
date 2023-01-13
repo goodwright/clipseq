@@ -1,6 +1,6 @@
-# CLIPSeq v1.0 📎 
+# CLIPSeq v1.0 📎
 
-Full source code available on [Github](https://github.com/goodwright/clipseq). Specific instructions for Flow usage can be found [**here**]. 
+Full source code available on [Github](https://github.com/goodwright/clipseq). Specific instructions for Flow usage can be found [**here**].
 
 ## Pipeline Summary
 
@@ -20,7 +20,7 @@ This pipeline requires demultiplexed fastq sample input and an associated metada
 
 **Moving UMI from fastq reads to read header**
 
-If you are analysing demultiplexed sample files, then depending on where you have sourced your fastq from, the UMI and experimental barcode might still be present at the 5' end of reads, which will cause errors in downstream analysis. Note this is common for historical public data downloaded from ArrayExpress, for example. 
+If you are analysing demultiplexed sample files, then depending on where you have sourced your fastq from, the UMI and experimental barcode might still be present at the 5' end of reads, which will cause errors in downstream analysis. Note this is common for historical public data downloaded from ArrayExpress, for example.
 
 To enable this option set `run_move_umi_to_header = true` and ensure you provide the UMI format to `move_umi`, for example `move_umi='NNNNNN'`.
 
@@ -36,24 +36,25 @@ For older data with very short or no UMIs at all, you may want to skip the UMI d
 
 To turn of deduplications, set `run_umi_dedup = false`
 
-**Changing other individual tool parameters** 
+**Changing other individual tool parameters**
 
 When you are working with data you're already familiar with you might have specific parameters in mind for certain tools, here are your options for changing:
+
 - Minimum length of reads kept by Trim Galore! after trimming, `trim_length`, eg. `10`
 - Bowtie parameters for pre-mapping, `bowtie_params`, eg. `"-v 2 -m 100 --norc --best --strata"`
 - Paraclu minimum cut off value, `paraclu_min_value`, eg. `30`
 
 ## Pipeline in Detail
 
-This detailed description will present each <u>subworkflow</u>/*module* run in the pipeline and give detailed information of inputs and outputs with filenames, and default parameters.
+This detailed description will present each <u>subworkflow</u>/_module_ run in the pipeline and give detailed information of inputs and outputs with filenames, and default parameters.
 
 1. <u>PARSE_FASTQ_INPUT</u>
 
    Checks samplesheet input, then formats it and fastq files into an appropriate channel format for Nextflow.
 
-   i. *SAMPLE_BASE_SAMPLESHEET_CHECK*: This module checks that the samplesheet input meets requirements. It outputs a sanitised samplesheet in a ".csv" file.
+   i. _SAMPLE_BASE_SAMPLESHEET_CHECK_: This module checks that the samplesheet input meets requirements. It outputs a sanitised samplesheet in a ".csv" file.
 
-   ii. *CAT_FASTQ*: This module concatenates fastq files labelled as being the same sample.
+   ii. _CAT_FASTQ_: This module concatenates fastq files labelled as being the same sample.
 
    The output of this subworkflow is a Nextflow channel containing a tuple of metadata and fastq files.
 
@@ -61,9 +62,9 @@ This detailed description will present each <u>subworkflow</u>/*module* run in t
 
 3. <u>FASTQC_TRIMGALORE</u>
 
-   i. *FASTQC*: Checks sequencing quality and adapter content of raw reads. Input - .Output - .
+   i. _FASTQC_: Checks sequencing quality and adapter content of raw reads. Input - .Output - .
 
-   ii. *TRIMGALORE*
+   ii. _TRIMGALORE_
 
 4. <u>RNA_ALIGN</u>
 5. <u>FILTER_TRANSCRIPTS</u>
@@ -72,14 +73,12 @@ This detailed description will present each <u>subworkflow</u>/*module* run in t
 8. <u>TRANSCRIPT_DEDUP</u>
 9. <u>CALC_GENOME_CROSSLINKS</u>
 10. <u>CALC_TRANSCRIPT_CROSSLINKS</u>
-11. *CLIPPY*
+11. _CLIPPY_
 12. <u>PARACLU_ANALYSE</u>
 13. <u>ICOUNT_ANALYSE</u>
-14. *PEKA*
+14. _PEKA_
 15. <u>CLIPSEQ_CLIPQC</u>
-16. *MULTIQC*
-
-
+16. _MULTIQC_
 
 ## FAQ
 
@@ -91,6 +90,6 @@ This pipeline is based on nf-core/clipseq but is updated in a few ways. For one,
 
 ## Authors
 
-This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 [nf-core/clipseq](https://nf-co.re/clipseq) pipeline in collaboration with the original authors and Prof. Jernej Ule. 
+This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 [nf-core/clipseq](https://nf-co.re/clipseq) pipeline in collaboration with the original authors and Prof. Jernej Ule.
 
 ## References

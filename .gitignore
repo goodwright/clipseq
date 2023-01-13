@@ -1,0 +1,10 @@
+.nextflow*
+work/
+results/
+.DS_Store
+testing/
+testing*
+*.pyc
+
+.nf-test/
+test.tap

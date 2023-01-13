@@ -1,0 +1,24 @@
+nextflow_pipeline {
+
+    name "only_trimming_fastq_trimming"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_trimming = true
+                skip_fastqc = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert !(new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_fastqc.zip").exists())
+
+            assert new File("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
+        }
+    }
+}

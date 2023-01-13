@@ -1,0 +1,72 @@
+name: icount_analyse
+description: Runs suite of icount tools on an input crosslinks BED file.
+keywords:
+  - icount
+  - peaks
+  - bed
+  - gtf
+  - crosslinks
+modules:
+  - goodwright/icount/summary
+  - goodwright/icount/rnamaps
+  - goodwright/icount/sigxls
+  - goodwright/icount/peaks
+  - nf-core/gunzip
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bed:
+      type: file
+      description: Input crosslinks BED file
+      pattern: "*.bed"
+  - gft_seg:
+      type: file
+      description: Input segmented GTF file
+      pattern: "*.gtf"
+  - gtf_resolved:
+      type: file
+      description: Input segmented and resolved GTF file
+      pattern: "*.gtf"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - tsv_summary_type:
+      type: file
+      description: output TSV file from iCount summary
+      pattern: "*.tsv"
+  - tsv_summary_subtype:
+      type: file
+      description: output TSV file from iCount summary
+      pattern: "*.tsv"
+  - tsv_summary_gene:
+      type: file
+      description: output TSV file from iCount summary
+      pattern: "*.tsv"
+  - tsv_rnamaps:
+      type: file
+      description: output TSV file from iCount rnamaps
+      pattern: "*.tsv"
+  - bed_sigxls:
+      type: file
+      description: output signal bed file from iCount sigxls
+      pattern: "*.bed"
+  - tsv_scores:
+      type: file
+      description: output tsv scores file from iCount sigxls
+      pattern: "*.tsv"
+  - bed_peaks:
+      type: file
+      description: output bed peaks file from iCount peaks
+      pattern: "*.bed"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@chris-cheshire"

@@ -1,0 +1,52 @@
+name: prepare_aligner
+description: Uncompresses and prepares aligner indexes.
+keywords:
+  - fasta
+  - gtf
+  - bowtie2
+  - star
+  - index
+modules:
+  - nf-core/bowtie2/build
+  - nf-core/star/genomegenerate
+input:
+  - aligners:
+      type: string
+      description: List of aligners to run
+      pattern: "[bowtie2, star]"
+  - fasta:
+      type: file
+      description: genome fasta file
+      pattern: "*.{fasta,fasta.gz}"
+  - gtf:
+      type: file
+      description: genome gtf annotation file
+      pattern: "*.{gtf,gtf.gz}"
+  - bt2_index_path:
+      type: file/folder
+      description: pre-computed bowtie2 index folder
+      pattern: "*.{tar.gz}"
+  - star_index_path:
+      type: file/folder
+      description: pre-computed star index folder
+      pattern: "*.{tar.gz}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bt2_index:
+      type: folder
+      description: pre-computed bowtie2 index folder
+      pattern: ""
+  - star_index:
+      type: folder
+      description: pre-computed star index folder
+      pattern: ""
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@chris-cheshire"

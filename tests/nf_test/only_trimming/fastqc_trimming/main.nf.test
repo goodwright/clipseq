@@ -1,0 +1,46 @@
+nextflow_pipeline {
+
+    name "only_trimming_fastq_trimming"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_trimming = true
+                save_trimmed = false
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_fastqc.zip").exists()
+            assert new File("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
+
+            assert !(new File("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").exists())
+        }
+    }
+
+    test("run_test_save_trimmed") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_trimming = true
+                save_trimmed = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File("$outputDir/01_prealign/pre_trim_fastqc/sample_1_R1_fastqc.zip").exists()
+            assert new File("$outputDir/01_prealign/post_trim_fastqc/sample_1_R1_trimmed_fastqc.zip").exists()
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
+
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").exists()
+            assert path("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").md5 == "4f811b7928ce4b3cf86cbfe0ed6e54b1"
+        }
+    }
+}

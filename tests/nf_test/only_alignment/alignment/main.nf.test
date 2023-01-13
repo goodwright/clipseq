@@ -1,0 +1,25 @@
+nextflow_pipeline {
+
+    name "only_alignment_alignment"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_filtering = true
+                save_align_intermed = false
+                save_unaligned = false
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.progress.out").exists()
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.final.out").exists()
+            // assert new File("$outputDir/02_alignment/target/log/sample_1_R1.Log.out").exists()
+            // assert new File("$outputDir/02_alignment/smrna/sample_1_R1.out").exists()
+        }
+    }
+}

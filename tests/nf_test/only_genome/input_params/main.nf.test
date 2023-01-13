@@ -1,0 +1,77 @@
+nextflow_pipeline {
+
+    name "only_genome_input_params"
+    script "main.nf"
+
+    test("samplesheet_null") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+                samplesheet = null
+                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
+                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Required parameter not specified: samplesheet")
+        }
+    }
+
+    test("fasta_null") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+                samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
+                fasta       = null
+                smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
+                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Required parameter not specified: fasta")
+        }
+    }
+
+    test("smrna_fasta_null") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+                samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
+                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                smrna_fasta = null
+                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Required parameter not specified: smrna_fasta")
+        }
+    }
+
+    test("gtf_null") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_genome = true
+                samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
+                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
+                gtf         = null
+            }
+        }
+
+        then {
+            assert workflow.failed
+            assert workflow.stdout.contains("Required parameter not specified: gtf")
+        }
+    }
+}

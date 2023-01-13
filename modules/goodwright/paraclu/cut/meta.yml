@@ -1,0 +1,39 @@
+name: paraclu_cut
+description: Subset the output of paraclu.
+keywords:
+  - Paralclu
+  - crosslinks
+  - k-mer
+  - bed
+tools:
+  - paraclu:
+      description: Paraclu finds clusters in data attached to sequences.
+      homepage: https://gitlab.com/mcfrith/paraclu
+      documentation: None
+      tool_dev_url: None
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - tsv:
+      type: file
+      description: TSV file of sigxls from paraclu
+      pattern: "*.{tsv}"
+
+output:
+  - tsv:
+      type: file
+      description: Output TSV of peaks
+      pattern: "*.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@codeprimate123"
+  - "@kkuret"
+  - "@chris-cheshire"

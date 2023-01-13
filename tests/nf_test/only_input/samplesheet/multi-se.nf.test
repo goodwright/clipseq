@@ -1,0 +1,22 @@
+nextflow_pipeline {
+
+    name "only_input_samplesheet_single-se"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_input = true
+                samplesheet = './tests/data/samplesheets/full-all-sample-se.csv'
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            assert new File("$outputDir/pipeline_info/samplesheet.valid.csv").exists()
+            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "0293f9a7be52aff5e8e50ea5329ea01c"
+        }
+    }
+}
