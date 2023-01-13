@@ -168,6 +168,7 @@ workflow CLIPSEQ {
     ch_regions_filt_gtf           = Channel.empty()
     ch_regions_resolved_gtf       = Channel.empty()
     ch_regions_resolved_gtf_genic = Channel.empty()
+    ch_longest_transcript_fai     = Channel.empty()
 
     if (params.run_genome_prep) {
         /*
@@ -190,6 +191,7 @@ workflow CLIPSEQ {
         ch_smrna_fasta_fai            = PREPARE_CLIPSEQ.out.smrna_fasta_fai
         ch_smrna_chrom_sizes          = PREPARE_CLIPSEQ.out.smrna_chrom_sizes
         ch_longest_transcript         = PREPARE_CLIPSEQ.out.longest_transcript
+        ch_longest_transcript_fai     = PREPARE_CLIPSEQ.out.longest_transcript_fai
         ch_seg_gtf                    = PREPARE_CLIPSEQ.out.seg_gtf
         ch_seg_filt_gtf               = PREPARE_CLIPSEQ.out.seg_filt_gtf
         ch_seg_resolved_gtf           = PREPARE_CLIPSEQ.out.seg_resolved_gtf
@@ -377,8 +379,8 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run crosslink calculation for transcripts
         */
         CALC_TRANSCRIPT_CROSSLINKS (
-            ch_genome_bam,
-            ch_fasta_fai.collect{ it[1] }
+            ch_transcript_bam,
+            ch_longest_transcript_fai.collect{ it[1] }
         )
         ch_versions                      = ch_versions.mix(CALC_TRANSCRIPT_CROSSLINKS.out.versions)
         ch_trans_crosslink_bed           = CALC_TRANSCRIPT_CROSSLINKS.out.bed

@@ -59,11 +59,24 @@ def main(process_name, gtf, output):
         gene_transcripts.sort(key=lambda t: [-t["cds_length"], -t["exon_length"]])
         transcript_ids.append(gene_transcripts[0]["id"] + "\n")
 
+    # create a transcript.fai file for use in getting crosslinks
+    fai_output = []
+    for transcript in transcripts:
+        output_line = ""
+        if transcript["id"] + "\n" in transcript_ids:
+            output_line = transcript["id"] + "\t"
+            output_line = output_line + str(max(transcript["exon_length"], transcript["cds_length"])) + "\n"
+            fai_output.append(output_line)
+
     # Save to file
     print("Saving longest transcript per gene...")
-    with open(output, "w") as f:
+    with open(output + ".txt", "w") as f:
         f.writelines(transcript_ids)
 
+    # Save to file
+    print("Saving longest transcript fai index...")
+    with open(output + ".fai", "w") as f:
+        f.writelines(fai_output)
 
 if __name__ == "__main__":
 
