@@ -68,8 +68,9 @@ workflow PREPARE_CLIPSEQ {
     CLIPSEQ_FIND_LONGEST_TRANSCRIPT (
         ch_gtf
     )
-    ch_longest_transcript = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript
-    ch_versions           = ch_versions.mix(CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.versions)
+    ch_longest_transcript     = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript
+    ch_longest_transcript_fai = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_fai
+    ch_versions               = ch_versions.mix(CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.versions)
 
     /*
     * MODULE: Filter the GTF file
@@ -186,6 +187,7 @@ workflow PREPARE_CLIPSEQ {
     smrna_fasta_fai            = ch_smrna_fasta_fai        // channel: [ val(meta), [ fai ] ]
     smrna_chrom_sizes          = ch_smrna_chrom_sizes      // channel: [ val(meta), [ txt ] ]
     longest_transcript         = ch_longest_transcript     // channel: [ val(meta), [ txt ] ]
+    longest_transcript_fai     = ch_longest_transcript_fai  // channel: [ val(meta), [ fai ] ]
     seg_gtf                    = ch_seg_gtf                // channel: [ val(meta), [ gtf ] ]
     seg_filt_gtf               = ch_seg_filt_gtf           // channel: [ val(meta), [ gtf ] ]
     seg_resolved_gtf           = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]
