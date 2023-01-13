@@ -9,7 +9,8 @@ process CLIPSEQ_FIND_LONGEST_TRANSCRIPT {
     tuple val(meta), path(gtf)
 
     output:
-    tuple val(meta), path("*.txt"),emit: longest_transcript
+    tuple val(meta), path("*.txt")                 ,emit: longest_transcript
+    tuple val(meta), path("*.fai")                 ,emit: longest_transcript_fai
     path  "versions.yml"                           ,emit: versions
 
     when:
@@ -17,6 +18,6 @@ process CLIPSEQ_FIND_LONGEST_TRANSCRIPT {
 
     shell:
     process_name = task.process
-    output       = task.ext.output ?: "longest_transcript.txt"
+    output       = task.ext.output ?: "longest_transcript"
     template 'find_longest_transcript.py'
 }
