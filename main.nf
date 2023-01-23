@@ -184,8 +184,8 @@ workflow CLIPSEQ {
         ch_regions_resolved_gtf       = []
         ch_regions_resolved_gtf_genic = []
         ch_longest_transcript_fai     = []
-        if(params.target_genome_index) { ch_target_genome_index = Channel.of([[:],file(params.target_genome_index, checkIfExists: true)]) }
-        if(params.smrna_genome_index)  { ch_smrna_genome_index = Channel.of([[:],file(params.smrna_genome_index, checkIfExists: true)]) }
+        if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
+        if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
         if(params.fasta_fai) { ch_fasta_fai = Channel.of([[:],file(params.fasta_fai, checkIfExists: true)]) }
         if(params.filtered_gtf) { ch_filtered_gtf = Channel.of([[:],file(params.filtered_gtf, checkIfExists: true)]) }
         if(params.chrom_sizes) { ch_chrom_sizes = Channel.of([[:],file(params.chrom_sizes, checkIfExists: true)]) }
@@ -302,6 +302,9 @@ workflow CLIPSEQ {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
         */
+        ch_smrna_genome_index.view { "smrna index $it" }
+        ch_target_genome_index.view { "target index $it" }
+
         RNA_ALIGN (
             ch_fastq,
             ch_smrna_genome_index,

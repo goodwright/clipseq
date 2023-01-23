@@ -52,10 +52,10 @@ workflow PREPARE_CLIPSEQ {
     * SUBWORKFLOW: Uncompress and prepare main genome files
     */
     if (params.fasta_fai && params.chrom_sizes){
-        ch_fasta       = params.fasta
-        ch_fasta_fai   = params.fasta_fai
-        ch_gtf         = params.gtf
-        ch_chrom_sizes = params.chrom_sizes
+        ch_fasta       = fasta
+        ch_fasta_fai   = fasta_fai
+        ch_gtf         = gtf
+        ch_chrom_sizes = chrom_sizes
     } else {
         PREPARE_PRIMARY_GENOME (
             fasta,
@@ -74,9 +74,9 @@ workflow PREPARE_CLIPSEQ {
     * SUBWORKFLOW: Uncompress and prepare smrna genome files
     */
     if (params.smrna_fasta_fai && params.smrna_chrom_sizes){
-        ch_smrna_fasta       = params.smrna_fasta
-        ch_smrna_fasta_fai   = params.smrna_fasta_fai
-        ch_smrna_chrom_sizes = params.smrna_chrom_sizes
+        ch_smrna_fasta       = smrna_fasta
+        ch_smrna_fasta_fai   = smrna_fasta_fai
+        ch_smrna_chrom_sizes = smrna_chrom_sizes
     } else {
         PREPARE_SMRNA_GENOME (
             smrna_fasta,
@@ -94,8 +94,8 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Find the longest transcript from the primary genome
     */
     if (params.longest_transcript && params.longest_transcript_fai){
-        ch_longest_transcript     = params.longest_transcript
-        ch_longest_transcript_fai = params.longest_transcript_fai
+        ch_longest_transcript     = longest_transcript
+        ch_longest_transcript_fai = longest_transcript_fai
     } else {
         CLIPSEQ_FIND_LONGEST_TRANSCRIPT (
             ch_gtf
@@ -109,7 +109,7 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Filter the GTF file
     */
     if (params.filtered_gtf){
-    ch_filt_gtf = params.filtered_gtf
+    ch_filt_gtf = filtered_gtf
     } else {
     CLIPSEQ_FILTER_GTF (
         ch_gtf
@@ -148,8 +148,8 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Segment GTF file using icount
     */
     if (params.seg_gtf && params.regions_gtf){
-    ch_seg_gtf     = params.seg_gtf
-	ch_regions_gtf = params.regions_gtf
+    ch_seg_gtf     = seg_gtf
+	ch_regions_gtf = regions_gtf
     } else {
     ICOUNT_SEG_GTF (
         ch_gtf,
@@ -164,8 +164,8 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Segment the filtered GTF file using icount
     */
     if (params.seg_filt_gtf && params.regions_filt_gtf){
-    ch_seg_filt_gtf     = params.seg_filt_gtf
-    ch_regions_filt_gtf = params.regions_filt_gtf
+    ch_seg_filt_gtf     = seg_filt_gtf
+    ch_regions_filt_gtf = regions_filt_gtf
     } else {
     ICOUNT_SEG_FILTGTF (
         ch_filt_gtf,
@@ -179,7 +179,7 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Resolve the GTF regions that iCount did not annotate
     */
     if (params.seg_resolved_gtf){
-    ch_seg_resolved_gtf = params.seg_resolved_gtf
+    ch_seg_resolved_gtf = seg_resolved_gtf
     } else {
     RESOLVE_UNANNOTATED (
         ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
@@ -196,7 +196,7 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Resolve the GTF regions that iCount did not annotate REGIONS FILE
     */
     if (params.regions_resolved_gtf){
-    ch_regions_resolved_gtf = params.regions_resolved_gtf
+    ch_regions_resolved_gtf = regions_resolved_gtf
     } else {
     RESOLVE_UNANNOTATED_REGIONS (
         ICOUNT_SEG_GTF.out.regions.map{ it[1] },
@@ -212,7 +212,7 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag
     */
     if (params.seg_resolved_gtf_genic){
-    ch_seg_resolved_gtf_genic = params.seg_resolved_gtf_genic
+    ch_seg_resolved_gtf_genic = seg_resolved_gtf_genic
     } else {
     RESOLVE_UNANNOTATED_GENIC_OTHER (
         ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
@@ -228,7 +228,7 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag REGIONS FILE
     */
     if (params.regions_resolved_gtf_genic){
-    ch_regions_resolved_gtf_genic = params.regions_resolved_gtf_genic
+    ch_regions_resolved_gtf_genic = regions_resolved_gtf_genic
     } else {
     RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
         ICOUNT_SEG_GTF.out.regions.map{ it[1] },
