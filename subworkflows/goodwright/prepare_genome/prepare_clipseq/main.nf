@@ -29,21 +29,21 @@ workflow PREPARE_CLIPSEQ {
     gtf                              // channel: [ gtf ]
     genome_index_path                // channel: [ folder/tar.gz ]
     smrna_index_path                 // channel: [ folder/tar.gz ]
-    fasta_fai                        // channel: [ fasta.fai ]                                            
-    filtered_gtf                     // channel: [ gtf ]                      
-    chrom_sizes                      // channel: [ tsv ]                     
-    smrna_fasta_fai                  // channel: [ fasta.fai ]                         
-    smrna_chrom_sizes                // channel: [ tsv ]                           
-    longest_transcript               // channel: [ txt ]                            
-    seg_gtf                          // channel: [ gtf ]                 
-    seg_filt_gtf                     // channel: [ gtf ]                      
-    seg_resolved_gtf                 // channel: [ gtf ]                          
-    seg_resolved_gtf_genic           // channel: [ gtf ]                                
-    regions_gtf                      // channel: [ gtf ]                     
-    regions_filt_gtf                 // channel: [ gtf ]                          
-    regions_resolved_gtf             // channel: [ gtf ]                              
-    regions_resolved_gtf_genic       // channel: [ gtf ]                                    
-    longest_transcript_fai           // channel: [ fasta.fai ]                                
+    fasta_fai                        // channel: [ [:], fasta.fai ]                                            
+    filtered_gtf                     // channel: [ [:], gtf ]                      
+    chrom_sizes                      // channel: [ [:], tsv ]                     
+    smrna_fasta_fai                  // channel: [ [:], fasta.fai ]                         
+    smrna_chrom_sizes                // channel: [ [:], tsv ]                           
+    longest_transcript               // channel: [ [:], txt ]                            
+    seg_gtf                          // channel: [ [:], gtf ]                 
+    seg_filt_gtf                     // channel: [ [:], gtf ]                      
+    seg_resolved_gtf                 // channel: [ [:], gtf ]                          
+    seg_resolved_gtf_genic           // channel: [ [:], gtf ]                                
+    regions_gtf                      // channel: [ [:], gtf ]                     
+    regions_filt_gtf                 // channel: [ [:], gtf ]                          
+    regions_resolved_gtf             // channel: [ [:], gtf ]                              
+    regions_resolved_gtf_genic       // channel: [ [:], gtf ]                                    
+    longest_transcript_fai           // channel: [ [:], fasta.fai ]                                
 
     main:
     ch_versions = Channel.empty()
@@ -131,6 +131,9 @@ workflow PREPARE_CLIPSEQ {
     ch_genome_index = PREPARE_PRIMARY_INDEX.out.star_index
     ch_versions     = ch_versions.mix(PREPARE_PRIMARY_INDEX.out.versions)
 
+    
+    ch_genome_index.view { "target index NUMERO three $it" }
+
     /*
     * SUBWORKFLOW: Prepare BT2 index for smrna genome
     */
@@ -143,6 +146,8 @@ workflow PREPARE_CLIPSEQ {
     )
     ch_smrna_index = PREPARE_SMRNA_INDEX.out.bt2_index
     ch_versions    = ch_versions.mix(PREPARE_SMRNA_INDEX.out.versions)
+
+    ch_smrna_index.view { "smrna index NUMERO three $it" }
 
     /*
     * MODULE: Segment GTF file using icount
