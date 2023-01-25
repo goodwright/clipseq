@@ -199,11 +199,11 @@ workflow CLIPSEQ {
         if(params.longest_transcript_fai) { ch_longest_transcript_fai = Channel.of([[:],file(params.longest_transcript_fai, checkIfExists: true)]) }
         if(params.seg_gtf) { ch_seg_gtf = Channel.of([[:],file(params.seg_gtf, checkIfExists: true)]) }
         if(params.seg_filt_gtf) { ch_seg_filt_gtf = Channel.of([[:],file(params.seg_filt_gtf, checkIfExists: true)]) }
-        if(params.seg_resolved_gtf) { ch_seg_resolved_gtf = Channel.of([[:],file(params.seg_resolved_gtf, checkIfExists: true)]) }
+        if(params.seg_resolved_gtf) { ch_seg_resolved_gtf = file(params.seg_resolved_gtf, checkIfExists: true) }
         if(params.seg_resolved_gtf_genic) { ch_seg_resolved_gtf_genic= Channel.of([[:],file(params.seg_resolved_gtf_genic, checkIfExists: true)]) }
         if(params.regions_gtf) { ch_regions_gtf = Channel.of([[:],file(params.regions_gtf, checkIfExists: true)]) }
         if(params.regions_filt_gtf) { ch_regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }
-        if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = Channel.of([[:],file(params.regions_resolved_gtf, checkIfExists: true)]) }
+        if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = file(params.regions_resolved_gtf, checkIfExists: true) }
         if(params.regions_resolved_gtf_genic) { ch_regions_resolved_gtf_genic = Channel.of([[:],file(params.regions_resolved_gtf_genic, checkIfExists: true)]) }
         /*
         * SUBWORKFLOW: Prepare clipseq genome files
@@ -306,8 +306,6 @@ workflow CLIPSEQ {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
         */
-        ch_smrna_genome_index.view { "smrna index $it" }
-        ch_target_genome_index.view { "target index $it" }
 
         RNA_ALIGN (
             ch_fastq,

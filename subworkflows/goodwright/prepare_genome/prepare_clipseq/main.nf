@@ -131,8 +131,6 @@ workflow PREPARE_CLIPSEQ {
     ch_genome_index = PREPARE_PRIMARY_INDEX.out.star_index
     ch_versions     = ch_versions.mix(PREPARE_PRIMARY_INDEX.out.versions)
 
-    
-    ch_genome_index.view { "target index NUMERO three $it" }
 
     /*
     * SUBWORKFLOW: Prepare BT2 index for smrna genome
@@ -147,7 +145,6 @@ workflow PREPARE_CLIPSEQ {
     ch_smrna_index = PREPARE_SMRNA_INDEX.out.bt2_index
     ch_versions    = ch_versions.mix(PREPARE_SMRNA_INDEX.out.versions)
 
-    ch_smrna_index.view { "smrna index NUMERO three $it" }
 
     /*
     * MODULE: Segment GTF file using icount

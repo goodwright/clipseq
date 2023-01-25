@@ -38,10 +38,10 @@ workflow PREPARE_ALINGER {
     ch_bt1_index = Channel.empty()
     if ("bowtie" in aligners && bt1_index_path) {
         if (bt1_index_path.toString().endsWith(".tar.gz")) {
-            ch_bt2_index = UNTAR_BT1 ( [ [:], bt1_index_path ] ).untar.flatten().last()
+            ch_bt1_index = UNTAR_BT1 ( [ [:], bt1_index_path ] ).untar.flatten().last()
             ch_versions  = ch_versions.mix(UNTAR_BT1.out.versions)
         } else {
-            ch_bt2_index = bt1_index_path
+            ch_bt1_index = bt1_index_path
         }
     }
     else if ("bowtie" in aligners && !bt1_index_path) {
@@ -65,7 +65,6 @@ workflow PREPARE_ALINGER {
         ch_star_index = STAR_GENOMEGENERATE ( ch_fasta_input, ch_gtf_input ).index
         ch_versions   = ch_versions.mix(STAR_GENOMEGENERATE.out.versions)
     }
-
 
     emit:
     bt2_index  = ch_bt1_index  // channel: [ val(meta), [ folder ] ]
