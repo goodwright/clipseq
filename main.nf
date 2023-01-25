@@ -59,7 +59,7 @@ check_param_list = [
     params.smrna_fasta_fai,
     params.smrna_chrom_sizes,
     params.longest_transcript,
-    params.longest_transcript_fai, 
+    params.longest_transcript_fai,
     params.seg_gtf,
     params.seg_filt_gtf,
     params.seg_resolved_gtf,
