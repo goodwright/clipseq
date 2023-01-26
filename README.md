@@ -15,7 +15,8 @@ profiles `test` and the container engine you wish to use eg. `docker`. For examp
 nextflow run main.nf -profile test,docker
 ```
 
-Full dataset testing of 9 iCLIP samples can also be run using profile `test_full`
+Full dataset testing of 9 iCLIP samples can also be run using profile `test_full`.
+A test can also be run that skips all preparing of annotations/indexes using profile `test_no_prep_genome`.
 
 ## Input
 
