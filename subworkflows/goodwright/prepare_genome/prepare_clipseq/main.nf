@@ -13,6 +13,8 @@ include { CLIPSEQ_RESOLVE_UNANNOTATED as RESOLVE_UNANNOTATED                    
 include { CLIPSEQ_RESOLVE_UNANNOTATED as RESOLVE_UNANNOTATED_GENIC_OTHER         } from '../../../../modules/goodwright/clipseq/resolve_unannotated/main.nf'
 include { CLIPSEQ_RESOLVE_UNANNOTATED as RESOLVE_UNANNOTATED_REGIONS             } from '../../../../modules/goodwright/clipseq/resolve_unannotated/main.nf'
 include { CLIPSEQ_RESOLVE_UNANNOTATED as RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS } from '../../../../modules/goodwright/clipseq/resolve_unannotated/main.nf'
+include { LINUX_COMMAND as REMOVE_GTF_BRACKETS                                   } from '../../../../modules/goodwright/linux/command/main.nf'
+include { GUNZIP                                                                 } from '../../../../modules/nf-core/gunzip/main.nf'
 
 /*
 * SUBWORKFLOWS
@@ -48,13 +50,14 @@ workflow PREPARE_CLIPSEQ {
     main:
     ch_versions = Channel.empty()
 
+
+    
     /*
     * SUBWORKFLOW: Uncompress and prepare main genome files
     */
     if (params.fasta_fai && params.chrom_sizes){
         ch_fasta       = fasta
         ch_fasta_fai   = fasta_fai
-        ch_gtf         = gtf
         ch_chrom_sizes = chrom_sizes
     } else {
         PREPARE_PRIMARY_GENOME (
@@ -69,6 +72,17 @@ workflow PREPARE_CLIPSEQ {
         ch_chrom_sizes = PREPARE_PRIMARY_GENOME.out.chrom_sizes
         ch_versions    = ch_versions.mix(PREPARE_PRIMARY_GENOME.out.versions)
     }
+
+    // Sometimes gtf have brackets in gene names and this makes UMICollapse fail.
+    REMOVE_GTF_BRACKETS ( 
+        ch_gtf,
+        [],
+        false
+     )
+    ch_gtf_with_meta = REMOVE_GTF_BRACKETS.out.file
+    ch_gtf = REMOVE_GTF_BRACKETS.out.file.flatten().last()
+
+
 
     /*
     * SUBWORKFLOW: Uncompress and prepare smrna genome files
@@ -98,7 +112,7 @@ workflow PREPARE_CLIPSEQ {
         ch_longest_transcript_fai = longest_transcript_fai
     } else {
         CLIPSEQ_FIND_LONGEST_TRANSCRIPT (
-            ch_gtf
+            ch_gtf_with_meta
         )
         ch_longest_transcript     = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript
         ch_longest_transcript_fai = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_fai
@@ -112,7 +126,7 @@ workflow PREPARE_CLIPSEQ {
     ch_filt_gtf = filtered_gtf
     } else {
     CLIPSEQ_FILTER_GTF (
-        ch_gtf
+        ch_gtf_with_meta
     )
     ch_filt_gtf = CLIPSEQ_FILTER_GTF.out.gtf
     ch_versions = ch_versions.mix(CLIPSEQ_FILTER_GTF.out.versions)
@@ -124,7 +138,7 @@ workflow PREPARE_CLIPSEQ {
     PREPARE_PRIMARY_INDEX (
         ["star"],
         ch_fasta,
-        ch_gtf,
+        ch_gtf_with_meta,
         [],
         genome_index_path
     )
@@ -154,7 +168,7 @@ workflow PREPARE_CLIPSEQ {
 	ch_regions_gtf = regions_gtf
     } else {
     ICOUNT_SEG_GTF (
-        ch_gtf,
+        ch_gtf_with_meta,
         ch_fasta_fai.map{ it[1] }
     )
     ch_seg_gtf     = ICOUNT_SEG_GTF.out.gtf
@@ -186,7 +200,7 @@ workflow PREPARE_CLIPSEQ {
     RESOLVE_UNANNOTATED (
         ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
         ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf.map{ it[1] },
+        ch_gtf,
         ch_fasta_fai.map{ it[1] },
         false
     )
@@ -203,7 +217,7 @@ workflow PREPARE_CLIPSEQ {
     RESOLVE_UNANNOTATED_REGIONS (
         ICOUNT_SEG_GTF.out.regions.map{ it[1] },
         ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf.map{ it[1] },
+        ch_gtf,
         ch_fasta_fai.map{ it[1] },
         false
     )
@@ -219,7 +233,7 @@ workflow PREPARE_CLIPSEQ {
     RESOLVE_UNANNOTATED_GENIC_OTHER (
         ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
         ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf.map{ it[1] },
+        ch_gtf,
         ch_fasta_fai.map{ it[1] },
         true
     )
@@ -235,7 +249,7 @@ workflow PREPARE_CLIPSEQ {
     RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
         ICOUNT_SEG_GTF.out.regions.map{ it[1] },
         ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf.map{ it[1] },
+        ch_gtf,
         ch_fasta_fai.map{ it[1] },
         true
     )

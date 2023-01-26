@@ -317,14 +317,8 @@ workflow CLIPSEQ {
         ch_versions                     = ch_versions.mix(RNA_ALIGN.out.versions)
         ch_genome_bam                   = RNA_ALIGN.out.genome_bam
         ch_genome_bai                   = RNA_ALIGN.out.genome_bai
-        ch_genome_samtools_stats        = RNA_ALIGN.out.genome_stats
-        ch_genome_samtools_flagstat     = RNA_ALIGN.out.genome_flagstat
-        ch_genome_samtools_idxstats     = RNA_ALIGN.out.genome_idxstats
         ch_transcript_bam               = RNA_ALIGN.out.transcript_bam
         ch_transcript_bai               = RNA_ALIGN.out.transcript_bai
-        ch_transcript_samtools_stats    = RNA_ALIGN.out.transcript_stats
-        ch_transcript_samtools_flagstat = RNA_ALIGN.out.transcript_flagstat
-        ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
         ch_bt_log                       = RNA_ALIGN.out.bt_log
         ch_star_log                     = RNA_ALIGN.out.star_log_final
     }

@@ -1,2 +1,2 @@
 group,replicate,fastq_1,fastq_2
-sample_1,1,./tests/data/ultraplex_demux_iCLIP_SmB_Cal51_NSsiRNA_20130808_LUc21_5.fastq.gz,
+sample_1,1,./tests/data/ERR3988069-yeast.fastq.gz,
