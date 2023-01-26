@@ -59,6 +59,7 @@ workflow PREPARE_CLIPSEQ {
         ch_fasta       = fasta
         ch_fasta_fai   = fasta_fai
         ch_chrom_sizes = chrom_sizes
+        ch_gtf         = [ [id:gtf.baseName], gtf ]
     } else {
         PREPARE_PRIMARY_GENOME (
             fasta,
