@@ -34,7 +34,7 @@ If you require all reference files (eg. genomic indexes, filtered and segmented 
 
 If you are providing all reference files then the following _additional_ files must be provided (note these are all produced by the `prepare_clipseq` subworkflow:
 
-If you are providing all reference files then the following *additional* files must be provided (note these are all produced by the `prepare_clipseq` subworkflow automatically if they are not provided to the pipeline):
+If you are providing all reference files then the following _additional_ files must be provided (note these are all produced by the `prepare_clipseq` subworkflow automatically if they are not provided to the pipeline):
 
 - `fasta_fai`
 - `chrom_sizes`
