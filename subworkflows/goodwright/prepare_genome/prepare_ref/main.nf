@@ -35,11 +35,11 @@ workflow PREPARE_REF {
     */
     ch_gtf = Channel.empty()
     if (gtf.toString().endsWith(".gz")) {
-        ch_gtf      = GUNZIP_GTF ( [ [:], gtf ] ).gunzip
+        ch_gtf      = GUNZIP_GTF ( [ [id:gtf.baseName], gtf ] ).gunzip
         ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
     }
     else if (gtf) {
-        ch_gtf = Channel.from( [ [ [:], gtf ] ] )
+        ch_gtf = Channel.from( [  [id:gtf.baseName], gtf  ] )
     }
 
     /*

@@ -24,16 +24,17 @@ If you require all reference files (eg. genomic indexes, filtered and segmented 
 
 - `samplesheet` : csv file containing 4 columns: group,replicate,fastq_1,fastq_2. group is the sample name, replicate is currently unused by the pipeline so filling with '1' is acceptable, fastq_1 is your demultiplexed sample fastq, paired end is currently not supported so please do not add a fastq 2 .eg './tests/data/samplesheets/small-single-sample-se.csv'
 
-| group      | replicate |  fastq_1                                                                | fastq_2 |
-| ---------- | --------- | ----------------------------------------------------------------------  | ------- |
-| TDP43_1    | 1         | s3://nf-core-awsmegatests/clipseq/input_data/fastq/ERR1530360.fastq.gz  |         |
+| group   | replicate | fastq_1                                                                | fastq_2 |
+| ------- | --------- | ---------------------------------------------------------------------- | ------- |
+| TDP43_1 | 1         | s3://nf-core-awsmegatests/clipseq/input_data/fastq/ERR1530360.fastq.gz |         |
 
+- `fasta` : genome fasta file .eg './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+- `smrna_fasta` : fasta file to be mapped to before the genome file, typically containing rRNA and tRNA sequences .eg'./tests/data/genome/homosapiens_smallRNA.fa.gz'
+- `gtf` : annotation file for the genome fasta .eg'./tests/data/genome/gencode.v35.chr21.gtf.gz'
 
-- `fasta`       : genome fasta file .eg './tests/data/genome/homosapien-hg37-chr21.fa.gz'
-- `smrna_fasta` : fasta file to be mapped to before the genome file, typically containing rRNA and tRNA sequences  .eg'./tests/data/genome/homosapiens_smallRNA.fa.gz'
-- `gtf`         : annotation file for the genome fasta .eg'./tests/data/genome/gencode.v35.chr21.gtf.gz'
+If you are providing all reference files then the following _additional_ files must be provided (note these are all produced by the `prepare_clipseq` subworkflow:
 
-If you are providing all reference files then the following *additional* files must be provided (note these are all produced by the `prepare_clipseq` subworkflow automatically if they are not provided to the pipeline):
+If you are providing all reference files then the following _additional_ files must be provided (note these are all produced by the `prepare_clipseq` subworkflow automatically if they are not provided to the pipeline):
 
 - `fasta_fai`
 - `chrom_sizes`
@@ -55,6 +56,7 @@ If you are providing all reference files then the following *additional* files m
 ## Output
 
 When the full pipeline is run, output is organised into 6 folders:
+
 - `00_genome` contains all reference files produced when the prepare_clipseq subworkflow is run.
 - `01_prealign` contains pre-trimmed FastQC reports, trimmed read files and post-trimming FastQC reports.
 - `02_alignment` contains two folders, one for the pre-mapping "smrna" and one for the genomic mapping "target", each contain alignment files and the "target" folder also contains useful samtools assessment of the bam file.
@@ -64,8 +66,10 @@ When the full pipeline is run, output is organised into 6 folders:
 - `06_reports` contains various CLIP-specific QC metrics in tabular format in the clipqc folder. These are plotted, alongside other QC metrics in the html provided in the multiqc folder.
 
 ## Authors and contact
-This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 nf-core/clipseq pipeline in collaboration with the original authors and Prof. Jernej Ule. 
+
+This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 nf-core/clipseq pipeline in collaboration with the original authors and Prof. Jernej Ule.
 To raise any issues or comments with the pipeline you can (in order of preference):
+
 - Raise an issue in this repository
-- Write to us in our [Slack](https://join.slack.com/t/imapsgroup/shared_invite/zt-r24y3591-Xbhnym2t38u_urU~I0K0lQ) 
+- Write to us in our [Slack](https://join.slack.com/t/imapsgroup/shared_invite/zt-r24y3591-Xbhnym2t38u_urU~I0K0lQ)
 - Email charlotte.capitanchik@goodwright.com

@@ -59,11 +59,42 @@ def main(process_name, gtf, output):
         gene_transcripts.sort(key=lambda t: [-t["cds_length"], -t["exon_length"]])
         transcript_ids.append(gene_transcripts[0]["id"] + "\n")
 
+    # create a transcript.fai file for use in getting crosslinks
+    fai_output = []
+    for transcript in transcripts:
+        output_line = ""
+        if transcript["id"] + "\n" in transcript_ids:
+            output_line = transcript["id"] + "\t"
+            output_line = output_line + str(max(transcript["exon_length"], transcript["cds_length"])) + "\n"
+            fai_output.append(output_line)
+
+    # create a transcript.gtf file for use in getting crosslinks
+    gtf_output = []
+    for transcript in transcripts:
+        output_line = ""
+        if transcript["id"] + "\n" in transcript_ids:
+            output_line = transcript["id"] + "\t"
+            output_line += "src\tgene\t2\t"
+            output_line += str(max(transcript["exon_length"], transcript["cds_length"])-1) + "\t"
+            output_line += '.\t+\t.\t' 
+            output_line = output_line + '"id:' + transcript["id"] +'"\n'
+            gtf_output.append(output_line)
+    gtf_output[-1] = gtf_output[-1].strip('\n')
+
     # Save to file
     print("Saving longest transcript per gene...")
-    with open(output, "w") as f:
+    with open(output + ".txt", "w") as f:
         f.writelines(transcript_ids)
 
+    # Save to file
+    print("Saving longest transcript fai index...")
+    with open(output + ".fai", "w") as f:
+        f.writelines(fai_output)
+
+    # Save to file
+    print("Saving longest transcript gtf...")
+    with open(output + ".gtf", "w") as f:
+        f.writelines(gtf_output)
 
 if __name__ == "__main__":
 
