@@ -97,8 +97,8 @@ This detailed description will present each <u>subworkflow</u>/_module_ run in t
    ii. _STAR_ALIGN_ : Aligns unmapped reads from smRNA Bowtie mapping to the genome, also referred to as target. [Manual.](<[https://bowtie-bio.sourceforge.net/manual.shtml](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf)>)
 
    **🟣Parameters - `--readFilesCommand zcat 
-         --outSAMtype BAM SortedByCoordinate
-         --quantMode TranscriptomeSAM ${params.star_params}`** Default params.star_params = "
+      --outSAMtype BAM SortedByCoordinate
+      --quantMode TranscriptomeSAM ${params.star_params}`** Default params.star_params = "
    --outFilterMultimapNmax 1
    --outFilterMultimapScoreRange 1
    --outSAMattributes All
