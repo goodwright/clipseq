@@ -16,6 +16,19 @@ For a detailed review of the considerations behind each analysis step you can co
 
 This pipeline requires demultiplexed fastq sample input and an associated metadata spreadsheet. We recommend using [our demultiplex pipeline](https://github.com/goodwright/flow-nf/tree/master/subworkflows/goodwright/clip_demultiplex) to produce these individual samples fastq.
 
+## Curated Outputs
+
+These are what we would consider to be the most commonly used outputs of the pipeline, so on the Flow platform we present these as "curated ouputs". All of the outputs are listed in the "Pipeline in Detail" section below.
+
+**Crosslink files**
+-
+
+**Peak files**
+-
+
+**Summary/analysis of crosslinks and peaks**
+-
+
 ## Commonly used parameters
 
 **Moving UMI from fastq reads to read header**
@@ -48,6 +61,10 @@ When you are working with data you're already familiar with you might have speci
 
 This detailed description will present each <u>subworkflow</u>/_module_ run in the pipeline and give detailed information of inputs and outputs with filenames, and default parameters.
 
+0. <u>PREPARE_CLIPSEQ</u> 
+
+    Prepares all of the alignment indexes and annotation files required by the pipeline, this only needs to be run once per genome, after this the output files can be provided to the pipeline to avoid this subworkflow running.
+
 1. <u>PARSE_FASTQ_INPUT</u>
 
    Checks samplesheet input, then formats it and fastq files into an appropriate channel format for Nextflow.
@@ -62,23 +79,76 @@ This detailed description will present each <u>subworkflow</u>/_module_ run in t
 
 3. <u>FASTQC_TRIMGALORE</u>
 
-   i. _FASTQC_: Checks sequencing quality and adapter content of raw reads. Input - .Output - .
+   i. _FASTQC_: Checks sequencing quality and adapter content of raw reads. 
+      
+      **⚪Input - sample `fastq`. 🟢Output - sample_fastqc.html `fastqc_html`, sample_fastqc.zip `fastqc_zip`**.
 
-   ii. _TRIMGALORE_
+   ii. _TRIMGALORE_: Trims for 3'adapters, read quality at 3' end and removes reads that become too short after this. [Manual.](https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md)
+
+      **🟣Parameters - `--fastqc --length ${params.trim_length} -q20`** Default params.trim_length = 10. 
+
+      **⚪Input - sample `fastq`. 🟢Output - sample_trimmed.fq.gz `fastq`, sample_trimming_report.txt `trim_log`, sample_trimmed_fastqc.html `fastqc_trim_html`, sample_trimmed_fastqc.zip `fastqc_trim_zip`**.
 
 4. <u>RNA_ALIGN</u>
-5. <u>FILTER_TRANSCRIPTS</u>
-6. <u>BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT</u>
-7. <u>GENOME_DEDUP</u>
-8. <u>TRANSCRIPT_DEDUP</u>
-9. <u>CALC_GENOME_CROSSLINKS</u>
-10. <u>CALC_TRANSCRIPT_CROSSLINKS</u>
-11. _CLIPPY_
-12. <u>PARACLU_ANALYSE</u>
-13. <u>ICOUNT_ANALYSE</u>
-14. _PEKA_
-15. <u>CLIPSEQ_CLIPQC</u>
-16. _MULTIQC_
+    
+    i. _BOWTIE_ALIGN_ : Aligns reads to rRNA, tRNA sequences referred to as small RNA, smRNA. [Manual.](https://bowtie-bio.sourceforge.net/manual.shtml)
+    
+    **🟣Parameters - `${params.bowtie_params}`** Default params.bowtie_params = "-v 2 -m 100 --norc --best --strata"
+    
+    **⚪Input - sample_trimmed.fq.gz `reads`, bowtie (folder with bowtie index) `index`. 🟢Output - sample.bam `bam`, sample.out `log`, sample.unmapped.fastq.gz `fastq`.**
+    
+    ii. _STAR_ALIGN_ : Aligns unmapped reads from smRNA Bowtie mapping to the genome, also referred to as target. [Manual.]([https://bowtie-bio.sourceforge.net/manual.shtml](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf))
+    
+    **🟣Parameters - `--readFilesCommand zcat 
+                --outSAMtype BAM SortedByCoordinate
+                --quantMode TranscriptomeSAM ${params.star_params}`** Default params.star_params = "
+                --outFilterMultimapNmax 1
+                --outFilterMultimapScoreRange 1
+                --outSAMattributes All
+                --alignSJoverhangMin 8
+                --alignSJDBoverhangMin 1
+                --outFilterType BySJout
+                --alignIntronMin 20
+                --alignIntronMax 1000000
+                --outFilterScoreMin 10
+                --alignEndsType Extend5pOfRead1
+                --twopassMode Basic"
+    
+    **⚪Input - sample.unmapped.fastq.gz `reads`, star (folder with star index) `index`. 🟢Output - sample.Aligned.sortedByCoord.out.bam `bam_sorted`, sample.Aligned.toTranscriptome.out.bam `bam_transcript`, sample.unmapped_1.fastq.gz `fastq`, sample.Log.final.out `log_final`, sample.Log.out `log_out`, sample.Log.progress.out `log_progress`**
+    
+    i. _SAMTOOLS_INDEX_GENOME_ : Indexes genome BAM file [Manual.](http://www.htslib.org/doc/samtools-index.html)
+    
+    **⚪Input - sample.Aligned.sortedByCoord.out.bam `bam`, 🟢Output - sample.Aligned.sortedByCoord.out.bam.bai `bai`.**
+    
+    ii. _SAMTOOLS_SORT_TRANSCRIPT_ : Sorts transcript bam file. [Manual.](http://www.htslib.org/doc/samtools-sort.html)
+    
+    **⚪Input - sample.Aligned.toTranscriptome.out.bam `bam`, 🟢Output - sample.Aligned.toTranscriptome.out.bam.bai `bai`.**
+    
+    iii. _SAMTOOLS_INDEX_TRANSCRIPT_ : Indexes transcript bam file. [Manual.](http://www.htslib.org/doc/samtools-index.html)
+
+    **⚪Input - sample.Aligned.sortedByCoord.out.bam `bam`, 🟢Output - sample.Aligned.sortedByCoord.out.bam.bai `bai`.**
+    
+  
+6. <u>FILTER_TRANSCRIPTS</u>
+7. <u>BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT</u>
+8. <u>GENOME_DEDUP</u>
+9. <u>TRANSCRIPT_DEDUP</u>
+10. <u>CALC_GENOME_CROSSLINKS</u>
+11. <u>CALC_TRANSCRIPT_CROSSLINKS</u>
+12. _CLIPPY_
+13. <u>PARACLU_ANALYSE</u>
+14. <u>ICOUNT_ANALYSE</u>
+15. _PEKA_
+16. <u>CLIPSEQ_CLIPQC</u>
+17. _MULTIQC_
+
+## Common Issues
+**Analysis of publicly available data**
+
+Analysis of publicly available data, especially older data can present issues as sometimes the barcode structure or structure of the uploaded fastq is not obvious. Things to check are: 
+- Look at the first few reads in the fastq - is the random barcode (UMI) in the header? This tells us that the 5' barcode and 3' adapter have been removed from the read already, make sure to check what format the random barcode (UMI) is provided in, eg. "rbc:" and change the `umi_separator` parameter if you need to.
+- If the random barcode is not in the header then you can use the `run_move_umi_to_header = true` parameter. The structure of the barcodes should be provided in the manuscript, but this is not always the case.
+- Be careful for data in SRA, where the read header is entirely removed - this might have removed the information of random barcode without the manuscript authors noticing.
 
 ## FAQ
 
