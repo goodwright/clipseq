@@ -33,7 +33,7 @@ If you require all reference files (eg. genomic indexes, filtered and segmented 
 - `smrna_fasta` : fasta file to be mapped to before the genome file, typically containing rRNA and tRNA sequences  .eg'./tests/data/genome/homosapiens_smallRNA.fa.gz'
 - `gtf`         : annotation file for the genome fasta .eg'./tests/data/genome/gencode.v35.chr21.gtf.gz'
 
-If you are providing all reference files then the following *additional* files must be provided (note these are all produced by the `prepare_clipseq` subworkflow:
+If you are providing all reference files then the following *additional* files must be provided (note these are all produced by the `prepare_clipseq` subworkflow automatically if they are not provided to the pipeline):
 
 - `fasta_fai`
 - `chrom_sizes`
