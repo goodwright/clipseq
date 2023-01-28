@@ -45,7 +45,8 @@ workflow PREPARE_CLIPSEQ {
     regions_filt_gtf                 // channel: [ [:], gtf ]                          
     regions_resolved_gtf             // channel: [ [:], gtf ]                              
     regions_resolved_gtf_genic       // channel: [ [:], gtf ]                                    
-    longest_transcript_fai           // channel: [ [:], fasta.fai ]                                
+    longest_transcript_fai           // channel: [ [:], fasta.fai ]
+    longest_transcript_gtf                                
 
     main:
     ch_versions = Channel.empty()
@@ -108,15 +109,17 @@ workflow PREPARE_CLIPSEQ {
     /*
     * MODULE: Find the longest transcript from the primary genome
     */
-    if (params.longest_transcript && params.longest_transcript_fai){
+    if (params.longest_transcript && params.longest_transcript_fai && params.longest_transcript_gtf){
         ch_longest_transcript     = longest_transcript
         ch_longest_transcript_fai = longest_transcript_fai
+        ch_longest_transcript_gtf = longest_transcript_gtf
     } else {
         CLIPSEQ_FIND_LONGEST_TRANSCRIPT (
             ch_gtf_with_meta
         )
         ch_longest_transcript     = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript
         ch_longest_transcript_fai = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_fai
+        ch_longest_transcript_gtf = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_gtf
         ch_versions               = ch_versions.mix(CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.versions)
     }
 
@@ -269,6 +272,7 @@ workflow PREPARE_CLIPSEQ {
     smrna_chrom_sizes          = ch_smrna_chrom_sizes      // channel: [ val(meta), [ txt ] ]
     longest_transcript         = ch_longest_transcript     // channel: [ val(meta), [ txt ] ]
     longest_transcript_fai     = ch_longest_transcript_fai  // channel: [ val(meta), [ fai ] ]
+    longest_transcript_gtf     = ch_longest_transcript_gtf  // channel: [ val(meta), [ fai ] ]
     seg_gtf                    = ch_seg_gtf                // channel: [ val(meta), [ gtf ] ]
     seg_filt_gtf               = ch_seg_filt_gtf           // channel: [ val(meta), [ gtf ] ]
     seg_resolved_gtf           = ch_seg_resolved_gtf       // channel: [ val(meta), [ gtf ] ]

@@ -12,7 +12,7 @@ process PARACLU_PARACLU {
     val min_value
 
     output:
-    tuple val(meta), path("*.sigxls.tsv"), emit: tsv
+    tuple val(meta), path("*.allClusters.tsv"), emit: tsv
     path "versions.yml"                  , emit: versions
 
     when:
@@ -23,7 +23,7 @@ process PARACLU_PARACLU {
     def prefix  = task.ext.prefix ?: "${meta.id}"
     def VERSION = '10' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
-    paraclu $args $bed > ${prefix}.sigxls.tsv
+    paraclu $args $bed > ${prefix}.allClusters.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
