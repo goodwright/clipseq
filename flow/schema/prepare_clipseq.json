@@ -1,0 +1,131 @@
+{
+    "inputs": {
+        "sample_options": {
+            "name": "Sample options",
+            "description": "Parameters relating to the sample being analysed.",
+            "properties": {
+                "input": {
+                    "name": "Sample",
+                    "type": "sample",
+                    "pattern": "csv|xlsx",
+                    "required": true,
+                    "description": "The sample to process."
+                }
+            }
+        },
+        "genome_options": {
+            "name": "Genome options",
+            "description": "The genome being aligned to.",
+            "takes_genome": true,
+            "properties": {
+                "fasta": {
+                    "name": "FASTA",
+                    "type": "file",
+                    "pattern": "fasta|fa$",
+                    "required": true,
+                    "genome_file": "fasta",
+                    "description": "A raw genome FASTA file."
+                },
+                "gtf": {
+                    "name": "GTF",
+                    "type": "file",
+                    "pattern": "gtf",
+                    "required": true,
+                    "genome_file": "gtf",
+                    "description": "An annotation for the genome."
+                },
+                "gene_bed": {
+                    "name": "BED",
+                    "type": "file",
+                    "pattern": "bed",
+                    "required": false,
+                    "genome_output": {
+                        "process": "GTF2BED",
+                        "filetype": "bed"
+                    },
+                    "description": "BED file containing gene intervals. This will be created from the GTF file if not specified."
+                },
+                "transcript_fasta": {
+                    "name": "Transcript FASTA",
+                    "type": "file",
+                    "pattern": "fasta|fa$",
+                    "required": false,
+                    "genome_output": {
+                        "process": "MAKE_TRANSCRIPTS_FASTA",
+                        "filetype": "fa"
+                    },
+                    "description": "FASTA transcriptome file - generated from the main FASTA if not provided."
+                },
+                "star_index": {
+                    "name": "STAR Index",
+                    "type": "file",
+                    "pattern": "",
+                    "required": false,
+                    "genome_output": {
+                        "process": "STAR_GENOMEGENERATE",
+                        "filetype": ""
+                    },
+                    "description": "A genome index built with STAR."
+                },
+                "rsem_index": {
+                    "name": "RSEM Index",
+                    "type": "file",
+                    "pattern": "",
+                    "required": false,
+                    "genome_output": {
+                        "process": "RSEM_PREPAREREFERENCE_GENOME",
+                        "filetype": ""
+                    },
+                    "description": "A genome index built with RSEM."
+                },
+                "splicesites": {
+                    "name": "Splicesites",
+                    "type": "file",
+                    "pattern": "txt",
+                    "required": false,
+                    "genome_output": {
+                        "process": "HISAT2_EXTRACTSPLICESITES",
+                        "filetype": "txt"
+                    },
+                    "description": "Splicesites needed for HISAT2 processing."
+                },
+                "hisat2_index": {
+                    "name": "HISAT2 Index",
+                    "type": "file",
+                    "pattern": "",
+                    "required": false,
+                    "genome_output": {
+                        "process": "HISAT2_BUILD",
+                        "filetype": ""
+                    },
+                    "description": "A genome index built with HISAT2."
+                },
+                "salmon_index": {
+                    "name": "Salmon Index",
+                    "type": "file",
+                    "pattern": "",
+                    "required": false,
+                    "genome_output": {
+                        "process": "SALMON_INDEX",
+                        "filetype": ""
+                    },
+                    "description": "A genome index built with Salmon."
+                }
+            }
+        }
+    },
+    "outputs": [
+        {
+            "name": "STAR Alignments",
+            "description": "Some alignments created by STAR. These are important for reason X.",
+            "filetype": "bam",
+            "process": "STAR_ALIGN_IGENOMES"
+        },
+        {
+            "name": "RDS Files",
+            "description": "An important file output from a Salmon process.",
+            "filetype": "rds",
+            "process": "SALMON_SE_GENE"
+        }
+    ]
+}
