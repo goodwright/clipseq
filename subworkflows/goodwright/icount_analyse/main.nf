@@ -15,7 +15,7 @@ include { GUNZIP as GUNZIP_PEAKS  } from '../../../modules/nf-core/gunzip/main.n
 workflow ICOUNT_ANALYSE {
     take:
     bed             // channel: [ val(meta), [ bed ] ]
-    gtf_seg         // channel: [ [ gtf ] ]
+    gtf_seg         // channel: [ val(meta), [ gtf ] ]
     gtf_resolved    // channel: [ [ gtf.gz ] ]
     run_peakcalling // val: boolean
 

@@ -11,6 +11,7 @@ process CLIPSEQ_FIND_LONGEST_TRANSCRIPT {
     output:
     tuple val(meta), path("*.txt")                 ,emit: longest_transcript
     tuple val(meta), path("*.fai")                 ,emit: longest_transcript_fai
+    tuple val(meta), path("*.gtf")                 ,emit: longest_transcript_gtf
     path  "versions.yml"                           ,emit: versions
 
     when:

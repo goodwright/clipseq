@@ -9,9 +9,9 @@ nextflow_pipeline {
                 outdir = "$outputDir"
                 only_genome = true
                 samplesheet = null
-                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                fasta       = './tests/data/genome/yeast_MitoV.fa.gz'
                 smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
-                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+                gtf         = './tests/data/genome/yeast_MitoV.gtf.gz'
             }
         }
 
@@ -29,7 +29,7 @@ nextflow_pipeline {
                 samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
                 fasta       = null
                 smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
-                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+                gtf         = './tests/data/genome/yeast_MitoV.gtf.gz'
             }
         }
 
@@ -45,9 +45,9 @@ nextflow_pipeline {
                 outdir = "$outputDir"
                 only_genome = true
                 samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
-                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                fasta       = './tests/data/genome/yeast_MitoV.fa.gz'
                 smrna_fasta = null
-                gtf         = './tests/data/genome/gencode.v35.chr21.gtf.gz'
+                gtf         = './tests/data/genome/yeast_MitoV.gtf.gz'
             }
         }
 
@@ -63,7 +63,7 @@ nextflow_pipeline {
                 outdir = "$outputDir"
                 only_genome = true
                 samplesheet = './tests/data/samplesheets/small-single-sample-se.csv'
-                fasta       = './tests/data/genome/homosapien-hg37-chr21.fa.gz'
+                fasta       = './tests/data/genome/yeast_MitoV.fa.gz'
                 smrna_fasta = './tests/data/genome/homosapiens_smallRNA.fa.gz'
                 gtf         = null
             }

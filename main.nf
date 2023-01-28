@@ -48,12 +48,30 @@ for (param in check_param_list) {
     }
 }
 
+
 // Check non-manditory input parameters to see if the files exist if they have been specified
 check_param_list = [
     params.target_genome_index,
-    params.smrna_genome_index
+    params.smrna_genome_index,
+    params.fasta_fai,
+    params.filtered_gtf,
+    params.chrom_sizes,
+    params.smrna_fasta_fai,
+    params.smrna_chrom_sizes,
+    params.longest_transcript,
+    params.longest_transcript_fai,
+    params.longest_transcript_gtf,
+    params.seg_gtf,
+    params.seg_filt_gtf,
+    params.seg_resolved_gtf,
+    params.seg_resolved_gtf_genic,
+    params.regions_gtf,
+    params.regions_filt_gtf,
+    params.regions_resolved_gtf,
+    params.regions_resolved_gtf_genic
 ]
 for (param in check_param_list) { if (param) { file(param, checkIfExists: true) } }
+
 
 // Stage dummy file to be used as an optional input where required
 ch_dummy_file = file("$projectDir/assets/dummy_file.txt", checkIfExists: true)
@@ -93,7 +111,8 @@ include { MULTIQC } from './modules/local/multiqc'
 //
 
 include { SAMTOOLS_SIMPLE_VIEW as FILTER_TRANSCRIPTS } from './modules/goodwright/samtools/simple_view/main'
-include { CLIPPY                                     } from './modules/goodwright/clippy/main'
+include { CLIPPY as CLIPPY_GENOME                    } from './modules/goodwright/clippy/main'
+include { CLIPPY as CLIPPY_TRANSCRIPT                } from './modules/goodwright/clippy/main'
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
@@ -106,11 +125,12 @@ include { PREPARE_CLIPSEQ                                       } from './subwor
 include { PARSE_FASTQ_INPUT                                     } from './subworkflows/goodwright/parse_fastq_input/main'
 include { FASTQC_TRIMGALORE                                     } from './subworkflows/goodwright/fastqc_trimgalore/main'
 include { RNA_ALIGN                                             } from './subworkflows/goodwright/rna_align/main'
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as GENOME_DEDUP     } from './subworkflows/goodwright/bam_dedup_stats_samtools_umitools/main'
-include { BAM_DEDUP_STATS_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP } from './subworkflows/goodwright/bam_dedup_stats_samtools_umitools/main'
+include { BAM_DEDUP_SAMTOOLS_UMITOOLS as GENOME_DEDUP           } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
+include { BAM_DEDUP_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP       } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './subworkflows/goodwright/clip_calc_crosslinks/main'
-include { PARACLU_ANALYSE                                       } from './subworkflows/goodwright/paraclu_analyse/main'
+include { PARACLU_ANALYSE as PARACLU_ANALYSE_GENOME             } from './subworkflows/goodwright/paraclu_analyse/main'
+include { PARACLU_ANALYSE as PARACLU_ANALYSE_TRANSCRIPT         } from './subworkflows/goodwright/paraclu_analyse/main'
 include { ICOUNT_ANALYSE                                        } from './subworkflows/goodwright/icount_analyse/main'
 
 /*
@@ -123,13 +143,15 @@ include { ICOUNT_ANALYSE                                        } from './subwor
 // MODULEs
 //
 
-include { UMITOOLS_EXTRACT                           } from './modules/nf-core/umitools/extract/main'
+include { UMITOOLS_EXTRACT                                 } from './modules/nf-core/umitools/extract/main'
+include { SAMTOOLS_SORT as SAMTOOLS_SORT_FILT_TRANSCRIPT   } from './modules/nf-core/samtools/sort/main'
+include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_FILT_TRANSCRIPT } from './modules/nf-core/samtools/index/main'
 
 //
 // SUBWORKFLOWS
 //
 
-include { BAM_SORT_STATS_SAMTOOLS as BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT } from './subworkflows/nf-core/bam_sort_stats_samtools/main'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,8 +162,6 @@ include { BAM_SORT_STATS_SAMTOOLS as BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT } from '
 workflow CLIPSEQ {
     // Init
     ch_versions            = Channel.empty()
-    ch_target_genome_index = []
-    ch_smrna_genome_index  = []
 
     // Prepare manditory params into channels
     ch_samplesheet = file(params.samplesheet, checkIfExists: true)
@@ -149,28 +169,49 @@ workflow CLIPSEQ {
     ch_smrna_fasta = file(params.smrna_fasta, checkIfExists: true)
     ch_gtf         = file(params.gtf, checkIfExists: true)
 
-    // Prepare non-manditory params into channels
-    if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
-    if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
-
-    // Prepare genome and build indexes if required
-    ch_fasta_fai                  = Channel.empty()
-    ch_filtered_gtf               = Channel.empty()
-    ch_chrom_sizes                = Channel.empty()
-    ch_smrna_fasta_fai            = Channel.empty()
-    ch_smrna_chrom_sizes          = Channel.empty()
-    ch_longest_transcript         = Channel.empty()
-    ch_seg_gtf                    = Channel.empty()
-    ch_seg_filt_gtf               = Channel.empty()
-    ch_seg_resolved_gtf           = Channel.empty()
-    ch_seg_resolved_gtf_genic     = Channel.empty()
-    ch_regions_gtf                = Channel.empty()
-    ch_regions_filt_gtf           = Channel.empty()
-    ch_regions_resolved_gtf       = Channel.empty()
-    ch_regions_resolved_gtf_genic = Channel.empty()
-    ch_longest_transcript_fai     = Channel.empty()
 
     if (params.run_genome_prep) {
+        // Prepare non-manditory params into channels
+        ch_target_genome_index        = []
+        ch_smrna_genome_index         = []
+        ch_fasta_fai                  = []
+        ch_filtered_gtf               = []
+        ch_chrom_sizes                = []
+        ch_smrna_fasta_fai            = []
+        ch_smrna_chrom_sizes          = []
+        ch_longest_transcript         = []
+        ch_seg_gtf                    = []
+        ch_seg_filt_gtf               = []
+        ch_seg_resolved_gtf           = []
+        ch_seg_resolved_gtf_genic     = []
+        ch_regions_gtf                = []
+        ch_regions_filt_gtf           = []
+        ch_regions_resolved_gtf       = []
+        ch_regions_resolved_gtf_genic = []
+        ch_longest_transcript_fai     = []
+        ch_longest_transcript_gtf     = []
+
+        if(params.target_genome_index) { ch_target_genome_index = file(params.target_genome_index, checkIfExists: true) }
+        if(params.smrna_genome_index)  { ch_smrna_genome_index = file(params.smrna_genome_index, checkIfExists: true) }
+
+
+
+        if(params.fasta_fai) { ch_fasta_fai = Channel.of([[:],file(params.fasta_fai, checkIfExists: true)]) }
+        if(params.filtered_gtf) { ch_filtered_gtf = Channel.of([[:],file(params.filtered_gtf, checkIfExists: true)]) }
+        if(params.chrom_sizes) { ch_chrom_sizes = Channel.of([[:],file(params.chrom_sizes, checkIfExists: true)]) }
+        if(params.smrna_fasta_fai) { ch_smrna_fasta_fai = Channel.of([[:],file(params.smrna_fasta_fai, checkIfExists: true)]) }
+        if(params.smrna_chrom_sizes) { ch_smrna_chrom_sizes = Channel.of([[:],file(params.smrna_chrom_sizes, checkIfExists: true)]) }
+        if(params.longest_transcript) { ch_longest_transcript = Channel.of([[:],file(params.longest_transcript, checkIfExists: true)]) }
+        if(params.longest_transcript_fai) { ch_longest_transcript_fai = Channel.of([[:],file(params.longest_transcript_fai, checkIfExists: true)]) }
+        if(params.longest_transcript_gtf) { ch_longest_transcript_gtf = Channel.of([[:],file(params.longest_transcript_gtf, checkIfExists: true)]) }
+        if(params.seg_gtf) { ch_seg_gtf = Channel.of([[:],file(params.seg_gtf, checkIfExists: true)]) }
+        if(params.seg_filt_gtf) { ch_seg_filt_gtf = Channel.of([[:],file(params.seg_filt_gtf, checkIfExists: true)]) }
+        if(params.seg_resolved_gtf) { ch_seg_resolved_gtf = file(params.seg_resolved_gtf, checkIfExists: true) }
+        if(params.seg_resolved_gtf_genic) { ch_seg_resolved_gtf_genic= Channel.of([[:],file(params.seg_resolved_gtf_genic, checkIfExists: true)]) }
+        if(params.regions_gtf) { ch_regions_gtf = Channel.of([[:],file(params.regions_gtf, checkIfExists: true)]) }
+        if(params.regions_filt_gtf) { ch_regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }
+        if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = file(params.regions_resolved_gtf, checkIfExists: true) }
+        if(params.regions_resolved_gtf_genic) { ch_regions_resolved_gtf_genic = Channel.of([[:],file(params.regions_resolved_gtf_genic, checkIfExists: true)]) }
         /*
         * SUBWORKFLOW: Prepare clipseq genome files
         */
@@ -179,7 +220,23 @@ workflow CLIPSEQ {
             ch_smrna_fasta,
             ch_gtf,
             ch_target_genome_index,
-            ch_smrna_genome_index
+            ch_smrna_genome_index,
+            ch_fasta_fai,
+            ch_filtered_gtf,
+            ch_chrom_sizes,
+            ch_smrna_fasta_fai,
+            ch_smrna_chrom_sizes,
+            ch_longest_transcript,
+            ch_seg_gtf,
+            ch_seg_filt_gtf,
+            ch_seg_resolved_gtf,
+            ch_seg_resolved_gtf_genic,
+            ch_regions_gtf,
+            ch_regions_filt_gtf,
+            ch_regions_resolved_gtf,
+            ch_regions_resolved_gtf_genic,
+            ch_longest_transcript_fai,
+            ch_longest_transcript_gtf
         )
         ch_versions                   = ch_versions.mix(PREPARE_CLIPSEQ.out.versions)
         ch_fasta                      = PREPARE_CLIPSEQ.out.fasta
@@ -192,6 +249,7 @@ workflow CLIPSEQ {
         ch_smrna_chrom_sizes          = PREPARE_CLIPSEQ.out.smrna_chrom_sizes
         ch_longest_transcript         = PREPARE_CLIPSEQ.out.longest_transcript
         ch_longest_transcript_fai     = PREPARE_CLIPSEQ.out.longest_transcript_fai
+        ch_longest_transcript_gtf     = PREPARE_CLIPSEQ.out.longest_transcript_gtf
         ch_seg_gtf                    = PREPARE_CLIPSEQ.out.seg_gtf
         ch_seg_filt_gtf               = PREPARE_CLIPSEQ.out.seg_filt_gtf
         ch_seg_resolved_gtf           = PREPARE_CLIPSEQ.out.seg_resolved_gtf
@@ -243,20 +301,15 @@ workflow CLIPSEQ {
 
     ch_genome_bam                   = Channel.empty()
     ch_genome_bai                   = Channel.empty()
-    ch_genome_samtools_stats        = Channel.empty()
-    ch_genome_samtools_flagstat     = Channel.empty()
-    ch_genome_samtools_idxstats     = Channel.empty()
     ch_transcript_bam               = Channel.empty()
     ch_transcript_bai               = Channel.empty()
-    ch_transcript_samtools_stats    = Channel.empty()
-    ch_transcript_samtools_flagstat = Channel.empty()
-    ch_transcript_samtools_idxstats = Channel.empty()
     ch_bt_log                       = Channel.empty()
     ch_star_log                     = Channel.empty()
     if(params.run_alignment) {
         /*
-        * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index/stats the output
+        * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index the output
         */
+
         RNA_ALIGN (
             ch_fastq,
             ch_smrna_genome_index,
@@ -267,14 +320,8 @@ workflow CLIPSEQ {
         ch_versions                     = ch_versions.mix(RNA_ALIGN.out.versions)
         ch_genome_bam                   = RNA_ALIGN.out.genome_bam
         ch_genome_bai                   = RNA_ALIGN.out.genome_bai
-        ch_genome_samtools_stats        = RNA_ALIGN.out.genome_stats
-        ch_genome_samtools_flagstat     = RNA_ALIGN.out.genome_flagstat
-        ch_genome_samtools_idxstats     = RNA_ALIGN.out.genome_idxstats
         ch_transcript_bam               = RNA_ALIGN.out.transcript_bam
         ch_transcript_bai               = RNA_ALIGN.out.transcript_bai
-        ch_transcript_samtools_stats    = RNA_ALIGN.out.transcript_stats
-        ch_transcript_samtools_flagstat = RNA_ALIGN.out.transcript_flagstat
-        ch_transcript_samtools_idxstats = RNA_ALIGN.out.transcript_idxstats
         ch_bt_log                       = RNA_ALIGN.out.bt_log
         ch_star_log                     = RNA_ALIGN.out.star_log_final
     }
@@ -299,18 +346,15 @@ workflow CLIPSEQ {
         ch_versions = ch_versions.mix(FILTER_TRANSCRIPTS.out.versions)
 
         /*
-        * SUBWORKFLOW: Sort, index, stats on filtered bam
+        * SUBWORKFLOW: sort, index filtered bam
         */
-        BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT (
-            FILTER_TRANSCRIPTS.out.bam,
-            ch_fasta.map{ it[1] }
-        )
-        ch_versions                     = ch_versions.mix(BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.versions)
-        ch_transcript_bam               = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.bam
-        ch_transcript_bai               = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.bai
-        ch_transcript_samtools_stats    = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.stats
-        ch_transcript_samtools_flagstat = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.flagstat
-        ch_transcript_samtools_idxstats = BAM_SORT_STATS_SAMTOOLS_TRANSCRIPT.out.idxstats
+        SAMTOOLS_SORT_FILT_TRANSCRIPT ( FILTER_TRANSCRIPTS.out.bam )
+        SAMTOOLS_INDEX_FILT_TRANSCRIPT ( SAMTOOLS_SORT_FILT_TRANSCRIPT.out.bam )
+
+        ch_versions                     = ch_versions.mix(SAMTOOLS_SORT_FILT_TRANSCRIPT.out.versions)
+        ch_versions                     = ch_versions.mix(SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.versions)
+        ch_transcript_bam               = SAMTOOLS_SORT_FILT_TRANSCRIPT.out.bam
+        ch_transcript_bai               = SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.bai
     }
 
     ch_umi_log = Channel.empty()
@@ -337,9 +381,6 @@ workflow CLIPSEQ {
         ch_versions                 = ch_versions.mix(GENOME_DEDUP.out.versions)
         ch_genome_bam               = GENOME_DEDUP.out.bam
         ch_genome_bai               = GENOME_DEDUP.out.bai
-        ch_genome_samtools_stats    = GENOME_DEDUP.out.stats
-        ch_genome_samtools_flagstat = GENOME_DEDUP.out.flagstat
-        ch_genome_samtools_idxstats = GENOME_DEDUP.out.idxstats
         ch_umi_log                  = GENOME_DEDUP.out.umi_log
 
         /*
@@ -351,9 +392,6 @@ workflow CLIPSEQ {
         ch_versions                     = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
         ch_transcript_bam               = TRANSCRIPT_DEDUP.out.bam
         ch_transcript_bai               = TRANSCRIPT_DEDUP.out.bai
-        ch_transcript_samtools_stats    = TRANSCRIPT_DEDUP.out.stats
-        ch_transcript_samtools_flagstat = TRANSCRIPT_DEDUP.out.flagstat
-        ch_transcript_samtools_idxstats = TRANSCRIPT_DEDUP.out.idxstats
     }
 
     ch_genome_crosslink_bed           = Channel.empty()
@@ -392,21 +430,36 @@ workflow CLIPSEQ {
         /*
         * MODULE: Run clippy on genome-level crosslinks
         */
-        CLIPPY (
+        CLIPPY_GENOME (
             ch_genome_crosslink_bed,
             ch_filtered_gtf.collect{ it[1] },
             ch_fasta_fai.collect{ it[1] }
         )
-        ch_versions = ch_versions.mix(CLIPPY.out.versions)
+        ch_versions = ch_versions.mix(CLIPPY_GENOME.out.versions)
 
         /*
-        * SUBWORKFLOW: Run paraclu on genome-level crosslinks
+        * MODULE: Run clippy on transcript-level crosslinks
         */
-        PARACLU_ANALYSE (
+        CLIPPY_TRANSCRIPT (
+            ch_trans_crosslink_bed,
+            ch_longest_transcript_gtf.collect{ it[1] },
+            ch_longest_transcript_fai.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(CLIPPY_TRANSCRIPT.out.versions)
+
+        /*
+        * SUBWORKFLOW: Run paraclu on genome-level and transcript-level crosslinks
+        */
+        PARACLU_ANALYSE_GENOME (
             ch_genome_crosslink_bed,
             params.paraclu_min_value
         )
-        ch_versions = ch_versions.mix(PARACLU_ANALYSE.out.versions)
+        ch_versions = ch_versions.mix(PARACLU_ANALYSE_GENOME.out.versions)
+
+        PARACLU_ANALYSE_TRANSCRIPT (
+            ch_trans_crosslink_bed,
+            params.paraclu_min_value
+        )
 
         /*
         * SUBWORKFLOW: Run iCount on genome-level crosslinks
@@ -423,7 +476,7 @@ workflow CLIPSEQ {
         // * MODULE: Run peka on genome-level crosslinks
         // */
         PEKA (
-            CLIPPY.out.peaks,
+            CLIPPY_GENOME.out.peaks,
             ch_genome_crosslink_bed,
             ch_fasta.collect{ it[1] },
             ch_fasta_fai.collect{ it[1] },
@@ -449,8 +502,8 @@ workflow CLIPSEQ {
             ch_umi_log.map{ it[1] },
             ch_genome_crosslink_bed.map{ it[1] },
             ICOUNT_ANALYSE.out.bed_peaks.map{ it[1] },
-            PARACLU_ANALYSE.out.peaks.map{ it[1] },
-            CLIPPY.out.peaks.map{ it[1] }
+            PARACLU_ANALYSE_GENOME.out.peaks.map{ it[1] },
+            CLIPPY_GENOME.out.peaks.map{ it[1] }
         )
 
         /*
