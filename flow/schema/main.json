@@ -219,7 +219,7 @@
                     "description": "Filtered GTF regions for use in PEKA using iCount segment command."
                 },
                 "regions_resolved_gtf": {
-                    "name": "Segmented resolved filtered GTF",
+                    "name": "Filtered resolved regions GTF",
                     "type": "file",
                     "pattern": "gtf$",
                     "required": false,
@@ -230,7 +230,7 @@
                     "description": "Filtered GTF regions using iCount segment command and then resolve unannotated regions by overlapping transcript segments."
                 },
                 "regions_resolved_gtf_genic": {
-                    "name": "Segmented resolved genic filtered GTF",
+                    "name": "Filtered resolved regions genic GTF",
                     "type": "file",
                     "pattern": "gtf$",
                     "required": false,
