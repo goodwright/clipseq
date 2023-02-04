@@ -224,7 +224,7 @@
                     "pattern": "gtf$",
                     "required": false,
                     "genome_output": {
-                        "process": "RESOLVE_UNANNOTATED",
+                        "process": "RESOLVE_UNANNOTATED_REGIONS",
                         "filetype": "gtf"
                     },
                     "description": "Filtered GTF regions using iCount segment command and then resolve unannotated regions by overlapping transcript segments."
@@ -235,7 +235,7 @@
                     "pattern": "gtf$",
                     "required": false,
                     "genome_output": {
-                        "process": "RESOLVE_UNANNOTATED_GENIC_OTHER",
+                        "process": "RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS",
                         "filetype": "gtf"
                     },
                     "description": "Filtered GTF regions using iCount segment command and then resolve unannotated regions by annotating as 'genic other'."
