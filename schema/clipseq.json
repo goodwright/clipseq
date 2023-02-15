@@ -9,7 +9,13 @@
                     "type": "sample",
                     "pattern": "csv|xlsx",
                     "required": true,
-                    "description": "The sample to process."
+                    "description": "The sample to process.",
+                    "csv": {
+                        "group": "name",
+                        "replicate": "name",
+                        "fastq_1": "input.1",
+                        "fastq_2": "input.2"
+                    }
                 }
             }
         },
