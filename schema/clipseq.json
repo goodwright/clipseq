@@ -4,7 +4,7 @@
             "name": "Sample options",
             "description": "Parameters relating to the sample being analysed.",
             "properties": {
-                "input": {
+                "samplesheet": {
                     "name": "Sample",
                     "type": "sample",
                     "pattern": "csv|xlsx",
