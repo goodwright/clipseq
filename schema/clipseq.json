@@ -255,7 +255,8 @@
                 "remove_dedupe": {
                     "name": "Skip Dedupe",
                     "description": "Skip the UMI deduplication of BAMs step.",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "default": false
                 },
                 "change_umi_delim": {
                     "name": "UMI Delimiter",
