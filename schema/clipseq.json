@@ -12,7 +12,7 @@
                     "description": "The sample to process.",
                     "csv": {
                         "group": "name",
-                        "replicate": "name",
+                        "replicate": "\"1\"",
                         "fastq_1": "input.1",
                         "fastq_2": "input.2"
                     }
