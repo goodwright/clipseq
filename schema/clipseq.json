@@ -139,11 +139,11 @@
                 "longest_transcript_gtf": {
                     "name": "Longest transcript IDs",
                     "type": "file",
-                    "pattern": "sizes$",
+                    "pattern": "gtf$",
                     "required": false,
                     "genome_output": {
                         "process": "CLIPSEQ_FIND_LONGEST_TRANSCRIPT",
-                        "filetype": "txt"
+                        "filetype": "gtf"
                     },
                     "description": "A list of transcript IDs for the longest transcript for each gene in provided GTF annotation."
                 },
