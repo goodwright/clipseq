@@ -45,7 +45,7 @@
                     "type": "file",
                     "pattern": "fasta|fa$",
                     "required": true,
-                    "genome_file": "fasta",
+                    "genome_file": "fasta|fa$",
                     "description": "FASTA file to be mapped to before the genome file, typically containing rRNA and tRNA sequences."
                 },
                 "fasta_fai": {
