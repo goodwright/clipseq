@@ -3,6 +3,7 @@
         "sample_options": {
             "name": "Sample options",
             "description": "Parameters relating to the sample being analysed.",
+            "advanced" : false,
             "properties": {
                 "samplesheet": {
                     "name": "Sample",
@@ -22,6 +23,7 @@
         "genome_options": {
             "name": "Genome options",
             "description": "The genome being aligned to.",
+            "advanced" : false,
             "takes_genome": true,
             "properties": {
                 "fasta": {
@@ -250,7 +252,8 @@
         },
         "settings_options": {
             "name": "Settings",
-            "description": "Additional config",
+            "description": "Additional configuration.",
+            "advanced" : true,
             "properties": {
                 "remove_dedupe": {
                     "name": "Skip Dedupe",
@@ -278,6 +281,7 @@
         "cli_options": {
             "name": "Command Line Options",
             "description": "Proide customised command line options to specific processes",
+            "advanced" : true,
             "properties": {
                 "bowtie_params": {
                     "name": "Bowtie parameters",
