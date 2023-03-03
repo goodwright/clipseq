@@ -1,0 +1,90 @@
+name: prepare_ncrna
+description: Prepare all ncRNA files for running the clipseq ncrna-aware analysis pipeline.
+keywords:
+  - fasta
+  - gtf
+  - bowtie2
+  - star
+  - index
+  - clipseq
+  - icount
+modules:
+  - goodwright/clipseq/find_longest_transcript
+  - goodwright/clipseq/filter_gtf
+  - goodwright/icount/segment
+  - goodwright/clipseq/resolve_unannotated
+subworkflows:
+  - goodwright/prepare-genome/prepare_ref
+  - goodwright/prepare-genome/prepare_aligner
+input:
+  - fasta:
+      type: file
+      description: genome fasta file
+      pattern: "*.{fasta,fasta.gz}"
+  - smrna_fasta:
+      type: file
+      description: genome fasta file for smrna
+      pattern: "*.{fasta,fasta.gz}"
+  - gtf:
+      type: file
+      description: genome gtf annotation file
+      pattern: "*.{gtf,gtf.gz}"
+  - genome_index_path:
+      type: file/folder
+      description: pre-computed star index folder for the primary genome
+      pattern: "*.{tar.gz}"
+  - smrna_index_path:
+      type: file/folder
+      description: pre-computed star index folder for the small-rna genome
+      pattern: "*.{tar.gz}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - fasta:
+      type: file
+      description: uncompressed genome fasta file
+  - fasta_fai:
+      type: file
+      description: genome fasta index file
+  - gtf:
+      type: file
+      description: uncompressed genome gtf file
+  - filtered_gtf:
+      type: file
+      description: filtered genome gtf file
+  - chrom_sizes:
+      type: file
+      description: primary genome chromosome sizes
+  - smrna_fasta:
+      type: file
+      description: smrna fasta file
+  - smrna_fasta_fai:
+      type: file
+      description: smrna fasta index file
+  - smrna_chrom_sizes:
+      type: file
+      description: smrna genome chromosome sizes
+  - longest_transcript:
+      type: file
+      description: file containing a number for the longest transcript
+  - seg_gtf:
+      type: file
+      description: icount segmented gtf file
+  - seg_filt_gtf:
+      type: file
+      description: icount segmented gtf file based on the filtered gtf file
+  - seg_resolved_gtf:
+      type: file
+      description: icount segmented gtf file with unannotated regons resolved
+  - seg_resolved_gtf_genic:
+      type: file
+      description: icount segmented gtf file with unannotated regons resolved with genic other
+authors:
+  - "@charlotteanne"
