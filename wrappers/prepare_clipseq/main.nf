@@ -27,7 +27,7 @@ workflow  {
     longest_transcript_fai     = []
     longest_transcript_gtf     = []
 
-    if(params.fasta_fai) { fasta_fai = Channel.of([[:],file(params.fasta_fai, checkIfExists: true)]) } 
+    if(params.fasta_fai) { fasta_fai = Channel.of([[:],file(params.fasta_fai, checkIfExists: true)]) }
     if(params.filtered_gtf) { filtered_gtf = Channel.of([[:],file(params.filtered_gtf, checkIfExists: true)]) }
     if(params.chrom_sizes) { chrom_sizes = Channel.of([[:],file(params.chrom_sizes, checkIfExists: true)]) }
     if(params.smrna_fasta_fai) { smrna_fasta_fai = Channel.of([[:],file(params.smrna_fasta_fai, checkIfExists: true)]) }
@@ -43,7 +43,7 @@ workflow  {
     if(params.regions_filt_gtf) { regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }
     if(params.regions_resolved_gtf) { regions_resolved_gtf = file(params.regions_resolved_gtf, checkIfExists: true) }
     if(params.regions_resolved_gtf_genic) { regions_resolved_gtf_genic = Channel.of([[:],file(params.regions_resolved_gtf_genic, checkIfExists: true)]) }
-   
+
     PREPARE_CLIPSEQ (
         fasta,
         smrna_fasta,
