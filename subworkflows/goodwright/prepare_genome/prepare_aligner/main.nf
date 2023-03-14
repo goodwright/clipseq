@@ -9,7 +9,7 @@ include { STAR_GENOMEGENERATE } from '../../../../modules/nf-core/star/genomegen
 
 workflow PREPARE_ALINGER {
     take:
-    aligners        // list: aligners, any of [bowtie2, star]
+    aligners        // list: aligners, any of [bowtie, star]
     fasta           // channel: [ fasta ]
     gtf             // channel: [ gtf ]
     bt1_index_path  // channel: [ folder/tar.gz ]

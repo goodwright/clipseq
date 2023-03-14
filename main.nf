@@ -122,6 +122,7 @@ include { CLIPSEQ_CLIPQC                             } from './modules/goodwrigh
 //
 
 include { PREPARE_CLIPSEQ                                       } from './subworkflows/goodwright/prepare_genome/prepare_clipseq/main'
+include { PREPARE_NCRNA                                         } from './subworkflows/goodwright/prepare_genome/prepare_ncrna/main'
 include { PARSE_FASTQ_INPUT                                     } from './subworkflows/goodwright/parse_fastq_input/main'
 include { FASTQC_TRIMGALORE                                     } from './subworkflows/goodwright/fastqc_trimgalore/main'
 include { RNA_ALIGN                                             } from './subworkflows/goodwright/rna_align/main'
@@ -160,6 +161,12 @@ include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_FILT_TRANSCRIPT } from './modules/nf-
 */
 
 workflow CLIPSEQ {
+
+    // Warning about supported genomes
+    if(params.species != "Hs" && params.run_ncrna){
+        exit 1, "Currently " + params.species + " is not supported for ncRNA-aware analysis. Please re-run using the standard CLIP-Seq pipeline.\n" 
+    }
+
     // Init
     ch_versions            = Channel.empty()
 
@@ -262,6 +269,62 @@ workflow CLIPSEQ {
         ch_smrna_genome_index         = PREPARE_CLIPSEQ.out.smrna_index
     }
 
+    // Logic for ncRNA-aware analyis and ncrna genome prep
+
+    if(params.run_ncrna) {
+        // Mandatory parameters for ncRNA prep
+        ch_rDNA_sequence                  = file(params.rDNA_sequence, checkIfExists: true)
+        ch_canonical_snRNA_sequences      = file(params.canonical_snRNA_sequences, checkIfExists: true)
+        ch_mature_tRNA_sequence           = file(params.mature_tRNA_sequence, checkIfExists: true)
+        ch_mature_snRNA_sequence          = file(params.mature_snRNA_sequence, checkIfExists: true)
+        ch_immature_tRNA_bed              = file(params.immature_tRNA_bed, checkIfExists: true)
+        ch_repeats                        = file(params.repeats, checkIfExists: true)
+        ch_mito_chromosome                = file(params.mito_chromosome, checkIfExists: true)
+
+        // optionally provide indexes to skip generation
+        if(params.rRNA_index) { ch_rRNA_index = Channel.of([[:],file(params.rRNA_index, checkIfExists: true)]) }
+        if(params.mature_tRNA_index) { ch_mature_tRNA_index = Channel.of([[:],file(params.mature_tRNA_index, checkIfExists: true)]) }
+        if(params.immature_tRNA_index) { ch_immature_tRNA_index = Channel.of([[:],file(params.immature_tRNA_index, checkIfExists: true)]) }
+        if(params.mature_snRNA_index) { ch_mature_snRNA_index = Channel.of([[:],file(params.mature_snRNA_index, checkIfExists: true)]) }
+        if(params.immature_snRNA_index) { ch_immature_snRNA_index = Channel.of([[:],file(params.immature_snRNA_index, checkIfExists: true)]) }
+        if(params.canonical_snRNA_index) { ch_canonical_snRNA_index = Channel.of([[:],file(params.canonical_snRNA_index, checkIfExists: true)]) }
+        if(params.mito_index) { ch_mito_index = Channel.of([[:],file(params.mito_index, checkIfExists: true)]) }
+        if(params.repeats_index) { ch_repeats_index = Channel.of([[:],file(params.repeats_index, checkIfExists: true)]) }
+        if(params.genome_minus_mito_index) { ch_genome_minus_mito_index = Channel.of([[:],file(genome_minus_mito_index, checkIfExists: true)]) }
+
+        PREPARE_NCRNA (
+            Channel.of(params.species),
+            ch_fasta,
+            ch_gtf,
+            ch_rDNA_sequence,
+            ch_canonical_snRNA_sequences,
+            ch_mature_tRNA_sequence,
+            ch_mature_snRNA_sequence,
+            ch_immature_tRNA_bed,
+            ch_repeats,
+            ch_mito_chromosome,
+            ch_rRNA_index,
+            ch_mature_tRNA_index,
+            ch_immature_tRNA_index,
+            ch_mature_snRNA_index,
+            ch_immature_snRNA_index,
+            ch_canonical_snRNA_index,
+            ch_mito_index,
+            ch_repeats_index,
+            ch_genome_minus_mito_index
+        )
+        ch_versions                   = ch_versions.mix(PREPARE_NCRNA.out.versions)
+        ch_rRNA_index                = PREPARE_NCRNA.out.rRNA_index
+        ch_mature_tRNA_index         = PREPARE_NCRNA.out.mature_tRNA_index
+        ch_immature_tRNA_index       = PREPARE_NCRNA.out.immature_tRNA_index
+        ch_mature_snRNA_index        = PREPARE_NCRNA.out.mature_snRNA_index
+        ch_immature_snRNA_index      = PREPARE_NCRNA.out.immature_snRNA_index
+        ch_canonical_snRNA_index     = PREPARE_NCRNA.out.canonical_snRNA_index
+        ch_mito_index                = PREPARE_NCRNA.out.mito_index
+        ch_repeats_index             = PREPARE_NCRNA.out.repeats_index
+        ch_genome_minus_mito_index   = PREPARE_NCRNA.out.genome_minus_mito_index
+    }
+
     ch_fastq = Channel.empty()
     if(params.run_input_check) {
         /*
@@ -305,7 +368,8 @@ workflow CLIPSEQ {
     ch_transcript_bai               = Channel.empty()
     ch_bt_log                       = Channel.empty()
     ch_star_log                     = Channel.empty()
-    if(params.run_alignment) {
+
+    if(params.run_alignment && !params.run_ncrna) {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index the output
         */

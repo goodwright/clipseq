@@ -5,110 +5,173 @@
 /*
 * MODULES
 */
-include { CLIPSEQ_FIND_LONGEST_TRANSCRIPT                                        } from '../../../../modules/goodwright/clipseq/find_longest_transcript/main.nf'
-
+include { GUNZIP                                        } from '../../../../modules/nf-core/gunzip/main.nf'
+include { LINUX as ONE_LINE_FASTA                       } from '../../../../modules/goodwright/linux/command/main.nf'
 
 /*
 * SUBWORKFLOWS
 */
-include { PREPARE_REF as PREPARE_PRIMARY_GENOME    } from '../prepare_ref/main.nf'
+include { PREPARE_REF     as PREPARE_RRNA_SEQUENCE                   } from '../prepare_ref/main.nf'
+include { PREPARE_REF     as PREPARE_CANONICAL_SNRNA_SEQUENCE        } from '../prepare_ref/main.nf'
+include { PREPARE_REF     as PREPARE_MATURE_TRNA_SEQUENCE            } from '../prepare_ref/main.nf'
+include { PREPARE_REF     as PREPARE_MATURE_SNRNA_SEQUENCE           } from '../prepare_ref/main.nf'
+include { PREPARE_ALINGER as PREPARE_RRNA                            } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_MATURE_TRNA                     } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_IMMATURE_TRNA                   } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_MATURE_SNRNA                    } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_IMMATURE_SNRNA                  } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_CANONICAL_SNRNA                 } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_SCA_SNO_Y                       } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_MITO                            } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_REPEATS                         } from '../prepare_aligner/main.nf'
+include { PREPARE_ALINGER as PREPARE_GENOME_MINUS_MITO               } from '../prepare_aligner/main.nf'
+
 
 
 workflow PREPARE_NCRNA {
     take:
     species                          // channel: [ "species 2 letter code" ]
     fasta                            // channel: [ fasta ]
-    smrna_fasta                      // channel: [ fasta ]
     gtf                              // channel: [ gtf ]
-
-
+    rDNA_sequence                    // channel: [ fasta ]
+    canonical_snRNA_sequences        // channel: [ fasta ]
+    mature_tRNA_sequence             // channel: [ fasta ]
+    mature_snRNA_sequence            // channel: [ fasta ]
+    immature_tRNA_bed                // channel: [ tar.gz ]
+    repeats                          // channel: [ txt.gz ]
+    mito_chromosome                  // channel: [ "name of mitochondrial chromosome" ]
+    rRNA_index                       // channel: [ folder/tar.gz ]
+    mature_tRNA_index                // channel: [ folder/tar.gz ]
+    immature_tRNA_index              // channel: [ folder/tar.gz ]
+    mature_snRNA_index               // channel: [ folder/tar.gz ]
+    immature_snRNA_index             // channel: [ folder/tar.gz ]
+    canonical_snRNA_index            // channel: [ folder/tar.gz ]
+    mito_index                       // channel: [ folder/tar.gz ]
+    repeats_index                    // channel: [ folder/tar.gz ]
+    genome_minus_mito_index          // channel: [ folder/tar.gz ]
+    
     main:
     ch_versions = Channel.empty()
 
 
 
     /*
-    * SUBWORKFLOW: Uncompress and prepare main genome files
+    * SUBWORKFLOW: Uncompress and prepare main sequence files
     */
-    if (params.fasta_fai && params.chrom_sizes){
-        ch_fasta       = fasta
-        ch_fasta_fai   = fasta_fai
-        ch_chrom_sizes = chrom_sizes
-        ch_gtf         = [ [id:gtf.baseName], gtf ]
+    if (!rDNA_sequence.toString().endsWith(".gz")){
+        ch_rDNA_sequence       = rDNA_sequence
     } else {
-        PREPARE_PRIMARY_GENOME (
-            fasta,
-            gtf,
+        PREPARE_RRNA_SEQUENCE (
+            rDNA_sequence,
+            [],
             [],
             []
         )
-        ch_fasta       = PREPARE_PRIMARY_GENOME.out.fasta
-        ch_fasta_fai   = PREPARE_PRIMARY_GENOME.out.fasta_fai
-        ch_gtf         = PREPARE_PRIMARY_GENOME.out.gtf
-        ch_chrom_sizes = PREPARE_PRIMARY_GENOME.out.chrom_sizes
-        ch_versions    = ch_versions.mix(PREPARE_PRIMARY_GENOME.out.versions)
+        ch_rDNA_sequence       = PREPARE_RRNA_SEQUENCE.out.fasta
+        ch_versions    = ch_versions.mix(PREPARE_RRNA_SEQUENCE.out.versions)
     }
 
-    // Sometimes gtf have brackets in gene names and this makes UMICollapse fail.
-    REMOVE_GTF_BRACKETS ( 
-        ch_gtf,
+    if (!canonical_snRNA_sequences.toString().endsWith(".gz")){
+        ch_canonical_snRNA_sequences      = canonical_snRNA_sequences
+    } else {
+        PREPARE_CANONICAL_SNRNA_SEQUENCE (
+            canonical_snRNA_sequences,
+            [],
+            [],
+            []
+        )
+        ch_canonical_snRNA_sequences       = PREPARE_CANONICAL_SNRNA_SEQUENCE.out.fasta
+    }
+
+    if (!mature_tRNA_sequence.toString().endsWith(".gz")){
+        ch_mature_tRNA_sequence      = mature_tRNA_sequence
+    } else {
+        PREPARE_MATURE_TRNA_SEQUENCE (
+            mature_tRNA_sequence,
+            [],
+            [],
+            []
+        )
+        ch_mature_tRNA_sequence       = PREPARE_MATURE_TRNA_SEQUENCE.out.fasta
+    }
+
+    if (!mature_snRNA_sequence.toString().endsWith(".gz")){
+        ch_mature_snRNA_sequence      = mature_snRNA_sequence
+    } else {
+        PREPARE_MATURE_SNRNA_SEQUENCE (
+            mature_snRNA_sequence,
+            [],
+            [],
+            []
+        )
+        ch_mature_snRNA_sequence       = PREPARE_MATURE_SNRNA_SEQUENCE.out.fasta
+    }
+
+    /*
+    * SUBWORKFLOW: Prepare rRNA BT1 index
+    */
+    PREPARE_RRNA (
+        ["bowtie"],
+        ch_rDNA_sequence,
         [],
-        false
-     )
-    ch_gtf_with_meta = REMOVE_GTF_BRACKETS.out.file
-    ch_gtf = REMOVE_GTF_BRACKETS.out.file.flatten().last()
-
-
-
-    /*
-    * SUBWORKFLOW: Uncompress and prepare smrna genome files
-    */
-    if (params.smrna_fasta_fai && params.smrna_chrom_sizes){
-        ch_smrna_fasta       = smrna_fasta
-        ch_smrna_fasta_fai   = smrna_fasta_fai
-        ch_smrna_chrom_sizes = smrna_chrom_sizes
-    } else {
-        PREPARE_SMRNA_GENOME (
-            smrna_fasta,
-            [],
-            [],
-            []
-        )
-        ch_smrna_fasta       = PREPARE_SMRNA_GENOME.out.fasta
-        ch_smrna_fasta_fai   = PREPARE_SMRNA_GENOME.out.fasta_fai
-        ch_smrna_chrom_sizes = PREPARE_SMRNA_GENOME.out.chrom_sizes
-        ch_versions          = ch_versions.mix(PREPARE_SMRNA_GENOME.out.versions)
-    }
-
-    /*
-    * MODULE: Find the longest transcript from the primary genome
-    */
-    if (params.longest_transcript && params.longest_transcript_fai && params.longest_transcript_gtf){
-        ch_longest_transcript     = longest_transcript
-        ch_longest_transcript_fai = longest_transcript_fai
-        ch_longest_transcript_gtf = longest_transcript_gtf
-    } else {
-        CLIPSEQ_FIND_LONGEST_TRANSCRIPT (
-            ch_gtf_with_meta
-        )
-        ch_longest_transcript     = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript
-        ch_longest_transcript_fai = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_fai
-        ch_longest_transcript_gtf = CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.longest_transcript_gtf
-        ch_versions               = ch_versions.mix(CLIPSEQ_FIND_LONGEST_TRANSCRIPT.out.versions)
-    }
-
-    /*
-    * MODULE: Filter the GTF file
-    */
-    if (params.filtered_gtf){
-    ch_filt_gtf = filtered_gtf
-    } else {
-    CLIPSEQ_FILTER_GTF (
-        ch_gtf_with_meta
+        rRNA_index,
+        []
     )
-    ch_filt_gtf = CLIPSEQ_FILTER_GTF.out.gtf
-    ch_versions = ch_versions.mix(CLIPSEQ_FILTER_GTF.out.versions)
+    ch_rRNA_index  = PREPARE_RRNA.out.bt2_index
+    ch_versions    = ch_versions.mix(PREPARE_RRNA.out.versions)
+
+    /*
+    * SUBWORKFLOW: Prepare canonical snRNA BT1 index
+    */
+    PREPARE_CANONICAL_SNRNA (
+        ["bowtie"],
+        ch_canonical_snRNA_sequences,
+        [],
+        canonical_snRNA_index,
+        []
+    )
+    ch_canonical_snRNA_index = PREPARE_RRNA.out.bt2_index
+
+    /*
+    * Prepare all mature snRNA - we have to grep it out of the transcripts fasta file
+    */
+    ch_mature_snRNA_sequence = mature_snRNA_sequence
+    if ( mature_snRNA_sequence.toString().endsWith("gz")){
+        GUNZIP (
+            ch_mature_snRNA_sequence
+        )
+        ch_mature_snRNA_sequence = GUNZIP.out.gunzip
+        ch_versions              = ch_versions.mix(GUNZIP.out.versions)
     }
+
+    ONE_LINE_FASTA (
+        ch_mature_snRNA_sequence
+    )
+    ch_mature_snRNA_sequence = ONE_LINE_FASTA.out.file
+    ch_versions              = ch_versions.mix(ONE_LINE_FASTA.out.versions)
+
+    RETRIEVE_MATURE_SNRNA (
+        ONE_LINE_FASTA.out.file
+    )
+    ch_mature_snRNA_sequence = RETRIEVE_MATURE_SNRNA.out.file
+    ch_versions              = ch_versions.mix(RETRIEVE_MATURE_SNRNA.out.versions)
+
+    PREPARE_MATURE_SNRNA (
+        ["bowtie"],
+        ch_mature_snRNA_sequence,
+        [],
+        mature_snRNA_index,
+        []
+    )
+    ch_mature_snRNA_index = PREPARE_MATURE_SNRNA.out.bt2_index
+
+    /*
+    * Prepare immature snRNA - we have to get gene intervals, extend with flanks and get sequence from main genome
+    */
+
+
+
+
 
     /*
     * SUBWORKFLOW: Prepare STAR index for primary genome
@@ -124,125 +187,20 @@ workflow PREPARE_NCRNA {
     ch_versions     = ch_versions.mix(PREPARE_PRIMARY_INDEX.out.versions)
 
 
-    /*
-    * SUBWORKFLOW: Prepare BT2 index for smrna genome
-    */
-    PREPARE_SMRNA_INDEX (
-        ["bowtie"],
-        ch_smrna_fasta,
-        [],
-        smrna_index_path,
-        []
-    )
-    ch_smrna_index = PREPARE_SMRNA_INDEX.out.bt2_index
-    ch_versions    = ch_versions.mix(PREPARE_SMRNA_INDEX.out.versions)
 
 
-    /*
-    * MODULE: Segment GTF file using icount
-    */
-    if (params.seg_gtf && params.regions_gtf){
-    ch_seg_gtf     = seg_gtf
-	ch_regions_gtf = regions_gtf
-    } else {
-    ICOUNT_SEG_GTF (
-        ch_gtf_with_meta,
-        ch_fasta_fai.map{ it[1] }
-    )
-    ch_seg_gtf     = ICOUNT_SEG_GTF.out.gtf
-	ch_regions_gtf = ICOUNT_SEG_GTF.out.regions
-    ch_versions    = ch_versions.mix(ICOUNT_SEG_GTF.out.versions)
-    }
 
-    /*
-    * MODULE: Segment the filtered GTF file using icount
-    */
-    if (params.seg_filt_gtf && params.regions_filt_gtf){
-    ch_seg_filt_gtf     = seg_filt_gtf
-    ch_regions_filt_gtf = regions_filt_gtf
-    } else {
-    ICOUNT_SEG_FILTGTF (
-        ch_filt_gtf,
-        ch_fasta_fai.map{ it[1] }
-    )
-    ch_seg_filt_gtf     = ICOUNT_SEG_FILTGTF.out.gtf
-    ch_regions_filt_gtf = ICOUNT_SEG_FILTGTF.out.regions
-    }
 
-    /*
-    * MODULE: Resolve the GTF regions that iCount did not annotate
-    */
-    if (params.seg_resolved_gtf){
-    ch_seg_resolved_gtf = seg_resolved_gtf
-    } else {
-    RESOLVE_UNANNOTATED (
-        ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf,
-        ch_fasta_fai.map{ it[1] },
-        false
-    )
-    ch_seg_resolved_gtf = RESOLVE_UNANNOTATED.out.gtf
-    ch_versions         = ch_versions.mix(RESOLVE_UNANNOTATED.out.versions)
-    }
-
-    /*
-    * MODULE: Resolve the GTF regions that iCount did not annotate REGIONS FILE
-    */
-    if (params.regions_resolved_gtf){
-    ch_regions_resolved_gtf = regions_resolved_gtf
-    } else {
-    RESOLVE_UNANNOTATED_REGIONS (
-        ICOUNT_SEG_GTF.out.regions.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf,
-        ch_fasta_fai.map{ it[1] },
-        false
-    )
-    ch_regions_resolved_gtf = RESOLVE_UNANNOTATED_REGIONS.out.gtf
-    }
-
-    /*
-    * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag
-    */
-    if (params.seg_resolved_gtf_genic){
-    ch_seg_resolved_gtf_genic = seg_resolved_gtf_genic
-    } else {
-    RESOLVE_UNANNOTATED_GENIC_OTHER (
-        ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf,
-        ch_fasta_fai.map{ it[1] },
-        true
-    )
-    ch_seg_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER.out.gtf
-    }
-
-    /*
-    * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag REGIONS FILE
-    */
-    if (params.regions_resolved_gtf_genic){
-    ch_regions_resolved_gtf_genic = regions_resolved_gtf_genic
-    } else {
-    RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
-        ICOUNT_SEG_GTF.out.regions.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf,
-        ch_fasta_fai.map{ it[1] },
-        true
-    )
-    ch_regions_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS.out.gtf
-    }
 
 
     emit:
-    rRNA_index = ch_rRNA_index 
-    mature_tRNA_index = ch_mature_tRNA_index 
-    immature_tRNA_index = ch_immature_tRNA_index 
-    mature_snRNA_index = ch_mature_snRNA_index 
-    immature_snRNA_index = ch_immature_snRNA_index 
-    canonical_snRNA_index = ch_canonical_snRNA_index 
-    mito_index = ch_mito_index 
-    repeats_index = ch_repeats_index 
-    genome_minus_mito_index = ch_genome_minus_mito_index 
+    rRNA_index                = ch_rRNA_index 
+    mature_tRNA_index         = ch_mature_tRNA_index 
+    immature_tRNA_index       = ch_immature_tRNA_index 
+    mature_snRNA_index        = ch_mature_snRNA_index 
+    immature_snRNA_index      = ch_immature_snRNA_index 
+    canonical_snRNA_index     = ch_canonical_snRNA_index 
+    mito_index                = ch_mito_index 
+    repeats_index             = ch_repeats_index 
+    genome_minus_mito_index   = ch_genome_minus_mito_index 
 }
