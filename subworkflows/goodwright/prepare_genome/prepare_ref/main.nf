@@ -39,7 +39,7 @@ workflow PREPARE_REF {
         ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
     }
     else if (gtf) {
-        ch_gtf = Channel.from( [  [id:gtf.baseName], gtf  ] )
+        ch_gtf = Channel.from( [ [  [id:gtf.baseName], gtf ] ] )
     }
 
     /*
