@@ -6,11 +6,11 @@
             "advanced": false,
             "properties": {
                 "samplesheet": {
-                    "name": "Sample",
+                    "name": "Samples",
                     "type": "sample",
                     "pattern": "csv|xlsx",
                     "required": true,
-                    "description": "The sample to process.",
+                    "description": "The samples to process.",
                     "csv": {
                         "group": "name",
                         "replicate": "\"1\"",
