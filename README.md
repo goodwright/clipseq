@@ -6,6 +6,8 @@ Cross-linking and immunoprecipitation followed by sequencing (CLIP) has allowed 
 
 This pipeline enables analysis of various forms of single-end CLIP data including variants of iCLIP (eg. irCLIP, iCLIP2, iiCLIP) and eCLIP (note that we have achieved comparable results using this pipeline to study reformatted paired-end eCLIP also). The pipeline currently doesn't support mutation calling and therefore might not be suitable for PAR-CLIP analysis, but we plan to include this at a future date.
 
+This DSL2 CLIP-Seq pipeline is written and maintained by Goodwright in collaboration with [Ule lab](https://www.ulelab.info/) and the developers of the DSL1 [nf-core/clipseq](https://nf-co.re/clipseq) pipeline.
+
 ## Quick-start
 
 To test the pipeline, use the associated config file and run it with the
@@ -65,7 +67,7 @@ When the full pipeline is run, output is organised into 6 folders:
 
 ## Authors and contact
 
-This DSL2 Nextflow pipeline is maintained by Goodwright. It was updated from the DSL1 nf-core/clipseq pipeline in collaboration with the original authors and Prof. Jernej Ule.
+This DSL2 CLIP-Seq pipeline is written and maintained by Goodwright in collaboration with [Ule lab](https://www.ulelab.info/) and the developers of the DSL1 [nf-core/clipseq](https://nf-co.re/clipseq) pipeline.
 To raise any issues or comments with the pipeline you can (in order of preference):
 
 - Raise an issue in this repository
