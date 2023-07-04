@@ -31,20 +31,20 @@ workflow PREPARE_CLIPSEQ {
     gtf                              // channel: [ gtf ]
     genome_index_path                // channel: [ folder/tar.gz ]
     smrna_index_path                 // channel: [ folder/tar.gz ]
-    fasta_fai                        // channel: [ [:], fasta.fai ]                                            
-    filtered_gtf                     // channel: [ [:], gtf ]                      
-    chrom_sizes                      // channel: [ [:], tsv ]                     
-    smrna_fasta_fai                  // channel: [ [:], fasta.fai ]                         
-    smrna_chrom_sizes                // channel: [ [:], tsv ]                           
-    longest_transcript               // channel: [ [:], txt ]                            
-    seg_gtf                          // channel: [ [:], gtf ]                 
-    seg_filt_gtf                     // channel: [ [:], gtf ]                      
-    seg_resolved_gtf                 // channel: [ [:], gtf ]                          
-    seg_resolved_gtf_genic           // channel: [ [:], gtf ]                                
-    regions_gtf                      // channel: [ [:], gtf ]                     
-    regions_filt_gtf                 // channel: [ [:], gtf ]                          
-    regions_resolved_gtf             // channel: [ [:], gtf ]                              
-    regions_resolved_gtf_genic       // channel: [ [:], gtf ]                                    
+    fasta_fai                        // channel: [ [:], fasta.fai ]
+    filtered_gtf                     // channel: [ [:], gtf ]
+    chrom_sizes                      // channel: [ [:], tsv ]
+    smrna_fasta_fai                  // channel: [ [:], fasta.fai ]
+    smrna_chrom_sizes                // channel: [ [:], tsv ]
+    longest_transcript               // channel: [ [:], txt ]
+    seg_gtf                          // channel: [ [:], gtf ]
+    seg_filt_gtf                     // channel: [ [:], gtf ]
+    seg_resolved_gtf                 // channel: [ [:], gtf ]
+    seg_resolved_gtf_genic           // channel: [ [:], gtf ]
+    regions_gtf                      // channel: [ [:], gtf ]
+    regions_filt_gtf                 // channel: [ [:], gtf ]
+    regions_resolved_gtf             // channel: [ [:], gtf ]
+    regions_resolved_gtf_genic       // channel: [ [:], gtf ]
     longest_transcript_fai           // channel: [ [:], fasta.fai ]
     longest_transcript_gtf                                
 
@@ -83,8 +83,6 @@ workflow PREPARE_CLIPSEQ {
      )
     ch_gtf_with_meta = REMOVE_GTF_BRACKETS.out.file
     ch_gtf = REMOVE_GTF_BRACKETS.out.file.flatten().last()
-
-
 
     /*
     * SUBWORKFLOW: Uncompress and prepare smrna genome files
