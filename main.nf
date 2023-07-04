@@ -497,13 +497,13 @@ workflow CLIPSEQ {
         * MODULE: Run clipqc
         */
         CLIPSEQ_CLIPQC (
-            ch_bt_log.map{ it[1] },
-            ch_star_log.map{ it[1] },
-            ch_umi_log.map{ it[1] },
-            ch_genome_crosslink_bed.map{ it[1] },
-            ICOUNT_ANALYSE.out.bed_peaks.map{ it[1] },
-            PARACLU_ANALYSE_GENOME.out.peaks.map{ it[1] },
-            CLIPPY_GENOME.out.peaks.map{ it[1] }
+            ch_bt_log.collect{ it[1] },
+            ch_star_log.collect{ it[1] },
+            ch_umi_log.collect{ it[1] },
+            ch_genome_crosslink_bed.collect{ it[1] },
+            ICOUNT_ANALYSE.out.bed_peaks.collect{ it[1] },
+            PARACLU_ANALYSE_GENOME.out.peaks.collect{ it[1] },
+            CLIPPY_GENOME.out.peaks.collect{ it[1] }
         )
 
         /*
