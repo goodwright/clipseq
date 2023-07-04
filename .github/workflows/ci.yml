@@ -35,7 +35,7 @@ jobs:
         if: matrix.profile == 'singularity'
         uses: eWaterCycle/setup-singularity@v5
         with:
-          singularity-version: 3.8.3
+          singularity-version: 3.7.1
 
       - name: Install Nextflow
         uses: nf-core/setup-nextflow@v1
