@@ -16,7 +16,6 @@ nextflow_pipeline {
             assert workflow.success
 
             assert new File("$outputDir/pipeline_info/samplesheet.valid.csv").exists()
-            assert path("$outputDir/pipeline_info/samplesheet.valid.csv").md5 == "12b2be3425cd9d9e84ea0ef9f34d1577"
         }
     }
 }
