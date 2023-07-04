@@ -17,7 +17,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("Required parameter not specified: samplesheet")
+            assert workflow.exitStatus == 1
+            assert workflow.trace.succeeded().size() == 0
+            assert workflow.trace.failed().size() == 0
         }
     }
 
@@ -35,7 +37,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("Required parameter not specified: fasta")
+            assert workflow.exitStatus == 1
+            assert workflow.trace.succeeded().size() == 0
+            assert workflow.trace.failed().size() == 0
         }
     }
 
@@ -53,7 +57,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("Required parameter not specified: smrna_fasta")
+            assert workflow.exitStatus == 1
+            assert workflow.trace.succeeded().size() == 0
+            assert workflow.trace.failed().size() == 0
         }
     }
 
@@ -71,7 +77,9 @@ nextflow_pipeline {
 
         then {
             assert workflow.failed
-            assert workflow.stdout.contains("Required parameter not specified: gtf")
+            assert workflow.exitStatus == 1
+            assert workflow.trace.succeeded().size() == 0
+            assert workflow.trace.failed().size() == 0
         }
     }
 }
