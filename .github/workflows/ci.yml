@@ -26,6 +26,7 @@ jobs:
           - "22.10.1"
           - ""
         profile: ["docker", "singularity"]
+        test: ["test", "test_no_prep_genome"]
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
@@ -43,8 +44,4 @@ jobs:
 
       - name: Run pipeline with test data
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test,${{ matrix.profile }} --outdir ./results
-
-      - name: Run pipeline with test [provide genome inputs] data
-        run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test_no_prep_genome,${{ matrix.profile }} --outdir ./results
+          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.test }},${{ matrix.profile }} --outdir ./results

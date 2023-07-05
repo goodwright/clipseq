@@ -299,12 +299,12 @@ workflow CLIPSEQ {
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
 
-    ch_genome_bam                   = Channel.empty()
-    ch_genome_bai                   = Channel.empty()
-    ch_transcript_bam               = Channel.empty()
-    ch_transcript_bai               = Channel.empty()
-    ch_bt_log                       = Channel.empty()
-    ch_star_log                     = Channel.empty()
+    ch_genome_bam     = Channel.empty()
+    ch_genome_bai     = Channel.empty()
+    ch_transcript_bam = Channel.empty()
+    ch_transcript_bai = Channel.empty()
+    ch_bt_log         = Channel.empty()
+    ch_star_log       = Channel.empty()
     if(params.run_alignment) {
         /*
         * SUBWORKFLOW: Run alignment to target and smrna genome. sort/index the output
@@ -317,13 +317,13 @@ workflow CLIPSEQ {
             ch_filtered_gtf.map{ it[1] },
             ch_fasta.map{ it[1] }
         )
-        ch_versions                     = ch_versions.mix(RNA_ALIGN.out.versions)
-        ch_genome_bam                   = RNA_ALIGN.out.genome_bam
-        ch_genome_bai                   = RNA_ALIGN.out.genome_bai
-        ch_transcript_bam               = RNA_ALIGN.out.transcript_bam
-        ch_transcript_bai               = RNA_ALIGN.out.transcript_bai
-        ch_bt_log                       = RNA_ALIGN.out.bt_log
-        ch_star_log                     = RNA_ALIGN.out.star_log_final
+        ch_versions       = ch_versions.mix(RNA_ALIGN.out.versions)
+        ch_genome_bam     = RNA_ALIGN.out.genome_bam
+        ch_genome_bai     = RNA_ALIGN.out.genome_bai
+        ch_transcript_bam = RNA_ALIGN.out.transcript_bam
+        ch_transcript_bai = RNA_ALIGN.out.transcript_bai
+        ch_bt_log         = RNA_ALIGN.out.bt_log
+        ch_star_log       = RNA_ALIGN.out.star_log_final
     }
 
     if(params.run_read_filter) {
@@ -351,10 +351,10 @@ workflow CLIPSEQ {
         SAMTOOLS_SORT_FILT_TRANSCRIPT ( FILTER_TRANSCRIPTS.out.bam )
         SAMTOOLS_INDEX_FILT_TRANSCRIPT ( SAMTOOLS_SORT_FILT_TRANSCRIPT.out.bam )
 
-        ch_versions                     = ch_versions.mix(SAMTOOLS_SORT_FILT_TRANSCRIPT.out.versions)
-        ch_versions                     = ch_versions.mix(SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.versions)
-        ch_transcript_bam               = SAMTOOLS_SORT_FILT_TRANSCRIPT.out.bam
-        ch_transcript_bai               = SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.bai
+        ch_versions       = ch_versions.mix(SAMTOOLS_SORT_FILT_TRANSCRIPT.out.versions)
+        ch_versions       = ch_versions.mix(SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.versions)
+        ch_transcript_bam = SAMTOOLS_SORT_FILT_TRANSCRIPT.out.bam
+        ch_transcript_bai = SAMTOOLS_INDEX_FILT_TRANSCRIPT.out.bai
     }
 
     ch_umi_log = Channel.empty()
@@ -378,10 +378,10 @@ workflow CLIPSEQ {
         GENOME_DEDUP (
             ch_genome_bam_bai
         )
-        ch_versions                 = ch_versions.mix(GENOME_DEDUP.out.versions)
-        ch_genome_bam               = GENOME_DEDUP.out.bam
-        ch_genome_bai               = GENOME_DEDUP.out.bai
-        ch_umi_log                  = GENOME_DEDUP.out.umi_log
+        ch_versions   = ch_versions.mix(GENOME_DEDUP.out.versions)
+        ch_genome_bam = GENOME_DEDUP.out.bam
+        ch_genome_bai = GENOME_DEDUP.out.bai
+        ch_umi_log    = GENOME_DEDUP.out.umi_log
 
         /*
         * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
@@ -389,9 +389,9 @@ workflow CLIPSEQ {
         TRANSCRIPT_DEDUP (
             ch_transcript_bam_bai
         )
-        ch_versions                     = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
-        ch_transcript_bam               = TRANSCRIPT_DEDUP.out.bam
-        ch_transcript_bai               = TRANSCRIPT_DEDUP.out.bai
+        ch_versions       = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
+        ch_transcript_bam = TRANSCRIPT_DEDUP.out.bam
+        ch_transcript_bai = TRANSCRIPT_DEDUP.out.bai
     }
 
     ch_genome_crosslink_bed           = Channel.empty()
@@ -497,13 +497,13 @@ workflow CLIPSEQ {
         * MODULE: Run clipqc
         */
         CLIPSEQ_CLIPQC (
-            ch_bt_log.map{ it[1] },
-            ch_star_log.map{ it[1] },
-            ch_umi_log.map{ it[1] },
-            ch_genome_crosslink_bed.map{ it[1] },
-            ICOUNT_ANALYSE.out.bed_peaks.map{ it[1] },
-            PARACLU_ANALYSE_GENOME.out.peaks.map{ it[1] },
-            CLIPPY_GENOME.out.peaks.map{ it[1] }
+            ch_bt_log.collect{ it[1] },
+            ch_star_log.collect{ it[1] },
+            ch_umi_log.collect{ it[1] },
+            ch_genome_crosslink_bed.collect{ it[1] },
+            ICOUNT_ANALYSE.out.bed_peaks.collect{ it[1] },
+            PARACLU_ANALYSE_GENOME.out.peaks.collect{ it[1] },
+            CLIPPY_GENOME.out.peaks.collect{ it[1] }
         )
 
         /*
