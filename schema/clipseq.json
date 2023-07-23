@@ -12,10 +12,22 @@
                     "required": true,
                     "description": "The samples to process.",
                     "csv": {
-                        "group": "name",
-                        "replicate": "\"1\"",
-                        "fastq_1": "input.1",
-                        "fastq_2": "input.2"
+                        "group": {
+                            "property": "", 
+                            "user_override": true
+                        },
+                        "replicate": {
+                            "property": "", 
+                            "user_override": true
+                        },
+                        "fastq_1": {
+                            "property": "input.1",
+                            "user_override": false
+                        },
+                        "fastq_2": {
+                            "property": "input.2",
+                            "user_override": false
+                        }
                     }
                 }
             }
