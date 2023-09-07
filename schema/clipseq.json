@@ -13,11 +13,11 @@
                     "description": "The samples to process.",
                     "csv": {
                         "group": {
-                            "property": "", 
+                            "property": "",
                             "user_override": true
                         },
                         "replicate": {
-                            "property": "", 
+                            "property": "",
                             "user_override": true
                         },
                         "fastq_1": {
