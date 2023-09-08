@@ -267,6 +267,11 @@
             "description": "Additional pipeline configuration options.",
             "advanced": true,
             "properties": {
+                "trim_length": {
+                    "name": "Minimum trim length.",
+                    "description": "Minimum length of read to keep after Trim Galore! trimming.",
+                    "type": "number"
+                },
                 "move_umi_to_header": {
                     "name": "Extract UMI to header",
                     "description": "Runs UMI to header extraction based on the head format provided in UMI header format.",
