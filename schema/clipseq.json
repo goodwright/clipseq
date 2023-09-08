@@ -262,11 +262,16 @@
                 }
             }
         },
-        "settings_options": {
+        "pipeline_options": {
             "name": "Settings",
-            "description": "Additional configuration.",
+            "description": "Additional pipeline configuration options.",
             "advanced": true,
             "properties": {
+                "skip_umi_dedupe": {
+                    "name": "Skip UMI Deduplication",
+                    "description": "Skip the UMI deduplication of BAMs.",
+                    "type": "boolean"
+                },
                 "paraclu_min_value": {
                     "name": "Paraclu min value",
                     "description": "Omit clusters whose total data value is less than this minimum value.",
