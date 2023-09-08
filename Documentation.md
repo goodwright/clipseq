@@ -41,7 +41,7 @@ MultiQC report of important quality control metrics. Produced by MULTIQC process
 
 If you are analysing demultiplexed sample files, then depending on where you have sourced your fastq from, the UMI and experimental barcode might still be present at the 5' end of reads, which will cause errors in downstream analysis. Note this is common for historical public data downloaded from ArrayExpress, for example.
 
-To enable this option set `run_move_umi_to_header = true` and ensure you provide the UMI format to `move_umi`, for example `move_umi='NNNNNN'`.
+To enable this option set `move_umi_to_header = true` and ensure you provide the UMI format to `umi_header_format`, for example `umi_header_format='NNNNNN'`.
 
 **Changing the UMI delimiter**
 
