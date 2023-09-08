@@ -282,6 +282,12 @@
                     "description": "Skip the UMI deduplication of BAMs.",
                     "type": "boolean"
                 },
+                "umi_separator": {
+                    "name": "UMI Collapse seperator.",
+                    "description": "The delimiter that UMICollapse uses to search for UMIs in the aligned reads.",
+                    "type": "string",
+                    "default": "rbc:"
+                },
                 "paraclu_min_value": {
                     "name": "Paraclu min value",
                     "description": "Omit clusters whose total data value is less than this minimum value.",
