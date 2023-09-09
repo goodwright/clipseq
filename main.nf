@@ -469,9 +469,9 @@ workflow CLIPSEQ {
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        // /*
-        // * MODULE: Run peka on genome-level crosslinks
-        // */
+        /*
+        * MODULE: Run peka on genome-level crosslinks
+        */
         PEKA (
             CLIPPY_GENOME.out.peaks,
             ch_genome_crosslink_bed,
