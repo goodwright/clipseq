@@ -2,8 +2,11 @@ process PEKA {
     tag "$meta.id"
     label "process_low"
 
-    conda (params.enable_conda ? "bioconda::peka=1.0.0" : null)
-    container "quay.io/biocontainers/peka:1.0.0--pyhdfd78af_0"
+    conda "bioconda::peka=1.0.0"
+    container ""
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    'https://depot.galaxyproject.org/singularity/peka:1.0.0--pyhdfd78af_0' :
+    'biocontainers/peka:1.0.0--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(peaks)

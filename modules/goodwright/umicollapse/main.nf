@@ -2,7 +2,7 @@ process UMICOLLAPSE {
     tag "$meta.id"
     label "process_medium"
 
-    container 'elly1502/umicollapse:latest'
+    container 'docker.io/elly1502/umicollapse:latest'
 
     input:
     tuple val(meta), path(bam), path(bai)

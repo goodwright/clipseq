@@ -1,11 +1,12 @@
 process UMITOOLS_EXTRACT {
     tag "$meta.id"
-    label "process_low"
+    label "process_single"
+    label "process_long"
 
-    conda "bioconda::umi_tools=1.1.2"
+    conda "bioconda::umi_tools=1.1.4"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/umi_tools:1.1.2--py38h4a8c8d9_0' :
-        'quay.io/biocontainers/umi_tools:1.1.2--py38h4a8c8d9_0' }"
+        'https://depot.galaxyproject.org/singularity/umi_tools:1.1.4--py38hbff2b2d_1' :
+        'biocontainers/umi_tools:1.1.4--py38hbff2b2d_1' }"
 
     input:
     tuple val(meta), path(reads)
@@ -29,6 +30,7 @@ process UMITOOLS_EXTRACT {
             -S ${prefix}.umi_extract.fastq.gz \\
             $args \\
             > ${prefix}.umi_extract.log
+
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             umitools: \$(umi_tools --version 2>&1 | sed 's/^.*UMI-tools version://; s/ *\$//')
@@ -44,6 +46,7 @@ process UMITOOLS_EXTRACT {
             --read2-out=${prefix}.umi_extract_2.fastq.gz \\
             $args \\
             > ${prefix}.umi_extract.log
+
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             umitools: \$(umi_tools --version 2>&1 | sed 's/^.*UMI-tools version://; s/ *\$//')
