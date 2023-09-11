@@ -54,24 +54,19 @@ workflow PREPARE_CLIPSEQ {
     /*
     * SUBWORKFLOW: Uncompress and prepare main genome files
     */
-    if (fasta_fai && chrom_sizes){
-        ch_fasta       = fasta
-        ch_fasta_fai   = fasta_fai
-        ch_chrom_sizes = chrom_sizes
-        ch_gtf         = [ [id:gtf.baseName], gtf ]
-    } else {
-        PREPARE_PRIMARY_GENOME (
-            fasta,
-            gtf,
-            [],
-            []
-        )
-        ch_fasta       = PREPARE_PRIMARY_GENOME.out.fasta
-        ch_fasta_fai   = PREPARE_PRIMARY_GENOME.out.fasta_fai
-        ch_gtf         = PREPARE_PRIMARY_GENOME.out.gtf
-        ch_chrom_sizes = PREPARE_PRIMARY_GENOME.out.chrom_sizes
-        ch_versions    = ch_versions.mix(PREPARE_PRIMARY_GENOME.out.versions)
-    }
+    PREPARE_PRIMARY_GENOME (
+        fasta,
+        gtf,
+        [],
+        [],
+        fasta_fai,
+        chrom_sizes
+    )
+    ch_fasta       = PREPARE_PRIMARY_GENOME.out.fasta
+    ch_fasta_fai   = PREPARE_PRIMARY_GENOME.out.fasta_fai
+    ch_gtf         = PREPARE_PRIMARY_GENOME.out.gtf
+    ch_chrom_sizes = PREPARE_PRIMARY_GENOME.out.chrom_sizes
+    ch_versions    = ch_versions.mix(PREPARE_PRIMARY_GENOME.out.versions)
 
     // Sometimes gtf have brackets in gene names and this makes UMICollapse fail.
     REMOVE_GTF_BRACKETS ( 
@@ -85,22 +80,18 @@ workflow PREPARE_CLIPSEQ {
     /*
     * SUBWORKFLOW: Uncompress and prepare smrna genome files
     */
-    if (smrna_fasta_fai && smrna_chrom_sizes){
-        ch_smrna_fasta       = smrna_fasta
-        ch_smrna_fasta_fai   = smrna_fasta_fai
-        ch_smrna_chrom_sizes = smrna_chrom_sizes
-    } else {
-        PREPARE_SMRNA_GENOME (
-            smrna_fasta,
-            [],
-            [],
-            []
-        )
-        ch_smrna_fasta       = PREPARE_SMRNA_GENOME.out.fasta
-        ch_smrna_fasta_fai   = PREPARE_SMRNA_GENOME.out.fasta_fai
-        ch_smrna_chrom_sizes = PREPARE_SMRNA_GENOME.out.chrom_sizes
-        ch_versions          = ch_versions.mix(PREPARE_SMRNA_GENOME.out.versions)
-    }
+    PREPARE_SMRNA_GENOME (
+        smrna_fasta,
+        [],
+        [],
+        [],
+        smrna_fasta_fai,
+        smrna_chrom_sizes
+    )
+    ch_smrna_fasta       = PREPARE_SMRNA_GENOME.out.fasta
+    ch_smrna_fasta_fai   = PREPARE_SMRNA_GENOME.out.fasta_fai
+    ch_smrna_chrom_sizes = PREPARE_SMRNA_GENOME.out.chrom_sizes
+    ch_versions          = ch_versions.mix(PREPARE_SMRNA_GENOME.out.versions)
 
     /*
     * MODULE: Find the longest transcript from the primary genome
@@ -228,14 +219,14 @@ workflow PREPARE_CLIPSEQ {
     if (seg_resolved_gtf_genic){
     ch_seg_resolved_gtf_genic = seg_resolved_gtf_genic
     } else {
-    RESOLVE_UNANNOTATED_GENIC_OTHER (
-        ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf.map{ it[1] },
-        ch_fasta_fai.map{ it[1] },
-        true
-    )
-    ch_seg_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER.out.gtf.map{ [[id:it.baseName], it]}
+        RESOLVE_UNANNOTATED_GENIC_OTHER (
+            ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
+            ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
+            ch_gtf.map{ it[1] },
+            ch_fasta_fai.map{ it[1] },
+            true
+        )
+        ch_seg_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER.out.gtf.map{ [[id:it.baseName], it]}
     }
 
     /*
@@ -244,14 +235,14 @@ workflow PREPARE_CLIPSEQ {
     if (regions_resolved_gtf_genic){
     ch_regions_resolved_gtf_genic = regions_resolved_gtf_genic
     } else {
-    RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
-        ICOUNT_SEG_GTF.out.regions.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf.map{ it[1] },
-        ch_fasta_fai.map{ it[1] },
-        true
-    )
-    ch_regions_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS.out.gtf.map{ [[id:it.baseName], it]}
+        RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
+            ICOUNT_SEG_GTF.out.regions.map{ it[1] },
+            ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
+            ch_gtf.map{ it[1] },
+            ch_fasta_fai.map{ it[1] },
+            true
+        )
+        ch_regions_resolved_gtf_genic = RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS.out.gtf.map{ [[id:it.baseName], it]}
     }
 
 
