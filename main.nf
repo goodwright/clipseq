@@ -209,6 +209,7 @@ workflow CLIPSEQ {
         if(params.regions_filt_gtf) { ch_regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }
         if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = file(params.regions_resolved_gtf, checkIfExists: true) }
         if(params.regions_resolved_gtf_genic) { ch_regions_resolved_gtf_genic = Channel.of([[:],file(params.regions_resolved_gtf_genic, checkIfExists: true)]) }
+
         /*
         * SUBWORKFLOW: Prepare clipseq genome files
         */
@@ -311,8 +312,8 @@ workflow CLIPSEQ {
             ch_fastq,
             ch_smrna_genome_index,
             ch_target_genome_index,
-            ch_filtered_gtf.map{ it[1] },
-            ch_fasta.map{ it[1] }
+            ch_filtered_gtf,
+            ch_fasta
         )
         ch_versions       = ch_versions.mix(RNA_ALIGN.out.versions)
         ch_genome_bam     = RNA_ALIGN.out.genome_bam
@@ -464,20 +465,20 @@ workflow CLIPSEQ {
         ICOUNT_ANALYSE (
             ch_genome_crosslink_bed,
             ch_seg_gtf.collect{ it[1] },
-            ch_seg_resolved_gtf,
+            ch_seg_resolved_gtf.collect{ it[1] },
             true
         )
         ch_versions = ch_versions.mix(ICOUNT_ANALYSE.out.versions)
 
-        // /*
-        // * MODULE: Run peka on genome-level crosslinks
-        // */
+        /*
+        * MODULE: Run peka on genome-level crosslinks
+        */
         PEKA (
             CLIPPY_GENOME.out.peaks,
             ch_genome_crosslink_bed,
             ch_fasta.collect{ it[1] },
             ch_fasta_fai.collect{ it[1] },
-            ch_regions_resolved_gtf
+            ch_regions_resolved_gtf.collect{ it[1] }
         )
         ch_versions = ch_versions.mix(PEKA.out.versions)
     }
