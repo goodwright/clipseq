@@ -23,11 +23,11 @@ workflow PREPARE_REF {
     */
     ch_fasta = Channel.empty()
     if (fasta.toString().endsWith(".gz")) {
-        ch_fasta    = GUNZIP_FASTA ( [ [:], fasta ] ).gunzip
+        ch_fasta    = GUNZIP_FASTA ( [ [id:fasta.baseName], fasta ] ).gunzip
         ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions)
     }
     else if (fasta) {
-        ch_fasta = Channel.from( [ [ [:], fasta ] ] )
+        ch_fasta = Channel.from( [ [ [id:fasta.baseName], fasta ] ] )
     }
 
     /*
@@ -39,7 +39,7 @@ workflow PREPARE_REF {
         ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
     }
     else if (gtf) {
-        ch_gtf = Channel.from( [ [  [id:gtf.baseName], gtf ] ] )
+        ch_gtf = Channel.from( [ [ [id:gtf.baseName], gtf ] ] )
     }
 
     /*
@@ -47,11 +47,11 @@ workflow PREPARE_REF {
     */
     ch_bed = Channel.empty()
     if (bed.toString().endsWith(".gz")) {
-        ch_bed      = GUNZIP_BED ( [ [:], bed ] ).gunzip
+        ch_bed      = GUNZIP_BED ( [ [id:bed.baseName], bed ] ).gunzip
         ch_versions = ch_versions.mix(GUNZIP_BED.out.versions)
     }
     else if (bed) {
-        ch_bed = Channel.from( [ [ [:], bed ] ] )
+        ch_bed = Channel.from( [ [ [id:bed.baseName], bed ] ] )
     }
 
     /*
@@ -59,11 +59,11 @@ workflow PREPARE_REF {
     */
     ch_blacklist = Channel.empty()
     if (blacklist.toString().endsWith(".gz")) {
-        ch_blacklist = GUNZIP_BLACKLIST ( [ [:], blacklist ] ).gunzip
+        ch_blacklist = GUNZIP_BLACKLIST ( [ [id:blacklist.baseName], blacklist ] ).gunzip
         ch_versions  = ch_versions.mix(GUNZIP_BLACKLIST.out.versions)
     }
     else if (blacklist) {
-        ch_blacklist = Channel.from( [ [ [:], blacklist ] ] )
+        ch_blacklist = Channel.from( [ [ [id:blacklist.baseName], blacklist ] ] )
     }
 
     /*
