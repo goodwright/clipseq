@@ -10,24 +10,45 @@ include { CUSTOM_GETCHROMSIZES       } from '../../../../modules/nf-core/custom/
 
 workflow PREPARE_REF {
     take:
-    fasta     // channel: [ val(meta), [ fasta/fasta.gz ] ]
-    gtf       // channel: [ val(meta), [ gtf/gtf.gz ] ]
-    bed       // channel: [ val(meta), [ bed/bed.gz ] ]
-    blacklist // channel: [ val(meta), [ bed/bed.gz ] ]
+    // MUST TAKE FILES AS INPUT WITH NO CHANNEL STRUCT FOR GZIPPED
+    fasta       // channel: [ fasta/fasta.gz ]
+    gtf         // channel: [ gtf/gtf.gz ]
+    bed         // channel: [ bed/bed.gz ]
+    blacklist   // channel: [ bed/bed.gz ]
+    fasta_fai   // channel: [ [:], fasta.fai ]
+    chrom_sizes // channel: [ [:], sizes ]
 
     main:
     ch_versions = Channel.empty()
+    ch_chrom_sizes = Channel.empty()
+    ch_fasta_fai   = Channel.empty()
+
+    if(chrom_sizes) {
+        ch_chrom_sizes = chrom_sizes
+        if(!(chrom_sizes instanceof groovyx.gpars.dataflow.DataflowVariable || 
+        chrom_sizes instanceof groovyx.gpars.dataflow.DataflowBroadcast)) {
+            ch_chrom_sizes = Channel.of([[:], chrom_sizes])
+        }
+    }
+
+    if(fasta_fai) {
+        ch_fasta_fai = fasta_fai
+        if(!(fasta_fai instanceof groovyx.gpars.dataflow.DataflowVariable || 
+        fasta_fai instanceof groovyx.gpars.dataflow.DataflowBroadcast)) {
+            ch_fasta_fai = Channel.of([[:], fasta_fai])
+        }
+    }
 
     /*
     * MODULE: Uncompress genome fasta file if required
     */
     ch_fasta = Channel.empty()
     if (fasta.toString().endsWith(".gz")) {
-        ch_fasta    = GUNZIP_FASTA ( [ [:], fasta ] ).gunzip
+        ch_fasta    = GUNZIP_FASTA ( [ [id:fasta.baseName], fasta ] ).gunzip
         ch_versions = ch_versions.mix(GUNZIP_FASTA.out.versions)
     }
     else if (fasta) {
-        ch_fasta = Channel.from( [ [ [:], fasta ] ] )
+        ch_fasta = Channel.from( [ [ [id:fasta.baseName], fasta ] ] )
     }
 
     /*
@@ -39,7 +60,7 @@ workflow PREPARE_REF {
         ch_versions = ch_versions.mix(GUNZIP_GTF.out.versions)
     }
     else if (gtf) {
-        ch_gtf = Channel.from( [ [  [id:gtf.baseName], gtf ] ] )
+        ch_gtf = Channel.from( [ [ [id:gtf.baseName], gtf ] ] )
     }
 
     /*
@@ -47,11 +68,11 @@ workflow PREPARE_REF {
     */
     ch_bed = Channel.empty()
     if (bed.toString().endsWith(".gz")) {
-        ch_bed      = GUNZIP_BED ( [ [:], bed ] ).gunzip
+        ch_bed      = GUNZIP_BED ( [ [id:bed.baseName], bed ] ).gunzip
         ch_versions = ch_versions.mix(GUNZIP_BED.out.versions)
     }
     else if (bed) {
-        ch_bed = Channel.from( [ [ [:], bed ] ] )
+        ch_bed = Channel.from( [ [ [id:bed.baseName], bed ] ] )
     }
 
     /*
@@ -59,25 +80,25 @@ workflow PREPARE_REF {
     */
     ch_blacklist = Channel.empty()
     if (blacklist.toString().endsWith(".gz")) {
-        ch_blacklist = GUNZIP_BLACKLIST ( [ [:], blacklist ] ).gunzip
+        ch_blacklist = GUNZIP_BLACKLIST ( [ [id:blacklist.baseName], blacklist ] ).gunzip
         ch_versions  = ch_versions.mix(GUNZIP_BLACKLIST.out.versions)
     }
     else if (blacklist) {
-        ch_blacklist = Channel.from( [ [ [:], blacklist ] ] )
+        ch_blacklist = Channel.from( [ [ [id:blacklist.baseName], blacklist ] ] )
     }
 
     /*
     * MODULE: Create chromosome sizes file and index genome file
     */
-    ch_chrom_sizes = Channel.empty()
-    ch_fasta_fai   = Channel.empty()
     if (fasta) {
-        CUSTOM_GETCHROMSIZES (
-            ch_fasta
-        )
-        ch_chrom_sizes = CUSTOM_GETCHROMSIZES.out.sizes
-        ch_fasta_fai   = CUSTOM_GETCHROMSIZES.out.fai
-        ch_versions    = ch_versions.mix(CUSTOM_GETCHROMSIZES.out.versions)
+        if (!(fasta_fai && chrom_sizes)) {
+            CUSTOM_GETCHROMSIZES (
+                ch_fasta
+            )
+            ch_chrom_sizes = CUSTOM_GETCHROMSIZES.out.sizes
+            ch_fasta_fai   = CUSTOM_GETCHROMSIZES.out.fai
+            ch_versions    = ch_versions.mix(CUSTOM_GETCHROMSIZES.out.versions)
+        }
     }
 
     emit:

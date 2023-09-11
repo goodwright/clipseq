@@ -2,6 +2,9 @@ name: dump_software_versions
 description: Custom module used to dump software versions
 keywords:
   - version
+tools:
+  - python:
+      description: Python
 input:
   - versions:
       type: file

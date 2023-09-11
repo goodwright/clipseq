@@ -2,10 +2,10 @@ process ICOUNT_RNAMAPS {
     tag "$meta.id"
     label "process_low"
 
-    conda (params.enable_conda ? "bioconda::icount-mini=2.0.3" : null)
+    conda "bioconda::icount-mini=2.0.3"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/icount-mini:2.0.3--pyh5e36f6f_0' :
-        'quay.io/biocontainers/icount-mini:2.0.3--pyh5e36f6f_0' }"
+        'biocontainers/icount-mini:2.0.3--pyh5e36f6f_0' }"
 
     input:
     tuple val(meta), path(bed)
