@@ -114,13 +114,13 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Filter the GTF file
     */
     if (filtered_gtf){
-    ch_filt_gtf = filtered_gtf
+        ch_filt_gtf = filtered_gtf
     } else {
-    CLIPSEQ_FILTER_GTF (
-        ch_gtf_with_meta
-    )
-    ch_filt_gtf = CLIPSEQ_FILTER_GTF.out.gtf
-    ch_versions = ch_versions.mix(CLIPSEQ_FILTER_GTF.out.versions)
+        CLIPSEQ_FILTER_GTF (
+            ch_gtf_with_meta
+        )
+        ch_filt_gtf = CLIPSEQ_FILTER_GTF.out.gtf
+        ch_versions = ch_versions.mix(CLIPSEQ_FILTER_GTF.out.versions)
     }
 
     /*
@@ -153,75 +153,75 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Segment GTF file using icount
     */
     if (seg_gtf && regions_gtf){
-    ch_seg_gtf     = seg_gtf
-	ch_regions_gtf = regions_gtf
+        ch_seg_gtf     = seg_gtf
+        ch_regions_gtf = regions_gtf
     } else {
-    ICOUNT_SEG_GTF (
-        ch_gtf_with_meta,
-        ch_fasta_fai.map{ it[1] }
-    )
-    ch_seg_gtf     = ICOUNT_SEG_GTF.out.gtf
-	ch_regions_gtf = ICOUNT_SEG_GTF.out.regions
-    ch_versions    = ch_versions.mix(ICOUNT_SEG_GTF.out.versions)
+        ICOUNT_SEG_GTF (
+            ch_gtf_with_meta,
+            ch_fasta_fai.map{ it[1] }
+        )
+        ch_seg_gtf     = ICOUNT_SEG_GTF.out.gtf
+        ch_regions_gtf = ICOUNT_SEG_GTF.out.regions
+        ch_versions    = ch_versions.mix(ICOUNT_SEG_GTF.out.versions)
     }
 
     /*
     * MODULE: Segment the filtered GTF file using icount
     */
     if (seg_filt_gtf && regions_filt_gtf){
-    ch_seg_filt_gtf     = seg_filt_gtf
-    ch_regions_filt_gtf = regions_filt_gtf
+        ch_seg_filt_gtf     = seg_filt_gtf
+        ch_regions_filt_gtf = regions_filt_gtf
     } else {
     ICOUNT_SEG_FILTGTF (
         ch_filt_gtf,
         ch_fasta_fai.map{ it[1] }
     )
-    ch_seg_filt_gtf     = ICOUNT_SEG_FILTGTF.out.gtf
-    ch_regions_filt_gtf = ICOUNT_SEG_FILTGTF.out.regions
+        ch_seg_filt_gtf     = ICOUNT_SEG_FILTGTF.out.gtf
+        ch_regions_filt_gtf = ICOUNT_SEG_FILTGTF.out.regions
     }
 
     /*
     * MODULE: Resolve the GTF regions that iCount did not annotate
     */
     if (seg_resolved_gtf){
-    ch_seg_resolved_gtf = seg_resolved_gtf
+        ch_seg_resolved_gtf = seg_resolved_gtf
     } else {
-    RESOLVE_UNANNOTATED (
-        ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
-        ch_gtf.map{ it[1] },
-        ch_fasta_fai.map{ it[1] },
-        false
-    )
-    ch_seg_resolved_gtf = RESOLVE_UNANNOTATED.out.gtf.map{ [[id:it.baseName], it]}
-    ch_versions         = ch_versions.mix(RESOLVE_UNANNOTATED.out.versions)
+        RESOLVE_UNANNOTATED (
+            ch_seg_gtf.map{ it[1] },
+            ch_seg_filt_gtf.map{ it[1] },
+            ch_gtf.map{ it[1] },
+            ch_fasta_fai.map{ it[1] },
+            false
+        )
+        ch_seg_resolved_gtf = RESOLVE_UNANNOTATED.out.gtf.map{ [[id:it.baseName], it]}
+        ch_versions         = ch_versions.mix(RESOLVE_UNANNOTATED.out.versions)
     }
 
     /*
     * MODULE: Resolve the GTF regions that iCount did not annotate REGIONS FILE
     */
     if (regions_resolved_gtf){
-    ch_regions_resolved_gtf = regions_resolved_gtf
+        ch_regions_resolved_gtf = regions_resolved_gtf
     } else {
-    RESOLVE_UNANNOTATED_REGIONS (
-        ICOUNT_SEG_GTF.out.regions.map{ it[1] },
-        ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
-        ch_gtf.map{ it[1] },
-        ch_fasta_fai.map{ it[1] },
-        false
-    )
-    ch_regions_resolved_gtf = RESOLVE_UNANNOTATED_REGIONS.out.gtf.map{ [[id:it.baseName], it]}
+        RESOLVE_UNANNOTATED_REGIONS (
+            ch_regions_gtf.map{ it[1] },
+            ch_regions_filt_gtf.map{ it[1] },
+            ch_gtf.map{ it[1] },
+            ch_fasta_fai.map{ it[1] },
+            false
+        )
+        ch_regions_resolved_gtf = RESOLVE_UNANNOTATED_REGIONS.out.gtf.map{ [[id:it.baseName], it]}
     }
 
     /*
     * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag
     */
     if (seg_resolved_gtf_genic){
-    ch_seg_resolved_gtf_genic = seg_resolved_gtf_genic
+        ch_seg_resolved_gtf_genic = seg_resolved_gtf_genic
     } else {
         RESOLVE_UNANNOTATED_GENIC_OTHER (
-            ICOUNT_SEG_GTF.out.gtf.map{ it[1] },
-            ICOUNT_SEG_FILTGTF.out.gtf.map{ it[1] },
+            ch_seg_gtf.map{ it[1] },
+            ch_seg_filt_gtf.map{ it[1] },
             ch_gtf.map{ it[1] },
             ch_fasta_fai.map{ it[1] },
             true
@@ -233,11 +233,11 @@ workflow PREPARE_CLIPSEQ {
     * MODULE: Resolve the GTF regions that iCount did not annotate with genic_other flag REGIONS FILE
     */
     if (regions_resolved_gtf_genic){
-    ch_regions_resolved_gtf_genic = regions_resolved_gtf_genic
+        ch_regions_resolved_gtf_genic = regions_resolved_gtf_genic
     } else {
         RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS (
-            ICOUNT_SEG_GTF.out.regions.map{ it[1] },
-            ICOUNT_SEG_FILTGTF.out.regions.map{ it[1] },
+            ch_regions_gtf.map{ it[1] },
+            ch_regions_filt_gtf.map{ it[1] },
             ch_gtf.map{ it[1] },
             ch_fasta_fai.map{ it[1] },
             true
