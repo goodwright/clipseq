@@ -206,8 +206,8 @@ workflow CLIPSEQ {
         if(params.seg_resolved_gtf) { ch_seg_resolved_gtf = Channel.of([[:],file(params.seg_resolved_gtf, checkIfExists: true)]) }
         if(params.seg_resolved_gtf_genic) { ch_seg_resolved_gtf_genic= Channel.of([[:],file(params.seg_resolved_gtf_genic, checkIfExists: true)]) }
         if(params.regions_gtf) { ch_regions_gtf = Channel.of([[:],file(params.regions_gtf, checkIfExists: true)]) }
-        if(params.regions_filt_gtf) { ch_regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }
-        if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = file(params.regions_resolved_gtf, checkIfExists: true) }
+        if(params.regions_filt_gtf) { ch_regions_filt_gtf = Channel.of([[:],file(params.regions_filt_gtf, checkIfExists: true)]) }        
+        if(params.regions_resolved_gtf) { ch_regions_resolved_gtf = Channel.of([[:],file(params.regions_resolved_gtf, checkIfExists: true)]) }
         if(params.regions_resolved_gtf_genic) { ch_regions_resolved_gtf_genic = Channel.of([[:],file(params.regions_resolved_gtf_genic, checkIfExists: true)]) }
 
         /*
