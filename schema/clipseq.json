@@ -347,8 +347,8 @@
             "process": "CLIPPY_GENOME"
         },
         {
-            "name": "Crosslink biotype summary",
-            "description": "Crosslinks summarised by RNA biotype. (Note: summaries by gene and transcript region also available)",
+            "name": "Crosslink summary",
+            "description": "Crosslinks summarised by gene, type (eg. CDS, intron) and subtype (eg. lncRNA, mRNA).",
             "filetype": "tsv",
             "process": "ICOUNT_SUMMARY"
         },
