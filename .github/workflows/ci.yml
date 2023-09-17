@@ -26,7 +26,7 @@ jobs:
           - "22.10.1"
           - ""
         profile: ["docker", "singularity"]
-        test: ["test", "test_no_prep_genome"]
+        test: ["test", "test_no_prep_genome", "test_flow_genome"]
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v3
