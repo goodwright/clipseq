@@ -10,6 +10,7 @@
                     "type": "sample",
                     "pattern": "csv|xlsx",
                     "required": true,
+                    "categories": ["CLIP"],
                     "description": "The samples to process.",
                     "csv": {
                         "group": {
