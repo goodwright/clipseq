@@ -49,6 +49,10 @@ output:
       type: file
       description: TSV file with calculated PEKA score and occurrence distribution for all possible k-mers
       pattern: "*.tsv"
+  - rtxn:
+      type: file
+      description: TSV file with relative occurrence distribution (rtxn) for all possible k-mers. Relative occurrences are obtained by dividing raw occurrences with the average k-mer occurrence in the distal region (DtXn).
+      pattern: "*rtxn*"
   - pdf:
       type: file
       description: PDF file with graphs showing k-mer occurrence distributions around thresholded crosslink sites
