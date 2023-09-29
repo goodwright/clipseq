@@ -15,7 +15,7 @@ include { GUNZIP as GUNZIP_PEAKS  } from '../../../modules/nf-core/gunzip/main.n
 workflow ICOUNT_ANALYSE {
     take:
     bed             // channel: [ val(meta), [ bed ] ]
-    gtf_seg         // channel: [ [ gtf ] ]
+    gtf_regions     // channel: [ [ gtf ] ]
     gtf_resolved    // channel: [ [ gtf.gz ] ]
     run_peakcalling // val: boolean
 
@@ -27,7 +27,7 @@ workflow ICOUNT_ANALYSE {
     */
     ICOUNT_SUMMARY (
         bed,
-        gtf_resolved
+        gtf_regions
     )
     ch_versions = ch_versions.mix(ICOUNT_SUMMARY.out.versions)
 
@@ -36,7 +36,7 @@ workflow ICOUNT_ANALYSE {
     */
     ICOUNT_RNAMAPS (
         bed,
-        gtf_resolved
+        gtf_regions
     )
     ch_versions = ch_versions.mix(ICOUNT_RNAMAPS.out.versions)
 
@@ -49,7 +49,7 @@ workflow ICOUNT_ANALYSE {
         */
         ICOUNT_SIGXLS (
             bed,
-            gtf_seg
+            gtf_resolved
         )
         ch_versions   = ch_versions.mix(ICOUNT_SIGXLS.out.versions)
         ch_tsv_scores = ICOUNT_SIGXLS.out.scores

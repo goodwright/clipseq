@@ -464,7 +464,7 @@ workflow CLIPSEQ {
         */
         ICOUNT_ANALYSE (
             ch_genome_crosslink_bed,
-            ch_seg_gtf.collect{ it[1] },
+            ch_regions_resolved_gtf.collect{ it[1] },
             ch_seg_resolved_gtf.collect{ it[1] },
             true
         )
