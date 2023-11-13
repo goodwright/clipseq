@@ -41,7 +41,7 @@ workflow RNA_ALIGN {
     */
     STAR_ALIGN (
         BOWTIE_ALIGN.out.fastq,
-        star_index,
+        star_index.collect{ [it[0], it[1]]},
         gtf.collect{ [it[0], it[1]]},
         false,
         '',
