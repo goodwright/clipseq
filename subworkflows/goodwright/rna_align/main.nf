@@ -9,6 +9,8 @@
 include { BOWTIE_ALIGN                                } from '../../../modules/nf-core/bowtie/align/main.nf'
 include { STAR_ALIGN                                  } from '../../../modules/nf-core/star/align/main.nf'
 include { SAMTOOLS_SORT as SAMTOOLS_SORT_TRANSCRIPT   } from '../../../modules/nf-core/samtools/sort/main'
+include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA        } from '../../../modules/nf-core/samtools/sort/main'
+include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_SMRNA      } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_TRANSCRIPT } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_GENOME     } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_GENOME       } from '../../../modules/nf-core/samtools/view/main'
@@ -33,6 +35,12 @@ workflow RNA_ALIGN {
         bt_index.collect{it[1]}
     )
     ch_versions = ch_versions.mix(BOWTIE_ALIGN.out.versions)
+
+    SAMTOOLS_SORT_SMRNA ( BOWTIE_ALIGN.out.bam )
+    ch_versions = ch_versions.mix(SAMTOOLS_SORT_SMRNA.out.versions)
+
+    SAMTOOLS_INDEX_SMRNA ( SAMTOOLS_SORT_SMRNA.out.bam )
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX_SMRNA.out.versions)
 
     /*
     * MODULE: Align reads that did not align to the smrna genome to the primary genome
