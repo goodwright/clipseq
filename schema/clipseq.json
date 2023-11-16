@@ -10,15 +10,18 @@
                     "type": "sample",
                     "pattern": "csv|xlsx",
                     "required": true,
+                    "categories": ["CLIP"],
                     "description": "The samples to process.",
                     "csv": {
                         "group": {
                             "property": "",
-                            "user_override": true
+                            "user_override": true,
+                            "required": true
                         },
                         "replicate": {
                             "property": "",
-                            "user_override": true
+                            "user_override": true,
+                            "required": true
                         },
                         "fastq_1": {
                             "property": "input.1",

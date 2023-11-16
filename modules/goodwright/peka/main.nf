@@ -18,6 +18,7 @@ process PEKA {
     output:
     tuple val(meta), path("*mer_cluster_distribution*"), emit: cluster,      optional: true
     tuple val(meta), path("*mer_distribution*")        , emit: distribution, optional: true
+    tuple val(meta), path("*rtxn*")                    , emit: rtxn,         optional: true
     tuple val(meta), path("*.pdf")                     , emit: pdf,          optional: true
     path "versions.yml"                                , emit: versions
 
