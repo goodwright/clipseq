@@ -302,7 +302,7 @@
         },
         "cli_options": {
             "name": "Command Line Options",
-            "description": "Proide customised command line options to specific processes",
+            "description": "Provide customised command line options to specific processes",
             "advanced": true,
             "properties": {
                 "bowtie_params": {
