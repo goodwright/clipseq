@@ -7,10 +7,13 @@
 * MODULES
 */ 
 include { BOWTIE_ALIGN                                } from '../../../modules/nf-core/bowtie/align/main.nf'
+include { BOWTIE_ALIGN as BOWTIE_ALIGN_K1             } from '../../../modules/nf-core/bowtie/align/main.nf'
 include { STAR_ALIGN                                  } from '../../../modules/nf-core/star/align/main.nf'
 include { SAMTOOLS_SORT as SAMTOOLS_SORT_TRANSCRIPT   } from '../../../modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA        } from '../../../modules/nf-core/samtools/sort/main'
+include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA_K1    } from '../../../modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_SMRNA      } from '../../../modules/nf-core/samtools/index/main'
+include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_SMRNA_K1   } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_TRANSCRIPT } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_GENOME     } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_VIEW_GENOME       } from '../../../modules/nf-core/samtools/view/main'
@@ -41,6 +44,23 @@ workflow RNA_ALIGN {
 
     SAMTOOLS_INDEX_SMRNA ( SAMTOOLS_SORT_SMRNA.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX_SMRNA.out.versions)
+
+    /*
+    * MODULE: Align reads to smrna genome, here allowing 100 multimappers but only reporting one alignment per multimapped read
+    * so that we can accurately count it in the crosslink summary later
+    */
+
+    BOWTIE_ALIGN_K1 (
+        fastq,
+        bt_index.collect{it[1]}
+    )
+    ch_versions = ch_versions.mix(BOWTIE_ALIGN_K1.out.versions)
+
+    SAMTOOLS_SORT_SMRNA_K1 ( BOWTIE_ALIGN_K1.out.bam )
+    ch_versions = ch_versions.mix(SAMTOOLS_SORT_SMRNA_K1.out.versions)
+
+    SAMTOOLS_INDEX_SMRNA_K1 ( SAMTOOLS_SORT_SMRNA_K1.out.bam )
+    ch_versions = ch_versions.mix(SAMTOOLS_INDEX_SMRNA_K1.out.versions)
 
     /*
     * MODULE: Align reads that did not align to the smrna genome to the primary genome
@@ -118,7 +138,6 @@ workflow RNA_ALIGN {
     )
 
     emit:
-    bt_bam              = BOWTIE_ALIGN.out.bam                            // channel: [ val(meta), [ bam ] ]
     bt_log              = BOWTIE_ALIGN.out.log                            // channel: [ val(meta), [ txt ] ]
     star_log            = STAR_ALIGN.out.log                              // channel: [ val(meta), [ txt ] ]
     star_log_final      = STAR_ALIGN.out.log_final                        // channel: [ val(meta), [ txt ] ]
@@ -130,5 +149,7 @@ workflow RNA_ALIGN {
     transcript_bai      = SAMTOOLS_VIEW_TRANSCRIPT.out.bai                // channel: [ val(meta), [ bai ] ]
     smrna_bam           = SAMTOOLS_SORT_SMRNA.out.bam                     // channel: [ val(meta), [ bam ] ]
     smrna_bai           = SAMTOOLS_INDEX_SMRNA.out.bai                    // channel: [ val(meta), [ bai ] ]
+    smrna_k1_bam        = SAMTOOLS_SORT_SMRNA_K1.out.bam                  // channel: [ val(meta), [ bam ] ]
+    smrna_k1_bai        = SAMTOOLS_INDEX_SMRNA_K1.out.bai                 // channel: [ val(meta), [ bai ] ]
     versions            = ch_versions                                     // channel: [ versions.yml ]
 }

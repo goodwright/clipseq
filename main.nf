@@ -128,7 +128,9 @@ include { RNA_ALIGN                                             } from './subwor
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as GENOME_UNIQUE_DEDUP    } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as GENOME_MULTI_DEDUP     } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as SMRNA_DEDUP            } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
+include { BAM_DEDUP_SAMTOOLS_UMITOOLS as SMRNA_K1_DEDUP         } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP       } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
+include { CLIP_CALC_CROSSLINKS as CALC_SMRNA_K1_CROSSLINKS      } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { PARACLU_ANALYSE as PARACLU_ANALYSE_GENOME             } from './subworkflows/goodwright/paraclu_analyse/main'
@@ -324,6 +326,8 @@ workflow CLIPSEQ {
         ch_genome_multi_bai   = RNA_ALIGN.out.genome_multi_bai
         ch_smrna_bam          = RNA_ALIGN.out.smrna_bam
         ch_smrna_bai          = RNA_ALIGN.out.smrna_bai
+        ch_smrna_k1_bam       = RNA_ALIGN.out.smrna_k1_bam
+        ch_smrna_k1_bai       = RNA_ALIGN.out.smrna_k1_bai
         ch_transcript_bam     = RNA_ALIGN.out.transcript_bam
         ch_transcript_bai     = RNA_ALIGN.out.transcript_bai
         ch_bt_log             = RNA_ALIGN.out.bt_log
@@ -381,6 +385,11 @@ workflow CLIPSEQ {
             .join ( ch_smrna_bai.map { row -> [row[0].id, row ].flatten()} )
             .map { row -> [row[1], row[2], row[4]] }
 
+        ch_smrna_k1_bam_bai = ch_smrna_k1_bam
+            .map { row -> [row[0].id, row ].flatten()}
+            .join ( ch_smrna_k1_bai.map { row -> [row[0].id, row ].flatten()} )
+            .map { row -> [row[1], row[2], row[4]] }
+
         ch_transcript_bam_bai = ch_transcript_bam
             .map { row -> [row[0].id, row ].flatten()}
             .join ( ch_transcript_bai.map { row -> [row[0].id, row ].flatten()} )
@@ -407,6 +416,14 @@ workflow CLIPSEQ {
         )
         ch_versions   = ch_versions.mix(SMRNA_DEDUP.out.versions)
 
+        SMRNA_K1_DEDUP (
+            ch_smrna_k1_bam_bai
+        )
+        ch_versions     = ch_versions.mix(SMRNA_K1_DEDUP.out.versions)
+        ch_smrna_k1_bam = SMRNA_K1_DEDUP.out.bam
+        ch_smrna_k1_bai = SMRNA_K1_DEDUP.out.bai
+        ch_umi_log      = SMRNA_K1_DEDUP.out.umi_log
+
         /*
         * SUBWORKFLOW: Run umi deduplication on transcript-level alignments
         */
@@ -425,6 +442,18 @@ workflow CLIPSEQ {
     ch_trans_crosslink_coverage       = Channel.empty()
     ch_trans_crosslink_coverage_norm  = Channel.empty()
     if(params.run_calc_crosslinks) {
+        /*
+        * SUBWORKFLOW: Run crosslink calculation for smRNA with -k 1
+        */
+        CALC_SMRNA_K1_CROSSLINKS (
+            ch_smrna_k1_bam,
+            ch_smrna_fasta_fai.collect{ it[1] }
+        )
+        ch_versions                      = ch_versions.mix(CALC_SMRNA_K1_CROSSLINKS.out.versions)
+        ch_smrna_crosslink_bed           = CALC_SMRNA_K1_CROSSLINKS.out.bed
+        ch_smrna_crosslink_coverage      = CALC_SMRNA_K1_CROSSLINKS.out.coverage
+        ch_smrna_crosslink_coverage_norm = CALC_SMRNA_K1_CROSSLINKS.out.coverage_norm
+
         /*
         * SUBWORKFLOW: Run crosslink calculation for genome
         */
@@ -489,6 +518,7 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run iCount on genome-level crosslinks
         */
         ICOUNT_ANALYSE (
+            ch_smrna_crosslink_bed,
             ch_genome_crosslink_bed,
             ch_regions_resolved_gtf.collect{ it[1] },
             ch_seg_resolved_gtf.collect{ it[1] },

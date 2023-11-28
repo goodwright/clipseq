@@ -5,15 +5,18 @@
 /*
 * MODULES
 */
+
 include { ICOUNT_SUMMARY          } from '../../../modules/goodwright/icount/summary/main.nf'
 include { ICOUNT_RNAMAPS          } from '../../../modules/goodwright/icount/rnamaps/main.nf'
 include { ICOUNT_SIGXLS           } from '../../../modules/goodwright/icount/sigxls/main.nf'
 include { ICOUNT_PEAKS            } from '../../../modules/goodwright/icount/peaks/main.nf'
 include { GUNZIP as GUNZIP_SIGXLS } from '../../../modules/nf-core/gunzip/main.nf'
 include { GUNZIP as GUNZIP_PEAKS  } from '../../../modules/nf-core/gunzip/main.nf'
+include { MERGE_SUMMARY           } from '../../../modules/goodwright/clipseq/merge_summary/main.nf'
 
 workflow ICOUNT_ANALYSE {
     take:
+    smrna_bed       // channel: [ val(meta), [ bed ] ]
     bed             // channel: [ val(meta), [ bed ] ]
     gtf_regions     // channel: [ [ gtf ] ]
     gtf_resolved    // channel: [ [ gtf.gz ] ]
@@ -23,13 +26,23 @@ workflow ICOUNT_ANALYSE {
     ch_versions = Channel.empty()
 
     /*
-    * MODULE: Run iCount summary
+    * MODULE: Run iCount summary 
     */
+ 
+
     ICOUNT_SUMMARY (
         bed,
         gtf_regions
     )
     ch_versions = ch_versions.mix(ICOUNT_SUMMARY.out.versions)
+
+    MERGE_SUMMARY (
+        ICOUNT_SUMMARY.out.summary_type,
+        ICOUNT_SUMMARY.out.summary_subtype,
+        ICOUNT_SUMMARY.out.summary_gene,
+        smrna_bed
+    )
+    ch_versions = ch_versions.mix(MERGE_SUMMARY.out.versions)
 
     /*
     * MODULE: Run iCount rnamaps

@@ -1,0 +1,52 @@
+name: merge_summary
+description: Merge results of pre-mapping with results of iCount summary
+tools:
+  - pandas:
+      description: |
+        Flexible and powerful data analysis / manipulation library for Python,
+        providing labeled data structures similar to R data.frame objects,
+        statistical functions, and much more.
+      homepage: https://pandas.pydata.org/
+      documentation: https://pandas.pydata.org/docs/
+      licence: ["BSD-3"]
+input:
+  - summary_type:
+      type: file
+      description: Output from iCount Summary
+      pattern: "*.tsv"
+  - summary_subtype:
+      type: file
+      description: Output from iCount Summary
+      pattern: "*.tsv"
+  - summary_gene:
+      type: file
+      description: Output from iCount Summary
+      pattern: "*.tsv"
+  - smrna_premapped_k1_cDNA:
+      type: file
+      description: smRNA premapped k1 cDNA (deduplicated) bed file
+      pattern: "*.bed"
+  - smrna_premapped_k1_reads_log:
+      type: file
+      description: smRNA premapped k1 reads bowtie log to get read number before deduplication
+      pattern: "*.out"
+
+output:
+  - summary_type_adjusted:
+      type: file
+      description: Output from iCount Summary adjusted with pre-mapping
+      pattern: "*.tsv"
+  - summary_subtype_adjusted:
+      type: file
+      description: Output from iCount Summary adjusted with pre-mapping
+      pattern: "*.tsv"
+  - summary_gene_adjusted:
+      type: file
+      description: Output from iCount Summary adjusted with pre-mapping
+      pattern: "*.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@charlotteanne"
