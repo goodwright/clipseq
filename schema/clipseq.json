@@ -308,14 +308,19 @@
             "description": "Provide customised command line options to specific processes",
             "advanced": true,
             "properties": {
+                "trimgalore_params": {
+                    "name": "Trim Galore! parameters",
+                    "description": "Parameters for Trim Galore! trimming. Defaults are -q 20 and minimum length 10 to keep reads.",
+                    "type": "string"
+                },
                 "bowtie_params": {
                     "name": "Bowtie parameters",
-                    "description": "Mapping parameters for Bowtie pre-mapping",
+                    "description": "Mapping parameters for Bowtie pre-mapping. Do not touch unless you know what you are doing!",
                     "type": "string"
                 },
                 "star_params": {
                     "name": "STAR parameters",
-                    "description": "Mapping parameters for STAR mapping",
+                    "description": "Mapping parameters for STAR mapping. Do not touch unless you know what you are doing!",
                     "type": "string"
                 },
                 "clippy_params": {
