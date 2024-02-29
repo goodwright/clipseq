@@ -36,7 +36,7 @@ process SAMTOOLS_SIMPLE_VIEW {
                     input.getExtension()
     if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
     """
-    xargs --arg-file=longest_transcript.txt samtools \\
+    xargs --arg-file=${filter_file} samtools \\
         view \\
         --threads ${task.cpus-1} \\
         ${reference} \\
