@@ -5,7 +5,8 @@ process SAMTOOLS_SIMPLE_VIEW {
     conda "bioconda::samtools=1.16.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/samtools:1.16.1--h6899075_1' :
-        'biocontainers/samtools:1.16.1--h6899075_1' }"
+        'mgibio/samtools-cwl:1.16.1' }"
+//         'biocontainers/samtools:1.16.1--h6899075_1' }"
 
     input:
     tuple val(meta), path(input), path(index)
@@ -35,14 +36,13 @@ process SAMTOOLS_SIMPLE_VIEW {
                     input.getExtension()
     if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
     """
-    samtools \\
+    xargs --arg-file=${filter_file} samtools \\
         view \\
         --threads ${task.cpus-1} \\
         ${reference} \\
         $args \\
         -o ${prefix}.${file_type} \\
         $input \\
-        `cat ${filter_file}` \\
         $args2
 
     cat <<-END_VERSIONS > versions.yml
