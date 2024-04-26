@@ -40,7 +40,7 @@ process UMICOLLAPSE {
         -Xss${max_stack_size_mega}M \\
         -jar \$UMICOLLAPSE_JAR \\
         -i ${input} \\
-        -o ${prefix}.${extension} \\
+        -o ${prefix}.bam \\
         $args | tee ${prefix}_UMICollapse.log
 
     cat <<-END_VERSIONS > versions.yml
@@ -55,9 +55,8 @@ process UMICOLLAPSE {
     if ( mode !in [ 'fastq', 'bam' ] ) {
         error "Mode must be one of 'fastq' or 'bam'."
     }
-    extension = mode.contains("fastq") ? "fastq.gz" : "bam"
     """
-    touch ${prefix}.dedup.${extension}
+    touch ${prefix}.dedup.bam
     touch ${prefix}_UMICollapse.log
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
