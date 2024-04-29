@@ -20,7 +20,7 @@ process UMICOLLAPSE {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    java -jar /UMICollapse/umicollapse.jar \\
+    java -Xmx184320M -jar /UMICollapse/umicollapse.jar \\
         bam \\
         -i $bam \\
         -o ${prefix}.bam \\

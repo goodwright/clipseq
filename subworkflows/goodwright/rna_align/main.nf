@@ -9,9 +9,10 @@
 include { BOWTIE_ALIGN                                } from '../../../modules/nf-core/bowtie/align/main.nf'
 include { BOWTIE_ALIGN as BOWTIE_ALIGN_K1             } from '../../../modules/nf-core/bowtie/align/main.nf'
 include { STAR_ALIGN                                  } from '../../../modules/nf-core/star/align/main.nf'
+include { SAMTOOLS_SORT as SAMTOOLS_SORT_GENOME       } from '../../../modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_SORT as SAMTOOLS_SORT_TRANSCRIPT   } from '../../../modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA        } from '../../../modules/nf-core/samtools/sort/main'
-include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA_K1    } from '../../../modules/nf-core/samtools/sort/main'
+include { SAMTOOLS_SORT as SAMTOOLS_SORT_SMRNA_K1     } from '../../../modules/nf-core/samtools/sort/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_SMRNA      } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_SMRNA_K1   } from '../../../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_INDEX_TRANSCRIPT } from '../../../modules/nf-core/samtools/index/main'
@@ -75,10 +76,12 @@ workflow RNA_ALIGN {
     )
     ch_versions = ch_versions.mix(STAR_ALIGN.out.versions)
 
+    SAMTOOLS_SORT_GENOME ( STAR_ALIGN.out.bam )
+
     /*
     * MODULE: Index genome-level BAM file 
     */
-    SAMTOOLS_INDEX_GENOME ( STAR_ALIGN.out.bam_sorted )
+    SAMTOOLS_INDEX_GENOME ( SAMTOOLS_SORT_GENOME.out.bam )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX_GENOME.out.versions.first())
 
     /*
@@ -94,7 +97,7 @@ workflow RNA_ALIGN {
     /*
     * CHANNEL: Join bam and bai files
     */
-    ch_bam_bai = STAR_ALIGN.out.bam_sorted
+    ch_bam_bai = SAMTOOLS_SORT_GENOME.out.bam
         .join(SAMTOOLS_INDEX_GENOME.out.bai, by: [0], remainder: true)
         .join(SAMTOOLS_INDEX_GENOME.out.csi, by: [0], remainder: true)
         .map {
@@ -143,7 +146,7 @@ workflow RNA_ALIGN {
     star_log_final      = STAR_ALIGN.out.log_final                        // channel: [ val(meta), [ txt ] ]
     genome_unique_bam   = SAMTOOLS_VIEW_GENOME.out.bam                    // channel: [ val(meta), [ bam ] ]
     genome_unique_bai   = SAMTOOLS_VIEW_GENOME.out.bai                    // channel: [ val(meta), [ bai ] ]
-    genome_multi_bam    = STAR_ALIGN.out.bam_sorted                       // channel: [ val(meta), [ bam ] ]
+    genome_multi_bam    = SAMTOOLS_SORT_GENOME.out.bam                    // channel: [ val(meta), [ bam ] ]
     genome_multi_bai    = SAMTOOLS_INDEX_GENOME.out.bai                   // channel: [ val(meta), [ bai ] ]
     transcript_bam      = SAMTOOLS_VIEW_TRANSCRIPT.out.bam                // channel: [ val(meta), [ bam ] ]
     transcript_bai      = SAMTOOLS_VIEW_TRANSCRIPT.out.bai                // channel: [ val(meta), [ bai ] ]
