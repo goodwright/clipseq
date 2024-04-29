@@ -1,6 +1,6 @@
 process UMICOLLAPSE {
     tag "$meta.id"
-    label "process_high"
+    label "process_medium"
 
     container 'docker.io/elly1502/umicollapse:latest'
 
@@ -20,7 +20,7 @@ process UMICOLLAPSE {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    java -Xmx184320M -jar /UMICollapse/umicollapse.jar \\
+    java -jar /UMICollapse/umicollapse.jar \\
         bam \\
         -i $bam \\
         -o ${prefix}.bam \\

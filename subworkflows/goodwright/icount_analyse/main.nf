@@ -12,7 +12,7 @@ include { ICOUNT_SIGXLS           } from '../../../modules/goodwright/icount/sig
 include { ICOUNT_PEAKS            } from '../../../modules/goodwright/icount/peaks/main.nf'
 include { GUNZIP as GUNZIP_SIGXLS } from '../../../modules/nf-core/gunzip/main.nf'
 include { GUNZIP as GUNZIP_PEAKS  } from '../../../modules/nf-core/gunzip/main.nf'
-include { MERGE_SUMMARY           } from '../../../modules/goodwright/clipseq/merge_summary/main.nf'
+include { MERGE_SUMMARY           } from '../../../modules/local/clipseq/merge_summary/main.nf'
 
 workflow ICOUNT_ANALYSE {
     take:

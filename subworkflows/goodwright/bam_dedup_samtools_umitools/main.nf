@@ -2,7 +2,7 @@
 * UMIcollapse, index BAM file and run samtools stats, flagstat and idxstats
 */
 
-include { UMICOLLAPSE        } from '../../../modules/goodwright/umicollapse/main'
+include { UMICOLLAPSE        } from '../../../modules/nf-core/umicollapse/main'   
 include { SAMTOOLS_INDEX     } from '../../../modules/nf-core/samtools/index/main'
 
 workflow BAM_DEDUP_SAMTOOLS_UMITOOLS {
@@ -16,7 +16,8 @@ workflow BAM_DEDUP_SAMTOOLS_UMITOOLS {
     * MODULE: UMI-tools collapse
     */
     UMICOLLAPSE ( 
-        bam_bai 
+        bam_bai,
+        'bam' 
     )
     ch_versions = ch_versions.mix(UMICOLLAPSE.out.versions)
 
