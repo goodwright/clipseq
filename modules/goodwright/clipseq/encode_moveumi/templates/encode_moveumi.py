@@ -15,7 +15,7 @@ with gzip.open(input_fq, mode = 'rt') as f_in:
         for record in SeqIO.parse(f_in, 'fastq'):
             header = record.id.split(":")
             if '_' not in header[-1]:
-                rearranged = ":".join(header[1:]) + '_' + header[0]
+                rearranged = ":".join(header[1:]) + '_rbc:' + header[0]
                 record.id = rearranged
                 record.name = rearranged
                 record.description = rearranged
