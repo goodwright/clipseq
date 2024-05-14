@@ -1,10 +1,8 @@
 process ENCODE_MOVEUMI {
     label "process_single"
 
-    conda "bioconda::biopython=1.70"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'https://depot.galaxyproject.org/singularity/biopython:1.81 ' :
-    'biocontainers/biopython:1.81' }"
+    conda "bioconda::biopython=1.78 pigz=2.6"
+    container "quay.io/biocontainers/mulled-v2-877c4e5a8fad685ea5bde487e04924ac447923b9:b7daa641364165419b9a87d9988bc803f913c5b6-0"
 
     input:
     tuple val(meta), path(reads)

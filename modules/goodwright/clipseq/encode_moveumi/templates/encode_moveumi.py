@@ -21,7 +21,7 @@ with gzip.open(input_fq, mode = 'rt') as f_in:
                 record.description = rearranged
             SeqIO.write(record, f_out, 'fastq')
 
-os.system('gzip ' + output_fq)
+os.system('pigz ' + output_fq)
 
 with open("versions.yml", "w") as out_f:
     out_f.write("!{process_name}" + ":\n")
