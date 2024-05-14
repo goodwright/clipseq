@@ -116,6 +116,7 @@ include { CLIPPY as CLIPPY_TRANSCRIPT                } from './modules/goodwrigh
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
+include { ENCODE_MOVEUMI                             } from './modules/goodwright/clipseq/encode_moveumi/main'
 
 //
 // SUBWORKFLOWS
@@ -277,7 +278,13 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
-
+    if(params.encode_eclip){
+        ENCODE_MOVEUMI (
+            ch_fastq
+        )
+        ch_versions = ch_versions.mix(ENCODE_MOVEUMI.out.versions)
+        ch_fastq    = ENCODE_MOVEUMI.out.reads
+    }
     if(params.run_move_umi_to_header){
         UMITOOLS_EXTRACT (
             ch_fastq
