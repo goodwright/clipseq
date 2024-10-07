@@ -118,6 +118,7 @@ include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwrigh
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
 include { ENCODE_MOVEUMI                             } from './modules/goodwright/clipseq/encode_moveumi/main'
 
+
 //
 // SUBWORKFLOWS
 //
@@ -137,6 +138,12 @@ include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './subwor
 include { PARACLU_ANALYSE as PARACLU_ANALYSE_GENOME             } from './subworkflows/goodwright/paraclu_analyse/main'
 include { PARACLU_ANALYSE as PARACLU_ANALYSE_TRANSCRIPT         } from './subworkflows/goodwright/paraclu_analyse/main'
 include { ICOUNT_ANALYSE                                        } from './subworkflows/goodwright/icount_analyse/main'
+
+include { PARSE_PAIRWISE_INPUT                                  } from './subworkflows/local/parse_pairwise_input/main'
+include { PREP_WHOLE_READ as PREP_TRANSCRIPT_WHOLE_READ         } from './subworkflows/local/prep_whole_read/main'
+include { PREP_WHOLE_READ as PREP_GENOME_WHOLE_READ             } from './subworkflows/local/prep_whole_read/main'
+include { PREP_WHOLE_READ as PREP_SMRNA_K1_WHOLE_READ           } from './subworkflows/local/prep_whole_read/main'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -277,6 +284,17 @@ workflow CLIPSEQ {
         ch_fastq    = PARSE_FASTQ_INPUT.out.fastq
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
+
+    //Additional pairwise sample sheet parsing
+    if(params.run_pairwise_input_check) {
+        PARSE_PAIRWISE_INPUT (
+            ch_pairwise_samplesheet
+        )
+        ch_versions = ch_versions.mix(PARSE_PAIRWISE_INPUT.out.versions)
+        ch_pairwise = PARSE_PAIRWISE_INPUT.out.pairwise
+        //EXAMPLE CHANNEL STRUCT: [id:WT_BRD4_plus_R1, control_id:WT_No_Ab_R1]
+    }
+
     //ch_fastq | view
     if(params.encode_eclip){
         ENCODE_MOVEUMI (
@@ -484,6 +502,69 @@ workflow CLIPSEQ {
         ch_trans_crosslink_bed           = CALC_TRANSCRIPT_CROSSLINKS.out.bed
         ch_trans_crosslink_coverage      = CALC_TRANSCRIPT_CROSSLINKS.out.coverage
         ch_trans_crosslink_coverage_norm = CALC_TRANSCRIPT_CROSSLINKS.out.coverage_norm
+    }
+
+    if(params.whole_read_analysis) {
+        /*
+        * SUBWORKFLOW: Run whole read analysis
+        */
+        PREP_TRANSCRIPT_WHOLE_READ(
+            ch_transcript_bam,
+            ch_longest_transcript_fai.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(PREP_TRANSCRIPT_WHOLE_READ.out.versions)
+        ch_trans_whole_read_bam_plus        = PREP_TRANSCRIPT_WHOLE_READ.out.bam_plus
+        ch_trans_whole_read_bam_minus       = PREP_TRANSCRIPT_WHOLE_READ.out.bam_minus
+
+        ch_trans_whole_read_bed             = PREP_TRANSCRIPT_WHOLE_READ.out.bed
+        ch_trans_whole_read_coverage        = PREP_TRANSCRIPT_WHOLE_READ.out.coverage
+        ch_trans_whole_read_coverage_norm   = PREP_TRANSCRIPT_WHOLE_READ.out.coverage_norm
+
+        PREP_GENOME_WHOLE_READ (
+            ch_genome_bam,
+            ch_fasta_fai.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(PREP_GENOME_WHOLE_READ.out.versions)
+        ch_genome_whole_read_bam_plus       = PREP_GENOME_WHOLE_READ.out.bam_plus
+        ch_genome_whole_read_bam_minus      = PREP_GENOME_WHOLE_READ.out.bam_minus
+
+        ch_genome_whole_read_bed            = PREP_GENOME_WHOLE_READ.out.bed
+        ch_genome_whole_read_coverage       = PREP_GENOME_WHOLE_READ.out.coverage
+        ch_genome_whole_read_coverage_norm  = PREP_GENOME_WHOLE_READ.out.coverage_norm
+
+        PREP_SMRNA_K1_WHOLE_READ (
+            ch_smrna_k1_bam,
+            ch_smrna_fasta_fai.collect{ it[1] }
+        )
+        ch_versions = ch_versions.mix(PREP_SMRNA_K1_WHOLE_READ.out.versions)
+        ch_smrna_whole_read_bam_plus        = PREP_SMRNA_K1_WHOLE_READ.out.bam_plus
+        ch_smrna_whole_read_bam_minus       = PREP_SMRNA_K1_WHOLE_READ.out.bam_minus
+
+        ch_smrna_whole_read_bed             = PREP_SMRNA_K1_WHOLE_READ.out.bed
+        ch_smrna_whole_read_coverage        = PREP_SMRNA_K1_WHOLE_READ.out.coverage
+        ch_smrna_whole_read_coverage_norm   = PREP_SMRNA_K1_WHOLE_READ.out.coverage_norm
+
+        // Sort out split bam channels for MACS3 peak calling
+        def rearrangeChannels(ch_pairwise, ch_read_bam) {
+            return ch_pairwise
+            .join(ch_read_bam, by: { pair, bam_entry -> pair[0] == bam_entry[0].id })
+            .join(ch_read_bam, by: { pair, bam_entry -> pair[1] == bam_entry[0].id })
+            .map { pair, bam1, bam2 ->
+                [bam1[0], bam1[1], bam2[1]] // Output format: [meta1, [bam1], [bam2]]
+            }
+        }
+        ch_trans_whole_read_bam_plus_pairwise = rearrangeChannels(ch_pairwise, ch_trans_whole_read_bam_plus)
+        ch_trans_whole_read_bam_minus_pairwise = rearrangeChannels(ch_pairwise, ch_trans_whole_read_bam_minus)
+        ch_genome_whole_read_bam_plus_pairwise = rearrangeChannels(ch_pairwise, ch_genome_whole_read_bam_plus)
+        ch_genome_whole_read_bam_minus_pairwise = rearrangeChannels(ch_pairwise, ch_genome_whole_read_bam_minus)
+
+        // MACS3 Peak Calling
+        MACS3_TRANSCRIPT_CALLPEAK (
+        ch_trans_whole_read_bam_plus_pairwise,
+        ch_macs_gsize
+        )
+
+
     }
 
     if(params.run_peak_calling) {
