@@ -1,16 +1,17 @@
-name: clip_calc_crosslinks
+name: prep_whole_read
 description: |
-  Calculate clip crosslinks using an input BAM file and genome index file. Crosslinks are outputed as a BED file and additional 
-  coverage and normalised coverage tracks are calculated in BEDGRAPH format.
+  Split bam files into plus and minus strand bam files for MACS3 peak calling
+  Also convert the bam file to bed format and calculate (normalised) coverage tracks in bedgraph format
 keywords:
+  - samtools
   - bedtools
-  - crosslinks
+  - macs3
   - coverage
   - fai
   - bam
 modules:
+  - nf-core/samtools/view
   - goodwright/linux/command
-  - goodwright/bedtools/shift
   - nf-core/bedtools/bamtobed
   - nf-core/bedtools/genomecov
 input:
@@ -18,7 +19,7 @@ input:
       type: map
       description: |
         Groovy Map containing sample information
-        e.g. [ id:'test', single_end:false ]
+        e.g. [id:FUS_KO_BRD4_plus_R2, group:FUS_KO_BRD4_plus, replicate:2, single_end:true]
   - bam:
       type: file
       description: BAM file
@@ -33,6 +34,14 @@ output:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
+  - bam_plus:
+      type: file
+      description: BAM file containing reads on the plus strand
+      pattern: "*_plus.bam"
+  - bam_minus:
+      type: file
+      description: BAM file containing reads on the minus strand
+      pattern: "*_minus.bam"
   - bed:
       type: file
       description: Bedfile containing the crosslink depths at genomic positions

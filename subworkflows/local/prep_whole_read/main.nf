@@ -20,6 +20,7 @@ include { LINUX_COMMAND as CROSSLINK_NORMCOVERAGE      } from '../../../modules/
 workflow PREP_WHOLE_READ {
     take:
     bam // channel: [ val(meta), [ bam ] ]
+    bai // channel: [ val(meta), [ bai ] ]
     fai // channel: [ fai ]
 
     main:
@@ -28,13 +29,20 @@ workflow PREP_WHOLE_READ {
     /*
     * MODULE: split BAM file into plus and minus strand files
     */
+    ch_bam = bam.join(bai, by: [0], remainder: true)
+        .map { meta, bam, bai -> [ meta, bam, bai ] }
+
     SAMTOOLS_VIEW_PLUS (
-        bam
+        ch_bam,
+        [[],[]],
+        []
     )
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_PLUS.out.versions)
 
     SAMTOOLS_VIEW_MINUS (
-        bam
+        ch_bam,
+        [[],[]],
+        []
     )
 
     /*

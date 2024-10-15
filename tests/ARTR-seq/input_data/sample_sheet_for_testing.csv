@@ -1,0 +1,5 @@
+group,replicate,fastq_1,fastq_2
+WT_BRD4_plus,1,/nemo/lab/ulej/data/STPs/babs/inputs/hanzhong.bai/asf/PM24162/20240807_LH00442_0034_A22MYGKLT3/fastq/BAI7152A9_S347_L008_R1_001.fastq.gz,
+WT_BRD4_plus,2,/nemo/lab/ulej/data/STPs/babs/inputs/hanzhong.bai/asf/PM24162/20240807_LH00442_0034_A22MYGKLT3/fastq/BAI7152A10_S348_L008_R1_001.fastq.gz,
+WT_No_Ab,1,/nemo/lab/ulej/data/STPs/babs/inputs/hanzhong.bai/asf/PM24162/20240807_LH00442_0034_A22MYGKLT3/fastq/BAI7152A11_S349_L008_R1_001.fastq.gz,
+WT_No_Ab,2,/nemo/lab/ulej/data/STPs/babs/inputs/hanzhong.bai/asf/PM24162/20240807_LH00442_0034_A22MYGKLT3/fastq/BAI7152A12_S350_L008_R1_001.fastq.gz,

@@ -4,7 +4,7 @@
  * Subworkflow goal is to create pairwise channels of sample id that match metadata
  */
 
-include { PAIRWISE_SAMPLESHEET_CHECK } from '../../../modules/local/whole_read_analysis/parse_pairwise_input/main.nf'
+include { PAIRWISE_SAMPLESHEET_CHECK } from '../../../modules/local/whole_read_analysis/pairwise_samplesheet_check/main.nf'
 
 workflow PARSE_PAIRWISE_INPUT {
     take:

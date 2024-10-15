@@ -1,0 +1,39 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "WT_BRD4_plus_R1",
+                        "WT_No_Ab_R1"
+                    ],
+                    [
+                        "WT_BRD4_plus_R2",
+                        "WT_No_Ab_R2"
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "pairwise": [
+                    [
+                        "WT_BRD4_plus_R1",
+                        "WT_No_Ab_R1"
+                    ],
+                    [
+                        "WT_BRD4_plus_R2",
+                        "WT_No_Ab_R2"
+                    ]
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "23.04.4"
+        },
+        "timestamp": "2024-10-08T14:41:40.966647"
+    }
+}

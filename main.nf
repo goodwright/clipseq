@@ -116,8 +116,14 @@ include { CLIPPY as CLIPPY_TRANSCRIPT                } from './modules/goodwrigh
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
-include { ENCODE_MOVEUMI                             } from './modules/goodwright/clipseq/encode_moveumi/main'
 
+
+include { ENCODE_MOVEUMI                             } from './modules/local/clipseq/encode_moveumi/main'
+
+include { MACS3_CALLPEAK as MACS3_CALLPEAK_GENOME_PLUS          } from './modules/nf-core/macs3/callpeak/main'
+include { MACS3_CALLPEAK as MACS3_CALLPEAK_GENOME_MINUS         } from './modules/nf-core/macs3/callpeak/main'
+include { MACS3_CALLPEAK as MACS3_CALLPEAK_TRANSCRIPT_PLUS      } from './modules/nf-core/macs3/callpeak/main'
+include { MACS3_CALLPEAK as MACS3_CALLPEAK_TRANSCRIPT_MINUS     } from './modules/nf-core/macs3/callpeak/main'
 
 //
 // SUBWORKFLOWS
@@ -287,6 +293,8 @@ workflow CLIPSEQ {
 
     //Additional pairwise sample sheet parsing
     if(params.run_pairwise_input_check) {
+        ch_pairwise_samplesheet = file(params.pairwise_samplesheet, checkIfExists: true)
+        
         PARSE_PAIRWISE_INPUT (
             ch_pairwise_samplesheet
         )
@@ -504,12 +512,13 @@ workflow CLIPSEQ {
         ch_trans_crosslink_coverage_norm = CALC_TRANSCRIPT_CROSSLINKS.out.coverage_norm
     }
 
-    if(params.whole_read_analysis) {
+    if(params.run_whole_read_analysis) {
         /*
         * SUBWORKFLOW: Run whole read analysis
         */
         PREP_TRANSCRIPT_WHOLE_READ(
             ch_transcript_bam,
+            ch_transcript_bai,
             ch_longest_transcript_fai.collect{ it[1] }
         )
         ch_versions = ch_versions.mix(PREP_TRANSCRIPT_WHOLE_READ.out.versions)
@@ -522,6 +531,7 @@ workflow CLIPSEQ {
 
         PREP_GENOME_WHOLE_READ (
             ch_genome_bam,
+            ch_genome_bai,
             ch_fasta_fai.collect{ it[1] }
         )
         ch_versions = ch_versions.mix(PREP_GENOME_WHOLE_READ.out.versions)
@@ -534,6 +544,7 @@ workflow CLIPSEQ {
 
         PREP_SMRNA_K1_WHOLE_READ (
             ch_smrna_k1_bam,
+            ch_smrna_k1_bai,
             ch_smrna_fasta_fai.collect{ it[1] }
         )
         ch_versions = ch_versions.mix(PREP_SMRNA_K1_WHOLE_READ.out.versions)
@@ -544,27 +555,40 @@ workflow CLIPSEQ {
         ch_smrna_whole_read_coverage        = PREP_SMRNA_K1_WHOLE_READ.out.coverage
         ch_smrna_whole_read_coverage_norm   = PREP_SMRNA_K1_WHOLE_READ.out.coverage_norm
 
-        // Sort out split bam channels for MACS3 peak calling
-        def rearrangeChannels(ch_pairwise, ch_read_bam) {
-            return ch_pairwise
-            .join(ch_read_bam, by: { pair, bam_entry -> pair[0] == bam_entry[0].id })
-            .join(ch_read_bam, by: { pair, bam_entry -> pair[1] == bam_entry[0].id })
-            .map { pair, bam1, bam2 ->
-                [bam1[0], bam1[1], bam2[1]] // Output format: [meta1, [bam1], [bam2]]
-            }
-        }
+        // Sort out split bam channels for MACS3 peak calling using rearrangeChannels(), which is defined below
         ch_trans_whole_read_bam_plus_pairwise = rearrangeChannels(ch_pairwise, ch_trans_whole_read_bam_plus)
         ch_trans_whole_read_bam_minus_pairwise = rearrangeChannels(ch_pairwise, ch_trans_whole_read_bam_minus)
         ch_genome_whole_read_bam_plus_pairwise = rearrangeChannels(ch_pairwise, ch_genome_whole_read_bam_plus)
         ch_genome_whole_read_bam_minus_pairwise = rearrangeChannels(ch_pairwise, ch_genome_whole_read_bam_minus)
 
         // MACS3 Peak Calling
-        MACS3_TRANSCRIPT_CALLPEAK (
-        ch_trans_whole_read_bam_plus_pairwise,
-        ch_macs_gsize
+        ch_macs_gsize = params.macs_gsize
+
+        MACS3_CALLPEAK_TRANSCRIPT_PLUS (
+            ch_trans_whole_read_bam_plus_pairwise,
+            ch_macs_gsize
+        )
+        ch_versions = ch_versions.mix(MACS3_CALLPEAK_TRANSCRIPT_PLUS.out.versions)
+
+        MACS3_CALLPEAK_TRANSCRIPT_MINUS (
+            ch_trans_whole_read_bam_minus_pairwise,
+            ch_macs_gsize
         )
 
+        MACS3_CALLPEAK_GENOME_PLUS (
+            ch_genome_whole_read_bam_plus_pairwise,
+            ch_macs_gsize
+        )
 
+        MACS3_CALLPEAK_GENOME_MINUS (
+            ch_genome_whole_read_bam_minus_pairwise,
+            ch_macs_gsize
+        )
+
+        // Fork bed channels for downstream peak calling
+        ch_genome_crosslink_bed = ch_genome_whole_read_bed
+        ch_trans_crosslink_bed  = ch_trans_whole_read_bed
+        ch_smrna_crosslink_bed  = ch_smrna_whole_read_bed
     }
 
     if(params.run_peak_calling) {
@@ -668,6 +692,36 @@ workflow CLIPSEQ {
         )
     }
 }
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// Function to rearrange channels to match pairwise samples
+def rearrangeChannels(ch_pairwise, ch_read_bam) {
+            // ch_pairwise: [val(id), val(control_id)]
+            // ch_read_bam: [val(meta), path(bam)]
+
+            // rearrange ch_read_bam to get sample id for .join()
+            def ch_read_bam_ext1 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}
+            def ch_read_bam_ext2 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}
+            
+            
+            return ch_pairwise
+            .join(ch_read_bam_ext1, by: [0])
+            .map {id, control_id, meta, bam -> [control_id, meta, bam]}
+            .join(ch_read_bam_ext2, by: [0])
+            .map { control_id, meta, bam, control_meta, control_bam ->
+                if (bam != null & control_bam != null) {
+                    [meta, bam, control_bam]
+                } else {
+                    exit 1, "BAM files do not exist!\n${bam}\n${control_bam}"
+                }
+            }
+            // final channel structure: [val(meta), path(bam), path(control_bam)]
+        }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

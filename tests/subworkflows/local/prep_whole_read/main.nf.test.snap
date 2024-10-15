@@ -1,0 +1,85 @@
+{
+    "genome whole read analysis": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                    ]
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "4": [
+                    
+                ],
+                "5": [
+                    "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
+                    "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
+                ],
+                "bam_minus": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                    ]
+                ],
+                "bam_plus": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                    ]
+                ],
+                "bed": [
+                    
+                ],
+                "coverage": [
+                    
+                ],
+                "coverage_norm": [
+                    
+                ],
+                "versions": [
+                    "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
+                    "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-08T21:34:33.40211113"
+    }
+}
