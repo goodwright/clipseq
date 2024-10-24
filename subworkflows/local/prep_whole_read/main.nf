@@ -22,6 +22,7 @@ workflow PREP_WHOLE_READ {
     bam // channel: [ val(meta), [ bam ] ]
     bai // channel: [ val(meta), [ bai ] ]
     fai // channel: [ fai ]
+    run_bigwig // boolean: run bigwig conversion
 
     main:
     ch_versions = Channel.empty()
@@ -72,16 +73,18 @@ workflow PREP_WHOLE_READ {
     /*
     * MODULE: Convert BED file to bigwig format
     */
-    BIGWIG_POS (
-        BEDTOOLS_GENOMECOV_POS.out.genomecov,
-        params.chrom_sizes
-    )
-    ch_versions = ch_versions.mix(BIGWIG_POS.out.versions)
+    if (run_bigwig) {
+        BIGWIG_POS (
+            BEDTOOLS_GENOMECOV_POS.out.genomecov,
+            params.chrom_sizes
+        )
+        ch_versions = ch_versions.mix(BIGWIG_POS.out.versions)
 
-    BIGWIG_NEG (
-        BEDTOOLS_GENOMECOV_NEG.out.genomecov,
-        params.chrom_sizes
-    )
+        BIGWIG_NEG (
+            BEDTOOLS_GENOMECOV_NEG.out.genomecov,
+            params.chrom_sizes
+        )
+    }
 
     emit:
     bam_plus     = SAMTOOLS_VIEW_PLUS.out.bam       // channel: [ val(meta), [ bam ] ]

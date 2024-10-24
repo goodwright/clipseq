@@ -519,7 +519,8 @@ workflow CLIPSEQ {
         PREP_TRANSCRIPT_WHOLE_READ(
             ch_transcript_bam,
             ch_transcript_bai,
-            ch_longest_transcript_fai.collect{ it[1] }
+            ch_longest_transcript_fai.collect{ it[1] },
+            false
         )
         ch_versions = ch_versions.mix(PREP_TRANSCRIPT_WHOLE_READ.out.versions)
         ch_trans_whole_read_bam_plus        = PREP_TRANSCRIPT_WHOLE_READ.out.bam_plus
@@ -530,7 +531,8 @@ workflow CLIPSEQ {
         PREP_GENOME_WHOLE_READ (
             ch_genome_bam,
             ch_genome_bai,
-            ch_fasta_fai.collect{ it[1] }
+            ch_fasta_fai.collect{ it[1] },
+            true
         )
         ch_versions = ch_versions.mix(PREP_GENOME_WHOLE_READ.out.versions)
         ch_genome_whole_read_bam_plus       = PREP_GENOME_WHOLE_READ.out.bam_plus
@@ -541,7 +543,8 @@ workflow CLIPSEQ {
         PREP_SMRNA_K1_WHOLE_READ (
             ch_smrna_k1_bam,
             ch_smrna_k1_bai,
-            ch_smrna_fasta_fai.collect{ it[1] }
+            ch_smrna_fasta_fai.collect{ it[1] },
+            false
         )
         ch_versions = ch_versions.mix(PREP_SMRNA_K1_WHOLE_READ.out.versions)
         ch_smrna_whole_read_bam_plus        = PREP_SMRNA_K1_WHOLE_READ.out.bam_plus
