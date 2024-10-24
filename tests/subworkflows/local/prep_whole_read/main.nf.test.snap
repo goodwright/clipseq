@@ -32,33 +32,12 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bed:md5,e81407242cf6703923857b3ca5368848"
+                        "WT_BRD4_plus_R1.bed:md5,4154ae3205761247f0d34369bd35ef24"
                     ]
                 ],
                 "3": [
-                    [
-                        {
-                            "id": "WT_BRD4_plus_R1",
-                            "group": "WT_BRD4_plus",
-                            "replicate": 1,
-                            "single_end": true
-                        },
-                        "WT_BRD4_plus_R1.transcriptome.cmd.bedgraph:md5,77641e9f8cadd33ad581b032a5f61da9"
-                    ]
-                ],
-                "4": [
-                    [
-                        {
-                            "id": "WT_BRD4_plus_R1",
-                            "group": "WT_BRD4_plus",
-                            "replicate": 1,
-                            "single_end": true
-                        },
-                        "WT_BRD4_plus_R1.norm.transcriptome.cmd.bedgraph:md5,c361144d11674bcdd5955c8dea037fbd"
-                    ]
-                ],
-                "5": [
                     "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,72c64a635a623b2727531efef33bb2a9",
                     "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
                     "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
                 ],
@@ -92,33 +71,12 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bed:md5,e81407242cf6703923857b3ca5368848"
-                    ]
-                ],
-                "coverage": [
-                    [
-                        {
-                            "id": "WT_BRD4_plus_R1",
-                            "group": "WT_BRD4_plus",
-                            "replicate": 1,
-                            "single_end": true
-                        },
-                        "WT_BRD4_plus_R1.transcriptome.cmd.bedgraph:md5,77641e9f8cadd33ad581b032a5f61da9"
-                    ]
-                ],
-                "coverage_norm": [
-                    [
-                        {
-                            "id": "WT_BRD4_plus_R1",
-                            "group": "WT_BRD4_plus",
-                            "replicate": 1,
-                            "single_end": true
-                        },
-                        "WT_BRD4_plus_R1.norm.transcriptome.cmd.bedgraph:md5,c361144d11674bcdd5955c8dea037fbd"
+                        "WT_BRD4_plus_R1.bed:md5,4154ae3205761247f0d34369bd35ef24"
                     ]
                 ],
                 "versions": [
                     "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,72c64a635a623b2727531efef33bb2a9",
                     "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
                     "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
                 ]
@@ -128,6 +86,6 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-22T14:57:08.187120068"
+        "timestamp": "2024-10-24T09:25:08.105192974"
     }
 }

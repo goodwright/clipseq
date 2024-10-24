@@ -526,8 +526,6 @@ workflow CLIPSEQ {
         ch_trans_whole_read_bam_minus       = PREP_TRANSCRIPT_WHOLE_READ.out.bam_minus
 
         ch_trans_whole_read_bed             = PREP_TRANSCRIPT_WHOLE_READ.out.bed
-        ch_trans_whole_read_coverage        = PREP_TRANSCRIPT_WHOLE_READ.out.coverage
-        ch_trans_whole_read_coverage_norm   = PREP_TRANSCRIPT_WHOLE_READ.out.coverage_norm
 
         PREP_GENOME_WHOLE_READ (
             ch_genome_bam,
@@ -539,8 +537,6 @@ workflow CLIPSEQ {
         ch_genome_whole_read_bam_minus      = PREP_GENOME_WHOLE_READ.out.bam_minus
 
         ch_genome_whole_read_bed            = PREP_GENOME_WHOLE_READ.out.bed
-        ch_genome_whole_read_coverage       = PREP_GENOME_WHOLE_READ.out.coverage
-        ch_genome_whole_read_coverage_norm  = PREP_GENOME_WHOLE_READ.out.coverage_norm
 
         PREP_SMRNA_K1_WHOLE_READ (
             ch_smrna_k1_bam,
@@ -552,8 +548,6 @@ workflow CLIPSEQ {
         ch_smrna_whole_read_bam_minus       = PREP_SMRNA_K1_WHOLE_READ.out.bam_minus
 
         ch_smrna_whole_read_bed             = PREP_SMRNA_K1_WHOLE_READ.out.bed
-        ch_smrna_whole_read_coverage        = PREP_SMRNA_K1_WHOLE_READ.out.coverage
-        ch_smrna_whole_read_coverage_norm   = PREP_SMRNA_K1_WHOLE_READ.out.coverage_norm
 
         // Sort out split bam channels for MACS3 peak calling using rearrangeChannels(), which is defined below
         ch_trans_whole_read_bam_plus_pairwise = rearrangeChannels(ch_pairwise, ch_trans_whole_read_bam_plus)
