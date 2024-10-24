@@ -2,7 +2,7 @@ nextflow_workflow {
 
     name "Test Workflow PREP_WHOLE_READ"
     script "subworkflows/local/prep_whole_read/main.nf"
-    config "/nemo/lab/ulej/home/users/baih/PM24162/goodwright_clipseq/clipseq/tests/subworkflows/local/prep_whole_read/test.config"
+    config "tests/subworkflows/local/prep_whole_read/test.config"
     workflow "PREP_WHOLE_READ"
 
     test("genome whole read analysis") {
@@ -19,16 +19,16 @@ nextflow_workflow {
                 input[0] = channel.of(
                     tuple(
                         [id: 'WT_BRD4_plus_R1', group: 'WT_BRD4_plus', replicate: 1, single_end: true],
-                        file("/nemo/lab/ulej/home/users/baih/PM24162/goodwright_clipseq/v1.3/clipseq/tests/ARTR-seq_20240925/output/03_filt_dedup/WT_BRD4_plus_R1.unique_genome.dedup.bam")
+                        file("${projectDir}/tests/subworkflows/local/prep_whole_read/WT_BRD4_plus_R1.unique_genome.dedup.subsampled.bam")
                     )
                 )
                 input[1] = channel.of(
                     tuple(
                         [id: 'WT_BRD4_plus_R1', group: 'WT_BRD4_plus', replicate: 1, single_end: true],
-                        file("/nemo/lab/ulej/home/users/baih/PM24162/goodwright_clipseq/v1.3/clipseq/tests/ARTR-seq_20240925/output/03_filt_dedup/WT_BRD4_plus_R1.unique_genome.dedup.bam.bai")
+                        file("${projectDir}/tests/subworkflows/local/prep_whole_read/WT_BRD4_plus_R1.unique_genome.dedup.subsampled.bam.bai")
                     )
                 )
-                input[2] = file("/nemo/lab/ulej/home/users/baih/PM24162/goodwright_clipseq/v1.3/clipseq/tests/ARTR-seq_20240925/output/00_genome/GRCh38.primary_assembly.genome.fa.fai")
+                input[2] = file("${projectDir}/tests/subworkflows/local/prep_whole_read/GRCh38.primary_assembly.genome.fa.fai")
                 """
             }
         }
@@ -36,11 +36,6 @@ nextflow_workflow {
         then {
             assert workflow.success
             assert snapshot(workflow.out).match()
-
-            with(workflow.out) {
-                assert bam_plus.get(1) ==~ /.*\.bam/
-                assert bam_minus.get(1) ==~ /.*\.bam/
-            }
         }
 
     }

@@ -10,7 +10,7 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                        "WT_BRD4_plus_R1_unique_transcriptome_plus.bam:md5,ae127b2cac380fe339aeec891d6b9a8b"
                     ]
                 ],
                 "1": [
@@ -21,17 +21,41 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                        "WT_BRD4_plus_R1_unique_transcriptome_neg.bam:md5,5e78995bc09ceb1697cae6089cd92948"
                     ]
                 ],
                 "2": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bed:md5,e81407242cf6703923857b3ca5368848"
+                    ]
                 ],
                 "3": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.transcriptome.cmd.bedgraph:md5,77641e9f8cadd33ad581b032a5f61da9"
+                    ]
                 ],
                 "4": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.norm.transcriptome.cmd.bedgraph:md5,c361144d11674bcdd5955c8dea037fbd"
+                    ]
                 ],
                 "5": [
                     "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
@@ -46,7 +70,7 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                        "WT_BRD4_plus_R1_unique_transcriptome_neg.bam:md5,5e78995bc09ceb1697cae6089cd92948"
                     ]
                 ],
                 "bam_plus": [
@@ -57,17 +81,41 @@
                             "replicate": 1,
                             "single_end": true
                         },
-                        "WT_BRD4_plus_R1.bam:md5,d952a81f15e815e5561741ec0cc124c1"
+                        "WT_BRD4_plus_R1_unique_transcriptome_plus.bam:md5,ae127b2cac380fe339aeec891d6b9a8b"
                     ]
                 ],
                 "bed": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bed:md5,e81407242cf6703923857b3ca5368848"
+                    ]
                 ],
                 "coverage": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.transcriptome.cmd.bedgraph:md5,77641e9f8cadd33ad581b032a5f61da9"
+                    ]
                 ],
                 "coverage_norm": [
-                    
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.norm.transcriptome.cmd.bedgraph:md5,c361144d11674bcdd5955c8dea037fbd"
+                    ]
                 ],
                 "versions": [
                     "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
@@ -80,6 +128,6 @@
             "nf-test": "0.9.0",
             "nextflow": "24.04.4"
         },
-        "timestamp": "2024-10-08T21:34:33.40211113"
+        "timestamp": "2024-10-22T14:57:08.187120068"
     }
 }

@@ -2,7 +2,7 @@ nextflow_workflow {
 
     name "Test Workflow PARSE_PAIRWISE_INPUT"
     script "subworkflows/local/parse_pairwise_input/main.nf"
-    config "tests/subworkflows/local/parse_pairwise_input/.testconfig"
+    config "tests/subworkflows/local/parse_pairwise_input/test.config"
     profile "singularity"
     workflow "PARSE_PAIRWISE_INPUT"
 
@@ -16,7 +16,7 @@ nextflow_workflow {
             workflow {
                 """
                 // define inputs of the workflow here. Example:
-                input[0] = file("${projectDir}/tests/ARTR-seq/input_data/pairwise_peak_calling_for_testing.csv")
+                input[0] = file("${projectDir}/tests/subworkflows/local/parse_pairwise_input/pairwise_peak_calling_for_testing.csv")
                 """
             }
         }
