@@ -74,15 +74,16 @@ workflow PREP_WHOLE_READ {
     * MODULE: Convert BED file to bigwig format
     */
     if (run_bigwig) {
+        ch_chrom_sizes = Channel.fromPath(params.chrom_sizes)
         BIGWIG_POS (
             BEDTOOLS_GENOMECOV_POS.out.genomecov,
-            params.chrom_sizes
+            ch_chrom_sizes.collect()
         )
         ch_versions = ch_versions.mix(BIGWIG_POS.out.versions)
 
         BIGWIG_NEG (
             BEDTOOLS_GENOMECOV_NEG.out.genomecov,
-            params.chrom_sizes
+            ch_chrom_sizes.collect()
         )
     }
 
