@@ -46,6 +46,7 @@ def check_samplesheet(process_name, samplesheet, output):
     dump_versions(process_name)
 
     rows = []
+    ip_rows = []
     samples = []
 
     with open(samplesheet, "r") as fin:
@@ -130,6 +131,13 @@ def check_samplesheet(process_name, samplesheet, output):
                 print_error("Samplesheet contains duplicate rows!", "Line", line)
             else:
                 rows.append(sample_info)
+            
+            ## Check that sample _info is not duplicated 
+            ip_info = (group, replicate)
+            if ip_info in ip_rows:
+                print_error("Samplesheet contains duplicate IP rows!", "Line", line)
+            else:
+                ip_rows.append(ip_info)
 
             ## Create sample id and control_sample id
             ## This id matches with the final id in meta (without _Txxx)

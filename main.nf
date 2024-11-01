@@ -701,15 +701,15 @@ def rearrangeChannels(ch_pairwise, ch_read_bam) {
             // ch_pairwise: [val(id), val(control_id)]
             // ch_read_bam: [val(meta), path(bam)]
 
-            // rearrange ch_read_bam to get sample id for .join()
-            def ch_read_bam_ext1 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}
-            def ch_read_bam_ext2 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}
+            // rearrange ch_read_bam to get sample id for .combine()
+            def ch_read_bam_ext1 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}.unique()
+            def ch_read_bam_ext2 = ch_read_bam.map {meta, bam -> [meta.id, meta, bam]}.unique()
             
-            
+            // using .combine() instead of .join() to allow for duplicates in ch_pairwise
             return ch_pairwise
-            .join(ch_read_bam_ext1, by: [0])
+            .combine(ch_read_bam_ext1, by: 0)
             .map {id, control_id, meta, bam -> [control_id, meta, bam]}
-            .join(ch_read_bam_ext2, by: [0])
+            .combine(ch_read_bam_ext2, by: 0)
             .map { control_id, meta, bam, control_meta, control_bam ->
                 if (bam != null & control_bam != null) {
                     [meta, bam, control_bam]
