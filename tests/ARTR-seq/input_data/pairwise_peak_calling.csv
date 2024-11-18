@@ -1,0 +1,11 @@
+group,replicate,control_group,control_replicate
+WT_BRD4_plus,1,WT_No_Ab,1
+WT_BRD4_plus,2,WT_No_Ab,2
+WT_FUS_plus,1,WT_No_Ab,1
+WT_FUS_plus,2,WT_No_Ab,2
+WT_FUS_plus,1,FUS_KO_FUS,1
+WT_FUS_plus,2,FUS_KO_FUS,2
+M3_KO_BRD4_plus,1,M3_KO_No_Ab,1
+M3_KO_BRD4_plus,2,M3_KO_No_Ab,2
+FUS_KO_BRD4_plus,1,FUS_KO_No_Ab,1
+FUS_KO_BRD4_plus,2,FUS_KO_No_Ab,2

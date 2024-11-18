@@ -1,0 +1,20 @@
+name: pairwise_samplesheet_check
+description: Checks a pairwise samplesheet recording IP and input samples for MACS3 peak calling
+keywords:
+  - samplesheet
+input:
+  - samplesheet:
+      type: file
+      description: Input samplesheet to check
+      pattern: "*.{csv}"
+output:
+  - csv:
+      type: file
+      description: Validated samplesheet file
+      pattern: "*.csv"
+  - version:
+      type: file
+      description: File containing software version
+      pattern: "*.{version.txt}"
+authors:
+  - "@hanzhong-bai"

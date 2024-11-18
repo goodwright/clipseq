@@ -1,0 +1,30 @@
+name: parse_pairwise_input
+description: |
+  Get sample id from pairwise samplesheet and check if compatible with fastq samplesheet
+ Then create channel of pairwise ids for bam file channel reorganisation before MACS3 peak calling
+ Subworkflow goal is to create pairwise channels of sample id that match metadata
+  
+keywords:
+
+modules:
+  - nf-core/samtools/view
+  - local/whole_read_analysis/pairwise_samplesheet_check
+  - nf-core/bedtools/bamtobed
+  - nf-core/bedtools/genomecov
+input:
+  - samplesheet:
+      type: file
+      description: Pairwise samplesheet
+      pattern: "*pairwise_samplesheet.csv"
+output:
+  - pairwise:
+      type: list
+      description: |
+        Groovy list containing pairwise sample information
+        e.g. [ id, control_id ]
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@hanzhong-bai"
