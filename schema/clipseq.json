@@ -1,275 +1,292 @@
 {
-    "inputs": {
-        "sample_options": {
+    "inputs": [
+        {
             "name": "Sample options",
             "description": "Parameters relating to the sample being analysed.",
             "advanced": false,
-            "properties": {
+            "params": {
                 "samplesheet": {
                     "name": "Samples",
-                    "type": "sample",
-                    "pattern": "csv|xlsx",
-                    "required": true,
-                    "categories": ["CLIP"],
                     "description": "The samples to process.",
-                    "csv": {
-                        "group": {
-                            "property": "",
-                            "user_override": true,
-                            "required": true
+                    "type": "csv",
+                    "required": true,
+                    "takes_samples": true,
+                    "sample_types": ["CLIP"],
+                    "columns": [
+                        {
+                            "name": "group",
+                            "type": "string",
+                            "required": true,
+                            "render": true
                         },
-                        "replicate": {
-                            "property": "",
-                            "user_override": true,
-                            "required": true
+                        {
+                            "name": "replicate",
+                            "type": "string",
+                            "required": true,
+                            "render": true
                         },
-                        "fastq_1": {
-                            "property": "input.1",
-                            "user_override": false
+                        {
+                            "name": "fastq_1",
+                            "type": "data",
+                            "from_sample": 1,
+                            "required": true,
+                            "render": false
                         },
-                        "fastq_2": {
-                            "property": "input.2",
-                            "user_override": false
+                        {
+                            "name": "fastq_2",
+                            "type": "data",
+                            "from_sample": 2,
+                            "required": false,
+                            "render": false
                         }
-                    }
+                    ]
                 }
             }
         },
-        "genome_options": {
+        {
             "name": "Genome options",
             "description": "The genome being aligned to.",
             "advanced": false,
-            "takes_genome": true,
-            "properties": {
+            "from_execution": true,
+            "params": {
                 "fasta": {
-                    "name": "Genome FASTA",
-                    "type": "file",
-                    "pattern": "fasta|fa$",
+                    "name": "FASTA",
+                    "type": "data",
+                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
                     "required": true,
-                    "genome_file": "fasta",
+                    "execution_output": {
+                        "process": null,
+                        "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$"
+                    },
                     "description": "A raw genome FASTA file."
                 },
                 "gtf": {
                     "name": "GTF",
-                    "type": "file",
-                    "pattern": "gtf",
+                    "type": "data",
+                    "pattern": "^\\S+\\.gtf(\\.gz)?$",
                     "required": true,
-                    "genome_file": "gtf",
+                    "execution_output": {
+                        "process": null,
+                        "pattern": "^\\S+\\.gtf(\\.gz)?$"
+                    },
                     "description": "An annotation for the genome."
                 },
                 "smrna_fasta": {
                     "name": "smRNA FASTA",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fasta|fa$",
                     "required": true,
-                    "genome_file": "fasta|fa$",
+                    "execution_output": {
+                        "process": null,
+                        "pattern": "(smrna|trna)\\.(fasta|fa)$"
+                    },
                     "description": "FASTA file to be mapped to before the genome file, typically containing rRNA and tRNA sequences."
                 },
                 "fasta_fai": {
                     "name": "Genome FASTA index",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fai$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "PREPARE_PRIMARY_GENOME:CUSTOM_GETCHROMSIZES",
-                        "filetype": "fai"
+                        "pattern": "\\.fai$"
                     },
                     "description": "A genome FASTA file index generated by Samtools faidx."
                 },
                 "chrom_sizes": {
                     "name": "Genome chromosome lengths",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "sizes$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "PREPARE_PRIMARY_GENOME:CUSTOM_GETCHROMSIZES",
-                        "filetype": "sizes"
+                        "pattern": "\\.sizes$"
                     },
                     "description": "A tabulated file of chromosome names and lengths."
                 },
                 "target_genome_index": {
                     "name": "Genome STAR index",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "STAR_GENOMEGENERATE",
-                        "filetype": ""
+                        "pattern": ""
                     },
                     "description": "A genome index generated by STAR."
                 },
                 "smrna_genome_index": {
                     "name": "Small RNA Bowtie index",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "BOWTIE_BUILD",
-                        "filetype": ""
+                        "pattern": ""
                     },
                     "description": "A small RNA index for pre-mapping generated by Bowtie."
                 },
                 "smrna_fasta_fai": {
                     "name": "Small RNA FASTA index",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fai$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "PREPARE_SMRNA_GENOME:CUSTOM_GETCHROMSIZES",
-                        "filetype": "fai"
+                        "pattern": "\\.fai$"
                     },
                     "description": "A small RNA FASTA file index generated by Samtools faidx."
                 },
                 "smrna_chrom_sizes": {
                     "name": "Small RNA lengths",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "sizes$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "PREPARE_SMRNA_GENOME:CUSTOM_GETCHROMSIZES",
-                        "filetype": "sizes"
+                        "pattern": "\\.sizes$"
                     },
                     "description": "A tabulated file of small RNA names and lengths."
                 },
                 "longest_transcript": {
                     "name": "Longest transcript IDs",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "txt$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "CLIPSEQ_FIND_LONGEST_TRANSCRIPT",
-                        "filetype": "txt"
+                        "pattern": "\\.txt$"
                     },
                     "description": "A list of transcript IDs for the longest transcript for each gene in provided GTF annotation."
                 },
                 "longest_transcript_fai": {
                     "name": "Longest transcript IDs and lengths",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fai$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "CLIPSEQ_FIND_LONGEST_TRANSCRIPT",
-                        "filetype": "fai"
+                        "pattern": "\\.fai$"
                     },
                     "description": "A tabulated file of transcript IDs and lengths for the longest transcript for each gene in provided GTF annotation."
                 },
                 "longest_transcript_gtf": {
                     "name": "Longest transcript IDs",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "CLIPSEQ_FIND_LONGEST_TRANSCRIPT",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "A list of transcript IDs for the longest transcript for each gene in provided GTF annotation."
                 },
                 "filtered_gtf": {
                     "name": "Filtered GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "CLIPSEQ_FILTER_GTF",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "GTF filtered for 'basic' transcript tag and support levels TSL1 and TSL2 to improve performance of downstream tools."
                 },
                 "seg_gtf": {
                     "name": "Segmented GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "ICOUNT_SEG_GTF",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "GTF segmented for use in iCount peak calling using iCount segment command."
                 },
                 "seg_filt_gtf": {
                     "name": "Segmented filtered GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "ICOUNT_SEG_FILTGTF",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "Filtered GTF segmented for use in iCount peak calling using iCount segment command."
                 },
                 "seg_resolved_gtf": {
                     "name": "Segmented resolved filtered GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "RESOLVE_UNANNOTATED",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "Filtered GTF segmented using iCount segment command and then resolve unannotated regions by overlapping transcript segments."
                 },
                 "seg_resolved_gtf_genic": {
                     "name": "Segmented resolved genic filtered GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "RESOLVE_UNANNOTATED_GENIC_OTHER",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "Filtered GTF segmented using iCount segment command and then resolve unannotated regions by annotating as 'genic other'."
                 },
                 "regions_gtf": {
                     "name": "Regions GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf.gz$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "ICOUNT_SEG_GTF",
-                        "filetype": "gtf.gz"
+                        "pattern": "\\.gtf.gz$"
                     },
                     "description": "GTF regions for use in PEKA using iCount segment command."
                 },
                 "regions_filt_gtf": {
                     "name": "Filtered regions GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf.gz$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "ICOUNT_SEG_FILTGTF",
-                        "filetype": "gtf.gz"
+                        "pattern": "\\.gtf.gz$"
                     },
                     "description": "Filtered GTF regions for use in PEKA using iCount segment command."
                 },
                 "regions_resolved_gtf": {
                     "name": "Filtered resolved regions GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "RESOLVE_UNANNOTATED_REGIONS",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "Filtered GTF regions using iCount segment command and then resolve unannotated regions by overlapping transcript segments."
                 },
                 "regions_resolved_gtf_genic": {
                     "name": "Filtered resolved regions genic GTF",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "gtf$",
                     "required": false,
-                    "genome_output": {
+                    "execution_output": {
                         "process": "RESOLVE_UNANNOTATED_GENIC_OTHER_REGIONS",
-                        "filetype": "gtf"
+                        "pattern": "\\.gtf$"
                     },
                     "description": "Filtered GTF regions using iCount segment command and then resolve unannotated regions by annotating as 'genic other'."
                 }
             }
         },
-        "pipeline_options": {
+        {
             "name": "Settings",
             "description": "Additional pipeline configuration options.",
             "advanced": true,
-            "properties": {
+            "params": {
                 "move_umi_to_header": {
                     "name": "Extract UMI to header",
                     "description": "Runs UMI to header extraction based on the head format provided in UMI header format.",
@@ -298,24 +315,19 @@
                 }
             }
         },
-        "cli_options": {
+        {
             "name": "Command Line Options",
-            "description": "Provide customised command line options to specific processes",
+            "description": "Proide customised command line options to specific processes",
             "advanced": true,
-            "properties": {
-                "trimgalore_params": {
-                    "name": "Trim Galore! parameters",
-                    "description": "Parameters for Trim Galore! trimming. Defaults are -q 20 and minimum length 10 to keep reads.",
-                    "type": "string"
-                },
+            "params": {
                 "bowtie_params": {
                     "name": "Bowtie parameters",
-                    "description": "Mapping parameters for Bowtie pre-mapping. Do not touch unless you know what you are doing!",
+                    "description": "Mapping parameters for Bowtie pre-mapping",
                     "type": "string"
                 },
                 "star_params": {
                     "name": "STAR parameters",
-                    "description": "Mapping parameters for STAR mapping. Do not touch unless you know what you are doing!",
+                    "description": "Mapping parameters for STAR mapping",
                     "type": "string"
                 },
                 "clippy_params": {
@@ -335,7 +347,7 @@
                 }
             }
         }
-    },
+    ],
     "outputs": [
         {
             "name": "Normalised genome crosslink bedgraph",
@@ -353,7 +365,7 @@
             "name": "Crosslink summary",
             "description": "Crosslinks summarised by gene, type (eg. CDS, intron) and subtype (eg. lncRNA, mRNA).",
             "filetype": "tsv",
-            "process": "MERGE_SUMMARY"
+            "process": "ICOUNT_SUMMARY"
         },
         {
             "name": "K-mer enrichment",
