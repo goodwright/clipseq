@@ -1,37 +1,38 @@
 {
-    "inputs": {
-        "genome_options": {
+    "inputs": [
+        {
             "name": "Genome options",
             "description": "The genome being aligned to.",
-            "takes_genome": true,
-            "properties": {
+            "from_fileset": true,
+            "fileset_requires_organism": true,
+            "params": {
                 "fasta": {
                     "name": "Genome FASTA",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fasta|fa$",
                     "required": true,
-                    "genome_file": "fasta",
+                    "fileset_pattern": "fasta",
                     "description": "A raw genome FASTA file."
                 },
                 "gtf": {
                     "name": "GTF",
-                    "type": "file",
-                    "pattern": "gtf",
+                    "type": "data",
+                    "pattern": "gtf$",
                     "required": true,
-                    "genome_file": "gtf",
+                    "fileset_pattern": "gtf$",
                     "description": "An annotation for the genome."
                 },
                 "smrna_fasta": {
                     "name": "smRNA FASTA",
-                    "type": "file",
+                    "type": "data",
                     "pattern": "fasta|fa$",
                     "required": true,
-                    "genome_file": "fasta|fa$",
+                    "fileset_pattern": "(smrna|trna)\\.(fasta|fa)$",
                     "description": "FASTA file to be mapped to before the genome file, typically containing rRNA and tRNA sequences."
                 }
             }
         }
-    },
+    ],
     "outputs": [
         {
             "name": "Genome STAR index",
