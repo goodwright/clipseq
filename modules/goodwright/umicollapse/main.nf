@@ -1,6 +1,6 @@
 process UMICOLLAPSE {
     tag "$meta.id"
-    label "process_high"
+    label "process_medium"
 
     container 'docker.io/elly1502/umicollapse:latest'
 
