@@ -440,6 +440,9 @@ workflow CLIPSEQ {
         ch_versions       = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
         ch_transcript_bam = TRANSCRIPT_DEDUP.out.bam
         ch_transcript_bai = TRANSCRIPT_DEDUP.out.bai
+    } else {
+        ch_genome_bam = ch_genome_unique_bam
+        ch_genome_bai = ch_genome_unique_bai
     }
 
     ch_genome_crosslink_bed           = Channel.empty()
