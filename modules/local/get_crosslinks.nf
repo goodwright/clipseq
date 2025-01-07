@@ -24,7 +24,8 @@ process GET_CROSSLINKS {
     if (crosslink_position == "start"){
         """
         bedtools bamtobed -i $bam > dedup.bed
-        bedtools shift -m 1 -p -1 -i dedup.bed -g $fai > shifted.bed
+        bedtools shift -m 1 -p -1 -i dedup.bed -g $fai > shiftedtemp.bed
+        awk -v OFS="\t" 'BEGIN {while (getline < ARGV[2]) {chrom[\$1] = \$2} ARGV[2] = ""} {start=\$2; end=\$3; if(start<0){start=0; end=1} if(end>chrom[\$1]){start=chrom[\$1]-1; end=chrom[\$1]} print \$1,start,end,\$4,\$5,\$6}' shiftedtemp.bed $fai > shifted.bed
         bedtools genomecov -dz -strand + -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
         bedtools genomecov -dz -strand - -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
         cat pos.bed neg.bed | sort -k1,1 -k2,2n -k3,3 -k6,6 > ${prefix}.xl.bed
@@ -41,7 +42,8 @@ process GET_CROSSLINKS {
     } else if (crosslink_position == "middle"){
         """
         bedtools bamtobed -i $bam > dedup.bed
-        awk '{OFS="\t"}{mid=int((\$2+\$3)/2); print \$1, mid, mid+1, \$4, \$5, \$6}' dedup.bed > shifted.bed
+        awk '{OFS="\t"}{mid=int((\$2+\$3)/2); print \$1, mid, mid+1, \$4, \$5, \$6}' dedup.bed > shiftedtemp.bed
+        awk -v OFS="\t" 'BEGIN {while (getline < ARGV[2]) {chrom[\$1] = \$2} ARGV[2] = ""} {start=\$2; end=\$3; if(start<0){start=0; end=1} if(end>chrom[\$1]){start=chrom[\$1]-1; end=chrom[\$1]} print \$1,start,end,\$4,\$5,\$6}' shiftedtemp.bed $fai > shifted.bed
         bedtools genomecov -dz -strand + -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
         bedtools genomecov -dz -strand - -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
         cat pos.bed neg.bed | sort -k1,1 -k2,2n -k3,3 -k6,6 > ${prefix}.xl.bed
@@ -58,7 +60,8 @@ process GET_CROSSLINKS {
     } else if (crosslink_position == "end"){
         """
         bedtools bamtobed -i $bam > dedup.bed
-        awk -v OFS="\t" '\$6=="+" {print \$1,\$3,\$3+1,\$4,\$5,\$6} \$6=="-" {print \$1,\$2-1,\$2,\$4,\$5,\$6}' dedup.bed > shifted.bed
+        awk -v OFS="\t" '\$6=="+" {print \$1,\$3,\$3+1,\$4,\$5,\$6} \$6=="-" {print \$1,\$2-1,\$2,\$4,\$5,\$6}' dedup.bed > shiftedtemp.bed
+        awk -v OFS="\t" 'BEGIN {while (getline < ARGV[2]) {chrom[\$1] = \$2} ARGV[2] = ""} {start=\$2; end=\$3; if(start<0){start=0; end=1} if(end>chrom[\$1]){start=chrom[\$1]-1; end=chrom[\$1]} print \$1,start,end,\$4,\$5,\$6}' shiftedtemp.bed $fai > shifted.bed
         bedtools genomecov -dz -strand + -3 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
         bedtools genomecov -dz -strand - -3 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
         cat pos.bed neg.bed | sort -k1,1 -k2,2n -k3,3 -k6,6 > ${prefix}.xl.bed
