@@ -41,16 +41,16 @@ process GET_CROSSLINKS {
         """
     } else if (crosslink_position == "middle"){
         """
-        bedtools bamtobed -i $bam > dedup.bed
-        awk '{OFS="\t"}{mid=int((\$2+\$3)/2); print \$1, mid, mid+1, \$4, \$5, \$6}' dedup.bed > shiftedtemp.bed
-        awk -v OFS="\t" 'BEGIN {while (getline < ARGV[2]) {chrom[\$1] = \$2} ARGV[2] = ""} {start=\$2; end=\$3; if(start<0){start=0; end=1} if(end>chrom[\$1]){start=chrom[\$1]-1; end=chrom[\$1]} print \$1,start,end,\$4,\$5,\$6}' shiftedtemp.bed $fai > shifted.bed
-        bedtools genomecov -dz -strand + -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
-        bedtools genomecov -dz -strand - -5 -i shifted.bed -g $fai | awk '{OFS="\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
+        bedtools bamtobed -bed12 -i $bam > dedup.bed12
+        awk -F'\\t' -v OFS='\\t' 'function abs(x){return x<0?-x:x}{split(\$11,sizes,",");split(\$12,starts,",");total_covered=0;for(i=1;i<=\$10;i++){total_covered+=sizes[i]};target_pos=int(total_covered/2);covered_so_far=0;for(i=1;i<=\$10;i++){if(covered_so_far+sizes[i]>=target_pos){offset=target_pos-covered_so_far;mid_pos=\$2+starts[i]+offset;print \$1,mid_pos,mid_pos+1,\$4,\$5,\$6;break};covered_so_far+=sizes[i]}}' dedup.bed12 > shiftedtemp.bed
+        awk -v OFS="\\t" 'BEGIN {while (getline < ARGV[2]) {chrom[\$1] = \$2} ARGV[2] = ""} {start=\$2; end=\$3; if(start<0){start=0; end=1} if(end>chrom[\$1]){start=chrom[\$1]-1; end=chrom[\$1]} print \$1,start,end,\$4,\$5,\$6}' shiftedtemp.bed $fai > shifted.bed
+        bedtools genomecov -dz -strand + -5 -i shifted.bed -g $fai | awk '{OFS="\\t"}{print \$1, \$2, \$2+1, ".", \$3, "+"}' > pos.bed
+        bedtools genomecov -dz -strand - -5 -i shifted.bed -g $fai | awk '{OFS="\\t"}{print \$1, \$2, \$2+1, ".", \$3, "-"}' > neg.bed
         cat pos.bed neg.bed | sort -k1,1 -k2,2n -k3,3 -k6,6 > ${prefix}.xl.bed
-        cat ${prefix}.xl.bed | awk '{OFS = "\t"}{if (\$6 == "+") {print \$1, \$2, \$3, \$5} else {print \$1, \$2, \$3, -\$5}}' > ${prefix}.xl.bedgraph
+        cat ${prefix}.xl.bed | awk '{OFS = "\\t"}{if (\$6 == "+") {print \$1, \$2, \$3, \$5} else {print \$1, \$2, \$3, -\$5}}' > ${prefix}.xl.bedgraph
         TOTAL_VARIABLE=`cat ${prefix}.xl.bed | awk \'BEGIN {total=0} {total=total+\$5} END {print total}\'`
-        cat ${prefix}.xl.bed | awk -v total=\$TOTAL_VARIABLE \'{printf "%s\\t%i\\t%i\\t%s\\t%f\\t%s\\n", \$1, \$2, \$3, \$4, 1000000*\$5/total, \$6}\' | awk \'{OFS = "\t"}{if (\$6 == "+") {print \$1, \$2, \$3, \$5} else {print \$1, \$2, \$3, -\$5}}\' | sort -k1,1 -k2,2n > ${prefix}.xl.CPMnorm.bedgraph
-
+        cat ${prefix}.xl.bed | awk -v total=\$TOTAL_VARIABLE \'{printf "%s\\t%i\\t%i\\t%s\\t%f\\t%s\\n", \$1, \$2, \$3, \$4, 1000000*\$5/total, \$6}\' | awk \'{OFS = "\\t"}{if (\$6 == "+") {print \$1, \$2, \$3, \$5} else {print \$1, \$2, \$3, -\$5}}\' | sort -k1,1 -k2,2n > ${prefix}.xl.CPMnorm.bedgraph
+        
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             linux: NOVERSION
