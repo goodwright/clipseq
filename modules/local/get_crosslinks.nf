@@ -9,7 +9,7 @@ process GET_CROSSLINKS {
 
     input:
     tuple val(meta), path(bam), path(bai)
-    tuple val(meta2), path(fai)
+    path fai
     val crosslink_position
 
     output:

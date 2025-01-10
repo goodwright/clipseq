@@ -458,7 +458,7 @@ workflow CLIPSEQ {
         */
         CALC_SMRNA_K1_CROSSLINKS (
             ch_smrna_k1_bam.join(ch_smrna_k1_bai),
-            ch_smrna_fasta_fai,
+            ch_smrna_fasta_fai.collect{ it[1] },
             params.crosslink_position
         )
         ch_versions                      = ch_versions.mix(CALC_SMRNA_K1_CROSSLINKS.out.versions)
@@ -471,7 +471,7 @@ workflow CLIPSEQ {
         */
         CALC_GENOME_CROSSLINKS (
             ch_genome_bam.join(ch_genome_bai),
-            ch_fasta_fai,
+            ch_fasta_fai.collect{ it[1] },
             params.crosslink_position
         )
         ch_versions                       = ch_versions.mix(CALC_GENOME_CROSSLINKS.out.versions)
@@ -484,7 +484,7 @@ workflow CLIPSEQ {
         */
         CALC_TRANSCRIPT_CROSSLINKS (
             ch_transcript_bam.join(ch_transcript_bai),
-            ch_longest_transcript_fai,
+            ch_longest_transcript_fai.collect{ it[1] },
             params.crosslink_position
         )
         ch_versions                      = ch_versions.mix(CALC_TRANSCRIPT_CROSSLINKS.out.versions)
