@@ -376,7 +376,7 @@
             "name": "Crosslink summary",
             "description": "Crosslinks summarised by gene, type (eg. CDS, intron) and subtype (eg. lncRNA, mRNA).",
             "filetype": "tsv",
-            "process": "ICOUNT_SUMMARY"
+            "process": "MERGE_SUMMARY"
         },
         {
             "name": "K-mer enrichment",
