@@ -350,6 +350,11 @@
                     "name": "PEKA parameters",
                     "description": "Parameters for PEKA K-mer enrichment analysis",
                     "type": "string"
+                },
+                "trimgalore_params": {
+                    "name": "Trim Galore! parameters",
+                    "description": "Parameters for Trim Galore! We reccomend to include the default params along with any new ones you add: '--fastqc --length 10 -q 20'",
+                    "type": "string"
                 }
             }
         }
