@@ -1,0 +1,5 @@
+group,replicate,fastq_1,fastq_2
+WT_BRD4_plus,1,tests/ARTR-seq/input_data/subsampled/WT_BRD4_plus_1_subsampled_100000.fastq.gz,
+WT_BRD4_plus,2,tests/ARTR-seq/input_data/subsampled/WT_BRD4_plus_2_subsampled_100000.fastq.gz,
+WT_No_Ab,1,tests/ARTR-seq/input_data/subsampled/WT_No_Ab_1_subsampled_100000.fastq.gz,
+WT_No_Ab,2,tests/ARTR-seq/input_data/subsampled/WT_No_Ab_2_subsampled_100000.fastq.gz,

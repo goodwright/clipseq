@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/nemo/lab/ulej/home/users/baih/PM24162/goodwright_clipseq/clipseq/tests/ARTR-seq/script/API_upload.py", line 1, in <module>
+    import flowbio
+ModuleNotFoundError: No module named 'flowbio'

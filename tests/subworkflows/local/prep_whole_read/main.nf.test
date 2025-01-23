@@ -1,0 +1,43 @@
+nextflow_workflow {
+
+    name "Test Workflow PREP_WHOLE_READ"
+    script "subworkflows/local/prep_whole_read/main.nf"
+    config "tests/subworkflows/local/prep_whole_read/test.config"
+    workflow "PREP_WHOLE_READ"
+
+    test("genome whole read analysis") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                outdir = "${projectDir}/tests/subworkflows/local/prep_whole_read/output"
+            }
+            workflow {
+                """
+                // define inputs of the workflow here. Example:
+                
+                input[0] = channel.of(
+                    tuple(
+                        [id: 'WT_BRD4_plus_R1', group: 'WT_BRD4_plus', replicate: 1, single_end: true],
+                        file("${projectDir}/tests/subworkflows/local/prep_whole_read/WT_BRD4_plus_R1.unique_genome.dedup.subsampled.bam")
+                    )
+                )
+                input[1] = channel.of(
+                    tuple(
+                        [id: 'WT_BRD4_plus_R1', group: 'WT_BRD4_plus', replicate: 1, single_end: true],
+                        file("${projectDir}/tests/subworkflows/local/prep_whole_read/WT_BRD4_plus_R1.unique_genome.dedup.subsampled.bam.bai")
+                    )
+                )
+                input[2] = file("${projectDir}/tests/subworkflows/local/prep_whole_read/GRCh38.primary_assembly.genome.fa.fai")
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+}

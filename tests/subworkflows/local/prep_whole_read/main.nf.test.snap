@@ -1,0 +1,91 @@
+{
+    "genome whole read analysis": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1_unique_transcriptome_plus.bam:md5,ae127b2cac380fe339aeec891d6b9a8b"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1_unique_transcriptome_neg.bam:md5,5e78995bc09ceb1697cae6089cd92948"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bed:md5,4154ae3205761247f0d34369bd35ef24"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,72c64a635a623b2727531efef33bb2a9",
+                    "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
+                    "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
+                ],
+                "bam_minus": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1_unique_transcriptome_neg.bam:md5,5e78995bc09ceb1697cae6089cd92948"
+                    ]
+                ],
+                "bam_plus": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1_unique_transcriptome_plus.bam:md5,ae127b2cac380fe339aeec891d6b9a8b"
+                    ]
+                ],
+                "bed": [
+                    [
+                        {
+                            "id": "WT_BRD4_plus_R1",
+                            "group": "WT_BRD4_plus",
+                            "replicate": 1,
+                            "single_end": true
+                        },
+                        "WT_BRD4_plus_R1.bed:md5,4154ae3205761247f0d34369bd35ef24"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,521d4bdfc9cd894d9f308f289f6b4d12",
+                    "versions.yml:md5,72c64a635a623b2727531efef33bb2a9",
+                    "versions.yml:md5,965df4a8dc27b395932172b6566f6c49",
+                    "versions.yml:md5,b0349334704ce14fbbe846c940ffa7dc"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "24.04.4"
+        },
+        "timestamp": "2024-10-24T09:25:08.105192974"
+    }
+}

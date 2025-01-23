@@ -17,6 +17,14 @@ profiles `test` and the container engine you wish to use eg. `docker`. For examp
 nextflow run main.nf -profile test,docker
 ```
 
+[ARTR-seq Test on NEMO, run as sbatch or on interactive mode]
+```bash
+ml Nextflow/23.04.4
+ml Singularity/3.11.3
+export NXF_SINGULARITY_CACHEDIR=/camp/lab/ulej/home/shared/singularity
+nextflow run main.nf -profile crick,test_artr_seq
+```
+
 Full dataset testing of 9 iCLIP samples can also be run using profile `test_full`.
 A test can also be run that skips all preparing of annotations/indexes using profile `test_no_prep_genome`.
 
@@ -29,6 +37,12 @@ If you require all reference files (eg. genomic indexes, filtered and segmented 
 | group   | replicate | fastq_1                                                                | fastq_2 |
 | ------- | --------- | ---------------------------------------------------------------------- | ------- |
 | TDP43_1 | 1         | s3://nf-core-awsmegatests/clipseq/input_data/fastq/ERR1530360.fastq.gz |         |
+
+- `pairwise_samplesheet` : csv file containing 4 columns: group,replicate,control_group,control_replicate. group is the sample name, replicate is currently unused by the pipeline so filling with '1' is acceptable, control_group is the control sample name, with control_replicate referring to which replicate to choose for MACS3 pairwise peak calling.
+
+| group   | replicate | control_group | control_replicate |
+| ------- | --------- | ------------- | ----------------- |
+| TDP43_1 | 1         | input         | 1                 |
 
 - `fasta` : genome fasta file .eg './tests/data/genome/homosapien-hg37-chr21.fa.gz'
 - `smrna_fasta` : fasta file to be mapped to before the genome file, typically containing rRNA and tRNA sequences .eg'./tests/data/genome/homosapiens_smallRNA.fa.gz'
