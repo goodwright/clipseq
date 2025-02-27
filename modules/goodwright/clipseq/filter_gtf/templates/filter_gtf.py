@@ -75,7 +75,7 @@ def main(process_name, gtf, output):
             (annotation["feature"] != "gene") & (annotation["annotations"].str.contains("|".join(gene_ids))), :
         ]
         df_t = df_t.loc[
-            ~df_t["annotations"].str.contains('transcript_support_level "1"|transcript_support_level "2"', regex=True)
+            ~df_t["annotations"].str.contains('transcript_support_level "1|transcript_support_level "2', regex=True)
         ]
         annotation.drop(index=df_t.index, inplace=True)
 
