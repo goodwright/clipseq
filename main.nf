@@ -95,6 +95,10 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 //
 
 include { MULTIQC } from './modules/local/multiqc'
+include { GET_CROSSLINKS as CALC_SMRNA_K1_CROSSLINKS      } from './modules/local/get_crosslinks'
+include { GET_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './modules/local/get_crosslinks'
+include { GET_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './modules/local/get_crosslinks'
+
 
 //
 // SUBWORKFLOWS
@@ -116,6 +120,7 @@ include { CLIPPY as CLIPPY_TRANSCRIPT                } from './modules/goodwrigh
 include { PEKA                                       } from './modules/goodwright/peka/main'
 include { DUMP_SOFTWARE_VERSIONS                     } from './modules/goodwright/dump_software_versions/main'
 include { CLIPSEQ_CLIPQC                             } from './modules/goodwright/clipseq/clipqc/main'
+include { ENCODE_MOVEUMI                             } from './modules/goodwright/clipseq/encode_moveumi/main'
 
 //
 // SUBWORKFLOWS
@@ -130,9 +135,6 @@ include { BAM_DEDUP_SAMTOOLS_UMITOOLS as GENOME_MULTI_DEDUP     } from './subwor
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as SMRNA_DEDUP            } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as SMRNA_K1_DEDUP         } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
 include { BAM_DEDUP_SAMTOOLS_UMITOOLS as TRANSCRIPT_DEDUP       } from './subworkflows/goodwright/bam_dedup_samtools_umitools/main'
-include { CLIP_CALC_CROSSLINKS as CALC_SMRNA_K1_CROSSLINKS      } from './subworkflows/goodwright/clip_calc_crosslinks/main'
-include { CLIP_CALC_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './subworkflows/goodwright/clip_calc_crosslinks/main'
-include { CLIP_CALC_CROSSLINKS as CALC_TRANSCRIPT_CROSSLINKS    } from './subworkflows/goodwright/clip_calc_crosslinks/main'
 include { PARACLU_ANALYSE as PARACLU_ANALYSE_GENOME             } from './subworkflows/goodwright/paraclu_analyse/main'
 include { PARACLU_ANALYSE as PARACLU_ANALYSE_TRANSCRIPT         } from './subworkflows/goodwright/paraclu_analyse/main'
 include { ICOUNT_ANALYSE                                        } from './subworkflows/goodwright/icount_analyse/main'
@@ -277,7 +279,13 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
-
+    if(params.encode_eclip){
+        ENCODE_MOVEUMI (
+            ch_fastq
+        )
+        ch_versions = ch_versions.mix(ENCODE_MOVEUMI.out.versions)
+        ch_fastq    = ENCODE_MOVEUMI.out.reads
+    }
     if(params.run_move_umi_to_header){
         UMITOOLS_EXTRACT (
             ch_fastq
@@ -433,6 +441,9 @@ workflow CLIPSEQ {
         ch_versions       = ch_versions.mix(TRANSCRIPT_DEDUP.out.versions)
         ch_transcript_bam = TRANSCRIPT_DEDUP.out.bam
         ch_transcript_bai = TRANSCRIPT_DEDUP.out.bai
+    } else {
+        ch_genome_bam = ch_genome_unique_bam
+        ch_genome_bai = ch_genome_unique_bai
     }
 
     ch_genome_crosslink_bed           = Channel.empty()
@@ -446,8 +457,9 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run crosslink calculation for smRNA with -k 1
         */
         CALC_SMRNA_K1_CROSSLINKS (
-            ch_smrna_k1_bam,
-            ch_smrna_fasta_fai.collect{ it[1] }
+            ch_smrna_k1_bam.join(ch_smrna_k1_bai),
+            ch_smrna_fasta_fai.collect{ it[1] },
+            params.crosslink_position
         )
         ch_versions                      = ch_versions.mix(CALC_SMRNA_K1_CROSSLINKS.out.versions)
         ch_smrna_crosslink_bed           = CALC_SMRNA_K1_CROSSLINKS.out.bed
@@ -458,8 +470,9 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run crosslink calculation for genome
         */
         CALC_GENOME_CROSSLINKS (
-            ch_genome_bam,
-            ch_fasta_fai.collect{ it[1] }
+            ch_genome_bam.join(ch_genome_bai),
+            ch_fasta_fai.collect{ it[1] },
+            params.crosslink_position
         )
         ch_versions                       = ch_versions.mix(CALC_GENOME_CROSSLINKS.out.versions)
         ch_genome_crosslink_bed           = CALC_GENOME_CROSSLINKS.out.bed
@@ -470,8 +483,9 @@ workflow CLIPSEQ {
         * SUBWORKFLOW: Run crosslink calculation for transcripts
         */
         CALC_TRANSCRIPT_CROSSLINKS (
-            ch_transcript_bam,
-            ch_longest_transcript_fai.collect{ it[1] }
+            ch_transcript_bam.join(ch_transcript_bai),
+            ch_longest_transcript_fai.collect{ it[1] },
+            params.crosslink_position
         )
         ch_versions                      = ch_versions.mix(CALC_TRANSCRIPT_CROSSLINKS.out.versions)
         ch_trans_crosslink_bed           = CALC_TRANSCRIPT_CROSSLINKS.out.bed
