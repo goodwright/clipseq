@@ -543,9 +543,11 @@ workflow CLIPSEQ {
         /*
         * MODULE: Run peka on genome-level crosslinks
         */
+        ch_peka_input = CLIPPY_GENOME.out.peaks
+            .join(ch_genome_crosslink_bed, by: 0)
         PEKA (
-            CLIPPY_GENOME.out.peaks,
-            ch_genome_crosslink_bed,
+            ch_peka_input.map { meta, peaks, crosslinks -> [meta, peaks] },
+            ch_peka_input.map { meta, peaks, crosslinks -> [meta, crosslinks] },
             ch_fasta.collect{ it[1] },
             ch_fasta_fai.collect{ it[1] },
             ch_regions_resolved_gtf.collect{ it[1] }
