@@ -36,11 +36,16 @@ workflow ICOUNT_ANALYSE {
     )
     ch_versions = ch_versions.mix(ICOUNT_SUMMARY.out.versions)
 
+    ch_merged_summaries = ICOUNT_SUMMARY.out.summary_type
+        .join( ICOUNT_SUMMARY.out.summary_subtype, by: [0])
+        .join( ICOUNT_SUMMARY.out.summary_gene, by: [0])
+        .join( smrna_bed, by: [0])
+        .map { meta, type, subtype, gene, bed -> 
+            [meta, [type, subtype, gene, bed]]
+        }
+
     MERGE_SUMMARY (
-        ICOUNT_SUMMARY.out.summary_type,
-        ICOUNT_SUMMARY.out.summary_subtype,
-        ICOUNT_SUMMARY.out.summary_gene,
-        smrna_bed
+        ch_merged_summaries
     )
     ch_versions = ch_versions.mix(MERGE_SUMMARY.out.versions)
 
