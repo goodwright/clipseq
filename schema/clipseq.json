@@ -290,7 +290,7 @@
                 "encode_eclip": {
                     "name" : "ENCODE eCLIP?",
                     "description": "This is an option for data downloaded from the ENCODE resource, which moves the random barcode from the start of the read header to the end delimited by _rbc:",
-                    "type": boolean
+                    "type": "boolean"
                 }
                 "crosslink_position": {
                     "name": "Crosslink position",
