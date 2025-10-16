@@ -1,6 +1,6 @@
 process PEKA {
     tag "$meta.id"
-    label "process_low"
+    label "process_high"
 
     conda "bioconda::peka=1.0.0"
     container ""
