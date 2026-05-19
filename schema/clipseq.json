@@ -11,7 +11,7 @@
                     "type": "csv",
                     "required": true,
                     "takes_samples": true,
-                    "sample_types": ["CLIP"],
+                    "sample_types": ["CLIP","RNA-Seq"],
                     "columns": [
                         {
                             "name": "group",
