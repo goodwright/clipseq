@@ -303,6 +303,11 @@
                     "description": "Format of the UMI header to extract.",
                     "type": "string"
                 },
+                "clean_fastq_headers": {
+                    "name": "Clean FASTQ Headers",
+                    "description": "Replace spaces in FASTQ header lines with underscores before any analysis.",
+                    "type": "boolean"
+                },
                 "skip_umi_dedupe": {
                     "name": "Skip UMI Deduplication",
                     "description": "Skip the UMI deduplication of BAMs.",

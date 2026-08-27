@@ -1,0 +1,28 @@
+nextflow_pipeline {
+
+    name "only_cleanheaders"
+    script "main.nf"
+
+    test("run_test") {
+        when {
+            params {
+                outdir = "$outputDir"
+                only_trimming = true
+                save_trimmed = true
+                clean_fastq_headers = true
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // The cleaned fastqs are intermediates and are not published, so
+            // assert the process ran. TrimGalore re-links its input to
+            // "${prefix}.fastq.gz", so downstream file names are unchanged.
+            assert workflow.trace.succeeded().any { it.process ==~ /.*CLEAN_FASTQ_HEADERS.*/ }
+
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1.fastq.gz_trimming_report.txt").exists()
+            assert new File("$outputDir/01_prealign/trimgalore/sample_1_R1_trimmed.fq.gz").exists()
+        }
+    }
+}
