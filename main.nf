@@ -94,6 +94,7 @@ ch_multiqc_config = file("$projectDir/assets/multiqc_config.yml", checkIfExists:
 // MODULEs
 //
 
+include { CLEAN_FASTQ_HEADERS } from './modules/local/clean_fastq_headers/main'
 include { MULTIQC } from './modules/local/multiqc'
 include { GET_CROSSLINKS as CALC_SMRNA_K1_CROSSLINKS      } from './modules/local/get_crosslinks'
 include { GET_CROSSLINKS as CALC_GENOME_CROSSLINKS        } from './modules/local/get_crosslinks'
@@ -279,6 +280,17 @@ workflow CLIPSEQ {
     }
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false], [FASTQ]]
     //ch_fastq | view
+    if(params.run_clean_fastq_headers) {
+        /*
+        * MODULE: Replace spaces in FASTQ headers with underscores before any analysis
+        */
+        CLEAN_FASTQ_HEADERS (
+            ch_fastq
+        )
+        ch_versions = ch_versions.mix(CLEAN_FASTQ_HEADERS.out.versions)
+        ch_fastq    = CLEAN_FASTQ_HEADERS.out.reads
+    }
+
     if(params.encode_eclip){
         ENCODE_MOVEUMI (
             ch_fastq

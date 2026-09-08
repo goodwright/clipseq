@@ -37,6 +37,12 @@ MultiQC report of important quality control metrics. Produced by MULTIQC process
 
 ## Commonly used parameters
 
+**Cleaning spaces from fastq headers**
+
+Some fastq files carry spaces in their header lines (for example `@READID 1:N:0:INDEX`). Tools further down the pipeline truncate read names at the first space, which can break UMI extraction and read-name matching after alignment.
+
+To enable this option set `clean_fastq_headers = true`. Every space in a header line is replaced with an underscore, and the cleaned reads are used for all subsequent steps. This runs before any other analysis, including UMI moving and trimming.
+
 **Moving UMI from fastq reads to read header**
 
 If you are analysing demultiplexed sample files, then depending on where you have sourced your fastq from, the UMI and experimental barcode might still be present at the 5' end of reads, which will cause errors in downstream analysis. Note this is common for historical public data downloaded from ArrayExpress, for example.
